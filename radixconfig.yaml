@@ -14,3 +14,7 @@ spec:
        - name: http
          port: 80
       public: http
+      environmentConfig:
+        - environment: development
+          monitoring: false
+          replicas: 1
