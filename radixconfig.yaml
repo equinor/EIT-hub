@@ -1,0 +1,16 @@
+apiVersion: radix.equinor.com/v1
+kind: RadixApplication
+metadata:
+  name: eit-hub
+spec:
+  environments:
+    - name: development
+      build:
+        from: master
+  components:    
+    - name: web
+      src: .
+      ports:
+       - name: http
+         port: 80
+      public: http
