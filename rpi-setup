@@ -1,0 +1,97 @@
+Short RPi Zero W IoT configuration recipe
+
+When receiving your unit you need to perform the following steps to be ready using RPi with the Enviro module
+1. Set up SSH with the supplied USB cable
+2. Change your password
+3. Configure WiFi
+4. Update the installed OS/software
+5. Install the Enviro Python library
+6. Experiment :)
+
+1. Set up SSH with the supplied USB cable
+
+Mac: 
+1. Attach the USB cable to your computer then to the left Micro USB connector on the RPi Zero
+2. Open Terminal
+3. ssh pi@raspberrypi.local
+4. Enter the initial password when prompted: raspberry
+
+PC: 
+1. Attach the USB cable to your computer then to the left Micro USB connector on the RPi Zero
+2. Install Bonjour and Putty
+3. Run Putty (See step 6-9 in https://desertbot.io/blog/headless-pi-zero-w-wifi-setup-windows)
+4. ssh pi@raspberrypi.local (note: I’m using a Mac and haven’t tested Putty, so your milage may vary)
+5. Enter the initial password when prompted: raspberry
+
+2. Change your password
+This can be done in several ways:
+- Configure with sudo raspi-config (see further instructions below) through a SSH connection using the supplied USB cable
+- Configure with sudo passwd through a SSH connection using the supplied USB cable
+
+3. Configure WiFi
+This can be done in several ways:
+- Configure with sudo raspi-config (see further instructions below) through a SSH connection using the supplied USB cable
+- Create/add a file called wpa_supplicant.conf to the root of the supplied SDHC card
+- Create/add a file called wpa_supplicant.conf with the CLI command sudo nano /etc/wpa_supplicant/wpa_supplicant.conf through a SSH connection using the supplied USB cable
+
+Using raspi-config to set password and configure WiFi (+++)
+Once connected to the RPi Zero W run:
+sudo raspi-config
+
+Configure the following
+1 Change user password
+2 -> N2 Wi-fi
+Enter SSID (your WiFi name)
+Enter password (for your WiFi)
+4 -> I2 Change Timezone
+Europe
+Oslo
+
+(You could also change the keyboard configuration, but my unit had issues with this and the change wouldn’t take.)
+
+Example content of wpa_supplicant.conf file:
+country=NO
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+network={
+	ssid="MyWiFiNetwork"
+	psk="MyWiFiPassword"
+	key_mgmt=WPA-PSK
+}
+
+Note: you can create a hashed version of your WiFi password to avoid storing it in plain text on the memory card:
+1. wpa_passphrase [MyWiFiNetwork] [MyWiFiPassword]
+2. Copy the hashed password
+3. sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+4. Paste the hashed password within the quote marks of the psk="MyWiFiPassword" and save
+5. sudo reboot
+
+4. Update the installed OS/software
+
+Update base system (this takes time…)
+sudo apt-get update -y
+sudo apt-get upgrade -y
+
+5. Install the Enviro Python library
+In the RPi CLI
+git clone https://github.com/pimoroni/enviroplus-python
+cd enviroplus-python
+sudo ./install.sh
+sudo reboot
+
+6. Experiment :)
+In the RPi CLI
+cd /home/pi/Pimoroni/enviroplus/examples
+
+You can list all the files in the folder using:
+ls 
+
+Then you can run an example:
+python all-in-one.py
+
+Exit the example using CTRL+c
+
+Links:
+https://core-electronics.com.au/tutorials/raspberry-pi-zerow-headless-wifi-setup.html
+https://medium.com/@aallan/setting-up-a-headless-raspberry-pi-zero-3ded0b83f274
+https://learn.adafruit.com/turning-your-raspberry-pi-zero-into-a-usb-gadget/ethernet-tweaks
