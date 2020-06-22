@@ -31,9 +31,8 @@ def main():
 
     """ Initiation"""
 
-    # set up something for the enviro TODO: find out what does this does
-    bus = SMBus(1)
-    bme280 = BME280(i2c_dev=bus)
+    # set up something for the enviro
+    bme280 = BME280()
 
     # create a client object for the IoT Hub
     client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING)
