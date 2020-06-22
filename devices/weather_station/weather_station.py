@@ -5,6 +5,7 @@ Script for sending weather data from an raspberry pi with enviro shield
 to an Azure IoT Hub
 """
 
+import settings
 import time, logging
 from azure.iot.device import IoTHubDeviceClient, Message
 from bme280 import BME280
@@ -17,7 +18,7 @@ except ImportError:
 # The device connection string to authenticate the device with your IoT hub.
 # Using the Azure CLI:
 # az iot hub device-identity show-connection-string --hub-name {YourIoTHubName} --device-id MyNodeDevice --output table
-CONNECTION_STRING = "HostName=API-test.azure-devices.net;DeviceId=RaspberryEnviro;SharedAccessKey=zG02/vQe56CZ42MjC79//84bk/+rM+KzihEckPtf370="
+CONNECTION_STRING = settings.CONNECTION_STRING
 
 # define the format of the json string that will be sent to the hub as a message
 MSG_TXT = '{{"temperature": {temperature}, " pressure": {pressure}, humidity": {humidity}}}'
