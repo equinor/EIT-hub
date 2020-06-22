@@ -15,6 +15,9 @@ except ImportError:
     from smbus import SMBus
 
 
+# The time between weather updates
+UPDATE_PERIOD = 60  # in seconds
+
 # The device connection string to authenticate the device with your IoT hub.
 # Using the Azure CLI:
 # az iot hub device-identity show-connection-string --hub-name {YourIoTHubName} --device-id MyNodeDevice --output table
