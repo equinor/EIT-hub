@@ -1,0 +1,177 @@
+
+#logo_equinor {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: auto;
+    opacity: 0.8;
+}
+
+body{
+    background-color: #659DBD;
+    font-family: sans-serif;
+    
+}
+#bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+}
+
+.flexHeader {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+.weather_chat {
+
+}
+
+.chat_box {
+    display: inline-block;
+    width: 400px;
+    float: left;
+}
+
+#chat_title {
+    font-size: 15px;
+}
+#messages {
+    height: 400px;
+
+    overflow: scroll;
+    background-color: #ffffff;
+    opacity: 0.8;
+
+
+}
+#messagebox {
+    width: 400px; 
+    display: block;
+}
+#send {
+    width: 400px; 
+    height: 30px;
+    display: block;
+    margin-top: 10px;
+    
+}
+
+
+.container{
+    width: 300px;    
+    background-color: #5d5c61;
+    
+    
+    margin: 0 auto;
+    
+    top: -600px;
+    border-radius: 10px;
+    padding-bottom : 50px;
+    margin-top: 50px;
+    margin-left: 100px;
+    display: inline-block;
+}
+
+.app-title{
+    width: 300px;
+    height: 50px;
+    border-radius: 10px 10px 0 0;
+}
+
+.app-title p{
+    text-align: center;
+    padding: 15px;
+    margin: 0 auto;
+    font-size: 1.9em;
+    color: #ffffff;
+}
+
+.notification{
+    background-color: #6c83c0;
+    display: none;
+}
+
+.notification p{
+    color: #721c24;
+    font-size: 1.2em;
+    margin: 0;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.weather-container{
+    width: 300px;
+    height: 260px;
+    background-color: #557a95;
+
+}
+
+.weather-icon{
+    width: 300px;
+    height: 128px;
+}
+
+.weather-icon img{
+    display: block;
+    margin: 0 auto;
+}
+
+.temperature-value{
+    width: 300px;
+    height:60px;
+}
+
+.temperature-value p{
+    padding: 0;
+    margin: 0;
+    color: #ffffff;
+    font-size: 4em;
+    text-align: center;
+    cursor: pointer;
+}
+
+.temperature-value p:hover{
+    
+}
+
+.temperature-value span{
+    color: #ffffff;
+    font-size: 0.5em;
+}
+
+.temperature-description{
+    
+}
+
+.temperature-description p{
+    padding: 8px;
+    margin: 0;
+    color: #ffffff;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.location{
+    
+}
+
+.location p{
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+#gamepad_title {
+    margin-top: 150px;
+    color: #000000;
+    font-size: 4em;
+}
