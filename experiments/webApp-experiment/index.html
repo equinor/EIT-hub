@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Webpage - weather</title>
+    <link href="styles/style.css" rel="stylesheet">
+</head>
+<body>
+    <img src="images/background.jpg" id="bg">
+    <div>
+        <img src="images/equinor-logo.png" alt="logo" id="logo_equinor">
+    </div>
+    <h1 class="flexHeader">
+        <span>
+            <span id="deviceCount">0 clients</span>
+            <select id="listOfDevices" class="select_box"></select>
+        </span>
+    </h1>  
+    <div class="weather_chat">
+        <div class="chat_box" style="display: inline-block;>
+            <h1 id="chat_title">Chat room</h1>
+            <pre id="messages"></pre>
+            <input type="text" id="messageBox" placeholder="Type your message here" style="width: 392px; padding-bottom: 10px;"/>
+            <button id="send" title="Send Message!">Send Message</button>
+        </div>
+        
+        
+        <div class="container" style="display: inline-block;">
+            <div class="app-title"><p>Weather</p></div>
+            <div class="notification"> </div>
+            <div class="weather-container">
+                <div class="weather-icon">
+                    <img src="images/unknown.png" alt="">
+                </div>
+                <div class="temperature-value">
+                    <p>- °<span>C</span></p>
+                </div>
+                <div class="temperature-description">
+                    <p> - </p>
+                </div>
+                <div class="location">
+                    <p>-</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h1 id="gamepad_title">Gamepad</h1>
+    
+    <script src="app.js"></script>
+</body>
+</html>
