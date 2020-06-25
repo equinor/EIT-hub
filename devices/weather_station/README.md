@@ -11,5 +11,5 @@ Simple script that reads weather data (Temperature, Pressure and Humidity) from 
      1. SetInterval   int(+)    Set the interval you want to send messages (seconds)  
      2. SetParameter  int(1-4)  Set if you want to see all thre parameters or just one specific
      3. SetTempFactor float(+)  Set the compensating factor for the temperature sensor depening on device used/where the temp sensor is in realtion to the CPU or other           heating elements                      
-     4. Reboot activatees on int payload = 1 For this to be usefull you will need to set weather_station.py to start upon startup
+     4. Reboot activatees on int payload = 1 For this to be usefull you will need to set weather_station.py to start on startup
       
