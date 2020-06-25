@@ -145,7 +145,7 @@ def main():
     while True:  
 
         # if statement so the loop won't sleep 
-        if int(time.time()) == prev_time + UPDATE_PERIOD:
+        if int(time.time()) >= prev_time + UPDATE_PERIOD:
             prev_time = int(time.time())
 
             # get new readings from the sensors 
