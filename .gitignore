@@ -1,2 +1,3 @@
 *.env
 *.pyc
+/experiments/webApp-experiment/node_modules/
