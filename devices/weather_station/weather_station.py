@@ -38,7 +38,7 @@ client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING)
 
 # define the format of the json string that will be sent to the hub as a message
 # Func for switching json string
-def msg_format1(argument):
+def json_format(argument):
     switcher = {
         1: '{{"temperature": {temperature}, " pressure": {pressure}, "humidity": {humidity}}}',
         2: '{{"temperature": {temperature}}}', 
@@ -47,10 +47,10 @@ def msg_format1(argument):
     }
     return switcher.get(argument)
     
-MSG_TXT = msg_format1(PARAMETER)
+MSG_TXT = json_format(PARAMETER)
 
 # Inserting to the json string depending on the parameter chosen   
-def msg_format2(argument, temperature, pressure, humidity):
+def msg_add_values(argument, temperature, pressure, humidity):
     global MSG_TXT
     if argument == 1:
         return MSG_TXT.format(temperature=temperature, pressure=pressure, humidity=humidity)
@@ -159,9 +159,9 @@ def main():
             )
 
             # create message and sent it to hub 
-            MSG_TXT = msg_format1(PARAMETER)
+            MSG_TXT = json_format(PARAMETER)
             message = Message(
-                msg_format2(PARAMETER, temperature, pressure, humidity)
+                msg_add_values(PARAMETER, temperature, pressure, humidity)
             )
             client.send_message(message)
 
