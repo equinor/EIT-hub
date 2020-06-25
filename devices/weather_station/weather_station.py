@@ -6,6 +6,7 @@ to an Azure IoT Hub
 """
 
 import settings
+import os
 import time, logging
 import threading
 from azure.iot.device import IoTHubDeviceClient, Message, MethodResponse
@@ -16,13 +17,16 @@ from bme280 import BME280
 bme280 = BME280()
 
 # The time between weather updates
-UPDATE_PERIOD = 10  # in seconds
+UPDATE_PERIOD = 1  # in seconds
 
 # Choosing what parameters we want to send
 PARAMETER = 1
 
 # Factor for tuning the cpu compensated temperature
 FACTOR = 1.5
+
+# if 1 the system will reboot
+RESTART = 0
 
 # The device connection string to authenticate the device with your IoT hub.
 # Using the Azure CLI:
@@ -41,7 +45,7 @@ def msg_format1(argument):
         3: '{{"pressure": {pressure}}}',
         4: '{{"humidity": {humidity}}}'
     }
-    return switcher.get(argument,"Invalid")
+    return switcher.get(argument)
     
 MSG_TXT = msg_format1(PARAMETER)
 
@@ -93,7 +97,7 @@ def Read_and_check(variable, msg_payload, name):
 
 # Method listener running on a different thread   
 def method_listener(device_client):
-    global PARAMETER, UPDATE_PERIOD, FACTOR
+    global PARAMETER, UPDATE_PERIOD, FACTOR, RESTART
     while True:
         method_request = device_client.receive_method_request()
         print (
@@ -108,6 +112,8 @@ def method_listener(device_client):
             PARAMETER, response_payload, response_status = Read_and_check(int, method_request.payload, method_request.name)
         elif method_request.name == "SetTempFactor":
             FACTOR, response_payload, response_status = Read_and_check(float, method_request.payload, method_request.name)
+        elif method_request.name == "Reboot":
+            RESTART, response_payload, response_status = Read_and_check(int, method_request.payload, method_request.name)
         else:
             response_payload = {"Response": "Direct method {} not defined".format(method_request.name)}
             response_status = 404
@@ -137,7 +143,7 @@ def main():
 
     """ Send telemetry loop """
     while True:  
-        
+
         # if statement so the loop won't sleep 
         if int(time.time()) == prev_time + UPDATE_PERIOD:
             prev_time = int(time.time())
@@ -159,6 +165,9 @@ def main():
             )
             client.send_message(message)
 
+        if RESTART == 1:
+           os.system('sudo reboot')
+
         
 
 
@@ -168,4 +177,4 @@ if __name__ == '__main__':
         main()
        
     except KeyboardInterrupt:
-        logging.info(' Program stopped by keyboardInterrupt')
+        logging.info('Program stopped by keyboardInterrupt')
