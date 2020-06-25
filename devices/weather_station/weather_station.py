@@ -40,7 +40,7 @@ client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING)
 # Func for switching json string
 def msg_format1(argument):
     switcher = {
-        1: '{{"temperature": {temperature}, " pressure": {pressure}, humidity": {humidity}}}',
+        1: '{{"temperature": {temperature}, " pressure": {pressure}, "humidity": {humidity}}}',
         2: '{{"temperature": {temperature}}}', 
         3: '{{"pressure": {pressure}}}',
         4: '{{"humidity": {humidity}}}'
