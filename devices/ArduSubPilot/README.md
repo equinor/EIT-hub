@@ -9,7 +9,7 @@ Its main object is `DeviceController`, which connects to a device according to i
 * Pymavlink
 
 
-## Running the ArduPilot simulator
+## Using the ArduPilot simulator
 
 Build the simulated device ([source](https://github.com/ArduPilot/ardupilot/blob/master/BUILD.md))
 
@@ -25,11 +25,9 @@ cd ardupilot/Tools/autotest
 ./sim_vehicle.py -v ArduSub -f vectored_6dof --console --map 
 ```
 
-## Using Poetry
-
-For a quick test
+## Run using Poetry
 
 ```
 poetry install
-poetry run test
+poetry run keyboard_control
 ```
