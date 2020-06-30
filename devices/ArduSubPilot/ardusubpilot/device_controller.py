@@ -37,7 +37,21 @@ class DeviceController:
         https://mavlink.io/en/messages/common.html#MANUAL_CONTROL
 
         """
+        
+        # Limit command values 
+        x = 1000 if x > 1000 else x
+        x = -1000 if x < -1000 else x
 
+        y = 1000 if x > 1000 else y
+        y = -1000 if x < -1000 else y
+
+        z = 1000 if x > 1000 else z
+        z = -1000 if x < -1000 else z
+
+        r = 1000 if x > 1000 else r
+        r = -1000 if x < -1000 else r
+
+        # Send command
         self.master.mav.manual_control_send(
             self.master.target_system,
             x,
