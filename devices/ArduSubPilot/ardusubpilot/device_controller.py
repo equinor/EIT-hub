@@ -8,7 +8,7 @@ class DeviceController:
 
         # Create the connection
         # Documentation on connection strings
-        # http://mavlink.io/en/mavgen_pythonhttp://mavlink.io/en/mavgen_python//
+        # http://mavlink.io/en/mavgen_python/
         self.master = mavutil.mavlink_connection(connenction_string)
 
         # Wait a heartbeat before sending commands

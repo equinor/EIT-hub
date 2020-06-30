@@ -1,5 +1,6 @@
 from time import sleep
 from ardusubpilot import DeviceController
+from ardusubpilot.config import CONNECTION_STRING
 
 
 def quick_test():
@@ -11,7 +12,7 @@ def quick_test():
 
 def keyboard_control():
 
-    dc = DeviceController()
+    dc = DeviceController(CONNECTION_STRING)
 
     while True:
 
