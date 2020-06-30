@@ -1,10 +1,5 @@
 from time import sleep
 from pymavlink import mavutil
-import os
-
-# load user-made environment variables
-from dotenv import load_dotenv
-load_dotenv()
 
 
 class DeviceController:
@@ -50,15 +45,4 @@ class DeviceController:
             z,
             r,
             0   # controller button pressed or not
-        )
-
-
-if __name__ == "__main__":
-    """
-    This code block is only for testing purposes.
-    """
-    dc = DeviceController()
-    print("Controller mode: " + dc.get_flightmode())
-    for i in range(5):
-        dc.send_thrust_command(r=200)
-        sleep(1)
+        )  

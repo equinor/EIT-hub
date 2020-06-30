@@ -25,5 +25,11 @@ cd ardupilot/Tools/autotest
 ./sim_vehicle.py -v ArduSub -f vectored_6dof --console --map 
 ```
 
+## Using Poetry
 
+For a quick test
 
+```
+poetry install
+poetry run test
+```
