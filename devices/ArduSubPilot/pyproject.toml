@@ -7,6 +7,7 @@ authors = ["Michael Hoyer <michael.hoyer3@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 pymavlink = "^2.4.9"
+python-dotenv = "^0.13.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
