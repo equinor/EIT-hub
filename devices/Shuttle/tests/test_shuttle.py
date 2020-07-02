@@ -1,4 +1,4 @@
-from ardusubpilot import __version__
+from shuttle import __version__
 
 
 def test_version():

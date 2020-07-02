@@ -1,12 +1,8 @@
 [tool.poetry]
-name = "ArduSubPilot"
+name = "Shuttle"
 version = "0.1.0"
 description = ""
-authors = ["Michael Hoyer <michael.hoyer3@gmail.com>"]
-
-[tool.poetry.scripts]
-test = 'ardusubpilot.main:quick_test'
-keyboard_control = 'ardusubpilot.main:keyboard_control'
+authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
