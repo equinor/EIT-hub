@@ -2,11 +2,11 @@ from pymavlink import mavutil
 
 
 def create_mavlink_connection(connenction_string: str):
-    """
+    '''
     Establishes a connection to a ArduPilot device through the given 
     connection string. 
     Returns an object that handles the connection and message sending. 
-    """
+    '''
 
     # Create the connection
     # Documentation on connection strings
@@ -25,13 +25,13 @@ def create_mavlink_connection(connenction_string: str):
 
 
 def send_thrust_command(mavcon, x=0, y=0, z=0, r=0) -> None:
-    """
+    '''
     Function that sends thrust commands to target device. 
     Values should be in the range [-1000, 1000], where
     1000 is full thottle ahead and negative is reverse.
     Documentation on manual control 
     https://mavlink.io/en/messages/common.html#MANUAL_CONTROL
-    """
+    '''
     
     # Limit command values 
     x = 1000 if x > 1000 else x
