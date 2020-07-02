@@ -1,5 +1,7 @@
+import json
+from shuttle.config import MAVLINK_CONNECTION_STRING, IOTHUB_CONNECTION_STRING
 from shuttle.shuttle_connector import create_mavlink_connection, send_thrust_command
-from shuttle.config import CONNECTION_STRING
+from shuttle.websocket_connector import create_websocket_client, consumer_handler
 
 
 def keyboard_control():
@@ -8,7 +10,7 @@ def keyboard_control():
     '''
 
     # establish connection to shuttle over mavlink
-    mavcon = create_mavlink_connection(CONNECTION_STRING)
+    mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
 
     # define shorthand function for sending thrust commands
     def thrust(x=0, y=0, z=0, r=0):
@@ -49,4 +51,33 @@ def keyboard_control():
 
 
 def control_over_websocket():
-    pass
+
+    # establish connection to shuttle over mavlink
+    mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
+
+    # retrieve websocket uri over IoT Hub
+    uri = 'tmptest'
+
+    # establish conneciton to backend over websocket
+    websocket = create_websocket_client(uri)
+
+
+    # define consumer function for incomming messages
+    async def thrust_message_consumer(message: str):
+
+        # unpack message
+        msg = json.loads(message)
+
+        # send thrust command
+        send_thrust_command(mavcon, msg['x'], msg['y'], msg['z'], msg['r'])
+
+
+    try: 
+        # run all incomming messages through the consumer function
+        consumer_handler(websocket, thrust_message_consumer)
+
+    except:
+        pass    # TODO: error handling
+
+    finally:
+        websocket.close()
