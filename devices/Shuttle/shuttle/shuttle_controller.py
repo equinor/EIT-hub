@@ -45,3 +45,8 @@ def keyboard_control():
         
         else:
             print('Invalid key pressed.\n Control with wasd, qe and zx')
+
+
+
+def control_over_websocket():
+    pass
