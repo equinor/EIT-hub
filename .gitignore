@@ -1,6 +1,7 @@
 *.env
 *.pyc
 /experiments/webApp-experiment/node_modules/
+.vscode
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,node,dotnetcore
