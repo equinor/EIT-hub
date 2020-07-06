@@ -31,7 +31,7 @@ if (process.env.NODE_ENV !== 'production') {
 const server = http.createServer(function(request, response) {
   // process HTTP request. Since we're writing just WebSockets
   // server we don't have to implement anything.
-  winston.log('info', 'A client has connected to the server')
+  logger.log('info', 'A client has connected to the server')
 });
 server.listen(1337, function() { });
 
@@ -45,19 +45,19 @@ wsServer.on('request', function(request) {
   var connection = request.accept(null, request.origin);
 
   connection.sendUTF("Client has connected to websocket");
-  winston.log('info', 'A client has connected to the websocket')
+  logger.log('info', 'A client has connected to the websocket')
 
   // This is the most important callback for us, we'll handle
   // all messages from users here.
   connection.on('message', function(message) {
     if (message.type === 'utf8') {
-      winston.log('info', 'Message recieved: ', message)
+      logger.log('info', 'Message recieved: ', message)
       connection.sendUTF(message);
     }
   });
 
   connection.on('close', function(connection) {
     // close user connection
-    winston.log('info', 'A client has disconnected')
+    logger.log('info', 'A client has disconnected')
   });
 });
