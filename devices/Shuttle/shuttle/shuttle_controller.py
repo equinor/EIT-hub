@@ -1,13 +1,33 @@
 import json
 import asyncio
 import logging
+from time import sleep
 from shuttle.config import MAVLINK_CONNECTION_STRING, IOTHUB_CONNECTION_STRING
-from shuttle.shuttle_connector import create_mavlink_connection, send_thrust_command
+from shuttle.shuttle_connector import create_mavlink_connection, send_thrust_command, log_data
 from shuttle.websocket_connector import consumer_handler
 
 
 logger = logging.getLogger('controller')
 logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler())
+formatter = logging.Formatter('%(name)s-%(levelname)s: %(message)s')
+logger.setFormatter(formatter)
+
+
+def quick_test():
+
+    # establish connection to shuttle over mavlink
+    mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
+    log_data(mavcon)
+
+    # define shorthand function for sending thrust commands
+    def thrust(x=0, y=0, z=500, r=0):
+        send_thrust_command(mavcon, x, y, z, r)
+
+    while True:
+        log_data(mavcon)
+        thrust(r=250)
+        sleep(1)
 
 
 def keyboard_control():

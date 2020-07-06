@@ -6,6 +6,7 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.scripts]
 keyboard_control = "shuttle.shuttle_controller:keyboard_control"
+test = "shuttle.shuttle_controller:quick_test"
 
 [tool.poetry.dependencies]
 python = "^3.8"

@@ -7,6 +7,8 @@ import logging
 logger = logging.getLogger('websockets')
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler())
+formatter = logging.Formatter('%(name)s-%(levelname)s: %(message)s')
+logger.setFormatter(formatter)
 
 
 async def consumer_handler(uri, consumer_func) -> None:
