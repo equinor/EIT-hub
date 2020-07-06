@@ -16,11 +16,13 @@ wsServer = new WebSocketServer({
 wsServer.on('request', function(request) {
   var connection = request.accept(null, request.origin);
 
+  connection.sendUTF("Client has connected to server");
+
   // This is the most important callback for us, we'll handle
   // all messages from users here.
   connection.on('message', function(message) {
     if (message.type === 'utf8') {
-      // process WebSocket message
+      connection.sendUTF(message);
     }
   });
 
