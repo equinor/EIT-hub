@@ -1,7 +1,13 @@
 import json
+import asyncio
+import logging
 from shuttle.config import MAVLINK_CONNECTION_STRING, IOTHUB_CONNECTION_STRING
 from shuttle.shuttle_connector import create_mavlink_connection, send_thrust_command
-from shuttle.websocket_connector import create_websocket_client, consumer_handler
+from shuttle.websocket_connector import consumer_handler
+
+
+logger = logging.getLogger('controller')
+logger.setLevel(logging.INFO)
 
 
 def keyboard_control():
@@ -56,11 +62,7 @@ def control_over_websocket():
     mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
 
     # retrieve websocket uri over IoT Hub
-    uri = 'tmptest'
-
-    # establish conneciton to backend over websocket
-    websocket = create_websocket_client(uri)
-
+    uri = 'ws://localhost:3000/'
 
     # define consumer function for incomming messages
     async def thrust_message_consumer(message: str):
@@ -69,15 +71,17 @@ def control_over_websocket():
         msg = json.loads(message)
 
         # send thrust command
-        send_thrust_command(mavcon, msg['x'], msg['y'], msg['z'], msg['r'])
+        try: 
+            send_thrust_command(mavcon, msg['x'], msg['y'], msg['z'], msg['r'])
+        except:
+            # TODO: catch format errors
+            pass
 
 
     try: 
         # run all incomming messages through the consumer function
-        consumer_handler(websocket, thrust_message_consumer)
+        asyncio.run(consumer_handler(uri, thrust_message_consumer))
 
     except:
+        logger.error('An exception occured')
         pass    # TODO: error handling
-
-    finally:
-        websocket.close()

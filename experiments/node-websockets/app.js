@@ -2,6 +2,8 @@ const WebSocketServer = require('websocket').server;
 const http = require('http');
 const winston = require('winston')
 
+const PORT = 3000;
+
 
 const logger = winston.createLogger({
   level: 'info',
@@ -31,9 +33,10 @@ if (process.env.NODE_ENV !== 'production') {
 const server = http.createServer(function(request, response) {
   // process HTTP request. Since we're writing just WebSockets
   // server we don't have to implement anything.
-  logger.log('info', 'A client has connected to the server')
+  logger.log('info', 'A request was recieved over HTTP')
+  response.end('Hello world')
 });
-server.listen(1337, function() { });
+server.listen(PORT, function() { });
 
 // create the server
 wsServer = new WebSocketServer({
@@ -52,7 +55,6 @@ wsServer.on('request', function(request) {
   connection.on('message', function(message) {
     if (message.type === 'utf8') {
       logger.log('info', 'Message recieved: ', message)
-      connection.sendUTF(message);
     }
   });
 

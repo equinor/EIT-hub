@@ -9,24 +9,17 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler())
 
 
-async def create_websocket_client(uri: str) -> websockets.WebSocketClientProtocol:
-    websocket = await websockets.connect(uri)
-    return websocket
-
-
-async def consumer_handler(websocket, consumer_func) -> None:
-    async for message in websocket:
-        await consumer_func(message)
+async def consumer_handler(uri, consumer_func) -> None:
+    async with websockets.connect(uri) as websocket:
+        async for message in websocket:
+            logger.info('message receieved')
+            await consumer_func(message)
 
 
 if __name__ == "__main__":
-    uri = 'tmp'
-    websocket = create_websocket_client(uri)
-
+    uri = 'ws://localhost:3000/'
+    
     async def printer(message):
         logger.info(message)
 
-    try:
-        consumer_handler(websocket, printer)
-    finally:
-        websocket.close()
+    asyncio.run(consumer_handler(uri, printer))
