@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node backend/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,15 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "jest": "^26.1.0"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "backend/**/*.js",
+      "!**/*.test.js"
+    ]
   }
 }

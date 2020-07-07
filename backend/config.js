@@ -18,6 +18,7 @@ function applyEnv(processEnv, base = defaultConf){
     })
 }
 
+/* istanbul ignore next Have untestable dotenv and process.env*/
 function main() {
     // Run dotenv to populate process.env from .env.
     dotenv.config();

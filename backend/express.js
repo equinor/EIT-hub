@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 const express = require('express');
 
 function start(port) {

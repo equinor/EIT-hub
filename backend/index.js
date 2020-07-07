@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 "use strict";
 
 const config = require('./config');
