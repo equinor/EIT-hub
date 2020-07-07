@@ -35,8 +35,14 @@ def quick_test():
 
     @periodic_task(delay=1)
     async def heartbeat():
-        logging.info('This log entry pretends to be a heartbeat')
+        mavcon.wait_heartbeat()
+        logging.info(f'Received heartbeat from {mavcon.target_system}')
 
+        # send heartbeat from GCS
+        mavcon.mav.heartbeat_send(mavutil.mavlink.MAV_TYPE_GCS,
+                                    mavutil.mavlink.MAV_AUTOPILOT_INVALID, 0, 0, 0)
+        
+        
     async def main():
         await asyncio.gather(
             rotate(),
