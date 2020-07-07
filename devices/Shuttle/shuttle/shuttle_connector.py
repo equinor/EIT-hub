@@ -65,5 +65,17 @@ async def send_thrust_command(mavcon, x=0, y=0, z=500, r=0) -> None:
     )
 
 
+async def send_heartbeat(mavcon):
+    ''' sends heartbeat from GCS to ardusub '''
+
+    mavcon.mav.heartbeat_send(
+        mavutil.mavlink.MAV_TYPE_GCS,
+        mavutil.mavlink.MAV_AUTOPILOT_INVALID, 
+        0, 
+        0, 
+        0
+    )
+
+
 def log_data(mavcon):
     pass

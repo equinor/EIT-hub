@@ -1,15 +1,23 @@
-import json
 import asyncio
 import logging
 from time import sleep
 from shuttle.config import MAVLINK_CONNECTION_STRING, IOTHUB_CONNECTION_STRING
-from shuttle.shuttle_connector import create_mavlink_connection, send_thrust_command, log_data
-from shuttle.websocket_connector import consumer_handler
+from shuttle.websocket_connector import input_handler, get_websocket_uri
+from shuttle.shuttle_connector import (
+    create_mavlink_connection, 
+    send_thrust_command, 
+    send_heartbeat,
+    log_data
+)
+
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 
 def periodic_task(delay: float):
+    ''' 
+    Decorator that makes a function run every <delay> seconds 
+    '''
     def periodic_task_decorator(func):
         async def wrapper(*args, **kwargs):
             while True:
@@ -19,140 +27,77 @@ def periodic_task(delay: float):
     return periodic_task_decorator
 
 
+@periodic_task(delay=1)
+async def thrust_sender(mavcon, desired_thrust: dict):
+    '''
+    Sends desired thrust to ardusub at given interval. 
+    '''
+    await send_thrust_command(
+        mavcon,
+        desired_thrust['x'], 
+        desired_thrust['y'], 
+        desired_thrust['z'], 
+        desired_thrust['r'], 
+    )
+
+
+@periodic_task(delay=1)
+async def heartbeat(mavcon):
+    ''' 
+    Send a heartbeat to ardusub every <delay> seconds 
+    '''
+    await send_heartbeat(mavcon)
+
+
+def create_thrust_updater(desired_thrust: dict):
+    ''' 
+    Returns a function that can be used to update the desired thrust 
+    '''
+    async def update_desired_thrust(x: int, y: int, z: int, r: int):
+        desired_thrust['x'] = x
+        desired_thrust['y'] = y
+        desired_thrust['z'] = z
+        desired_thrust['r'] = r
+
+    return update_desired_thrust
+
+
 def quick_test():
 
-    # establish connection to shuttle over mavlink
     mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
-    log_data(mavcon)
+    uri = get_websocket_uri()
+    desired_thrust: dict = {
+        'x': 0,
+        'y': 0,
+        'z': 500,
+        'r': 100,
+    }
 
-    # define shorthand function for sending thrust commands
-    def thrust(x=0, y=0, z=500, r=0):
-        send_thrust_command(mavcon, x, y, z, r)
-
-    @periodic_task(delay=1)
-    async def rotate():
-        thrust(r=100)
-
-    @periodic_task(delay=1)
-    async def heartbeat():
-        mavcon.wait_heartbeat()
-        logging.info(f'Received heartbeat from {mavcon.target_system}')
-
-        # send heartbeat from GCS
-        mavcon.mav.heartbeat_send(mavutil.mavlink.MAV_TYPE_GCS,
-                                    mavutil.mavlink.MAV_AUTOPILOT_INVALID, 0, 0, 0)
-        
-        
     async def main():
         await asyncio.gather(
-            rotate(),
-            heartbeat()
+            thrust_sender(mavcon, desired_thrust),
+            heartbeat(mavcon)
         )
 
-
-def keyboard_control():
-    '''
-    Lets a user control the shuttle directly from the topside computer through keyboard commands
-    '''
-
-    # establish connection to shuttle over mavlink
-    mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
-
-    # define shorthand function for sending thrust commands
-    def thrust(x=0, y=0, z=500, r=0):
-        send_thrust_command(mavcon, x, y, z, r)
-
-    # wait for keyboard commands until termination
-    while True:
-
-        key = input('waiting for command..\n')
-
-        if key == 'w':
-            thrust(x=100)
-
-        elif key == 'a':
-            thrust(y=-100)
-
-        elif key == 's':
-            thrust(x=-100)
-
-        elif key == 'd':
-            thrust(y=100)
-
-        elif key == 'q':
-            thrust(r=-100)
-
-        elif key == 'e':
-            thrust(r=100)
-
-        elif key == 'z':
-            thrust(z=-100)
-
-        elif key == 'x':
-            thrust(z=100)
-        
-        else:
-            print('Invalid key pressed.\n Control with wasd, qe and zx')
-
+    asyncio.run(main())
 
 
 def control_over_websocket():
 
-    @periodic_task(delay=1)
-    async def hello():
-        logging.info('hello')
+    mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
+    uri = get_websocket_uri()
+    desired_thrust: dict = {
+        'x': 0,
+        'y': 0,
+        'z': 500,
+        'r': 0,
+    }
 
     async def main():
-
-        # establish connection to shuttle over mavlink
-        mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
-
-        # TODO: retrieve websocket uri over IoT Hub
-        uri = 'ws://localhost:3000/'
-
-        # define consumer function for incomming messages
-        async def thrust_message_consumer(message: str):
-
-            # unpack message
-            msg = json.loads(message)
-
-            # send thrust command
-            try: 
-                send_thrust_command(mavcon, msg['x'], msg['y'], msg['z'], msg['r'])
-            except:
-                # TODO: catch format errors
-                pass
-
         await asyncio.gather(
-            consumer_handler(uri, thrust_message_consumer),
-            hello()
-        )
-
-
-    try: 
-        # run all incomming messages through the consumer function
-        asyncio.run(main())
-
-    except:
-        logging.error('An exception occured')
-        pass    # TODO: error handling
-
-
-if __name__ == "__main__":
-
-    async def main():
-        
-        @periodic_task(delay=1)
-        async def hello() -> None:
-            logging.info('hello')
-
-        @periodic_task(2)
-        async def there() -> None:
-            logging.info('there')
-
-        await asyncio.gather(
-            hello(),
-            there()
+            input_handler(uri, create_thrust_updater(desired_thrust)),
+            thrust_sender(mavcon, desired_thrust),
+            heartbeat(mavcon)
         )
 
     asyncio.run(main())

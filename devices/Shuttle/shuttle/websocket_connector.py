@@ -1,21 +1,27 @@
 import asyncio
 import websockets
 import logging
+import json
+
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 
-async def consumer_handler(uri, consumer_func) -> None:
+async def input_handler(uri, thrust_update_func) -> None:
     async with websockets.connect(uri) as websocket:
         async for message in websocket:
             logging.info('message receieved')
-            await consumer_func(message)
+            try: 
+                thrust_dict = json.loads(message)
+                await thrust_update_func(
+                    x=thrust_dict['x'],
+                    y=thrust_dict['y'],
+                    z=thrust_dict['z'],
+                    r=thrust_dict['r']
+                )
+            except ValueError:
+                logging.exception('Incomming json message has invalid format')
 
-
-if __name__ == "__main__":
-    uri = 'ws://localhost:3000/'
-    
-    async def printer(message):
-        logging.info(message)
-
-    asyncio.run(consumer_handler(uri, printer))
+def get_websocket_uri() -> str:
+    # TODO: get uri form iot hub
+    return 'ws://localhost:3000/'
