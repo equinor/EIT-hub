@@ -12,3 +12,6 @@ IOTHUB_CONNECTION_STRING = os.getenv('IOTHUB_CONNECTION_STRING')
 # Needs to be changed depending on the physical setup. Documentation: 
 # http://mavlink.io/en/mavgen_python/
 MAVLINK_CONNECTION_STRING = 'udpin:0.0.0.0:14550'
+
+HEARTBEAT_DELAY = 1
+PILOT_CMD_DELAY = 1

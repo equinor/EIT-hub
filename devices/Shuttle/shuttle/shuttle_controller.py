@@ -1,7 +1,6 @@
 import asyncio
 import logging
-from time import sleep
-from shuttle.config import MAVLINK_CONNECTION_STRING, IOTHUB_CONNECTION_STRING
+from shuttle import config
 from shuttle.websocket_connector import input_handler, get_websocket_uri
 from shuttle.shuttle_connector import (
     create_mavlink_connection, 
@@ -27,7 +26,7 @@ def periodic_task(delay: float):
     return periodic_task_decorator
 
 
-@periodic_task(delay=1)
+@periodic_task(config.PILOT_CMD_DELAY)
 async def thrust_sender(mavcon, desired_thrust: dict):
     '''
     Sends desired thrust to ardusub at given interval. 
@@ -41,7 +40,7 @@ async def thrust_sender(mavcon, desired_thrust: dict):
     )
 
 
-@periodic_task(delay=1)
+@periodic_task(config.HEARTBEAT_DELAY)
 async def heartbeat(mavcon):
     ''' 
     Send a heartbeat to ardusub every <delay> seconds 
@@ -64,7 +63,7 @@ def create_thrust_updater(desired_thrust: dict):
 
 def quick_test():
 
-    mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
+    mavcon = create_mavlink_connection(config.MAVLINK_CONNECTION_STRING)
     desired_thrust: dict = {
         'x': 0,
         'y': 0,
@@ -83,7 +82,7 @@ def quick_test():
 
 def control_over_websocket():
 
-    mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
+    mavcon = create_mavlink_connection(config.MAVLINK_CONNECTION_STRING)
     uri = get_websocket_uri()
     desired_thrust: dict = {
         'x': 0,
