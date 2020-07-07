@@ -6,12 +6,17 @@ from shuttle.config import MAVLINK_CONNECTION_STRING, IOTHUB_CONNECTION_STRING
 from shuttle.shuttle_connector import create_mavlink_connection, send_thrust_command, log_data
 from shuttle.websocket_connector import consumer_handler
 
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
-logger = logging.getLogger('controller')
-logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler())
-formatter = logging.Formatter('%(name)s-%(levelname)s: %(message)s')
-logger.setFormatter(formatter)
+
+def periodic_task(delay: float):
+    def periodic_task_decorator(func):
+        async def wrapper(*args, **kwargs):
+            while True:
+                await func(*args, **kwargs)
+                await asyncio.sleep(delay)
+        return wrapper
+    return periodic_task_decorator
 
 
 def quick_test():
@@ -24,10 +29,19 @@ def quick_test():
     def thrust(x=0, y=0, z=500, r=0):
         send_thrust_command(mavcon, x, y, z, r)
 
-    while True:
-        log_data(mavcon)
-        thrust(r=250)
-        sleep(1)
+    @periodic_task(delay=1)
+    async def rotate():
+        thrust(r=100)
+
+    @periodic_task(delay=1)
+    async def heartbeat():
+        logging.info('This log entry pretends to be a heartbeat')
+
+    async def main():
+        await asyncio.gather(
+            rotate(),
+            heartbeat()
+        )
 
 
 def keyboard_control():
@@ -39,8 +53,8 @@ def keyboard_control():
     mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
 
     # define shorthand function for sending thrust commands
-    def thrust(x=0, y=0, z=0, r=0):
-        send_thrust_command(mavcon, x=0, y=0, z=0, r=0)
+    def thrust(x=0, y=0, z=500, r=0):
+        send_thrust_command(mavcon, x, y, z, r)
 
     # wait for keyboard commands until termination
     while True:
@@ -48,28 +62,28 @@ def keyboard_control():
         key = input('waiting for command..\n')
 
         if key == 'w':
-            thrust(x=250)
+            thrust(x=100)
 
         elif key == 'a':
-            thrust(y=-250)
+            thrust(y=-100)
 
         elif key == 's':
-            thrust(x=-250)
+            thrust(x=-100)
 
         elif key == 'd':
-            thrust(y=250)
+            thrust(y=100)
 
         elif key == 'q':
-            thrust(r=-250)
+            thrust(r=-100)
 
         elif key == 'e':
-            thrust(r=250)
+            thrust(r=100)
 
         elif key == 'z':
-            thrust(z=-250)
+            thrust(z=-100)
 
         elif key == 'x':
-            thrust(z=250)
+            thrust(z=100)
         
         else:
             print('Invalid key pressed.\n Control with wasd, qe and zx')
@@ -78,30 +92,61 @@ def keyboard_control():
 
 def control_over_websocket():
 
-    # establish connection to shuttle over mavlink
-    mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
+    @periodic_task(delay=1)
+    async def hello():
+        logging.info('hello')
 
-    # retrieve websocket uri over IoT Hub
-    uri = 'ws://localhost:3000/'
+    async def main():
 
-    # define consumer function for incomming messages
-    async def thrust_message_consumer(message: str):
+        # establish connection to shuttle over mavlink
+        mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
 
-        # unpack message
-        msg = json.loads(message)
+        # TODO: retrieve websocket uri over IoT Hub
+        uri = 'ws://localhost:3000/'
 
-        # send thrust command
-        try: 
-            send_thrust_command(mavcon, msg['x'], msg['y'], msg['z'], msg['r'])
-        except:
-            # TODO: catch format errors
-            pass
+        # define consumer function for incomming messages
+        async def thrust_message_consumer(message: str):
+
+            # unpack message
+            msg = json.loads(message)
+
+            # send thrust command
+            try: 
+                send_thrust_command(mavcon, msg['x'], msg['y'], msg['z'], msg['r'])
+            except:
+                # TODO: catch format errors
+                pass
+
+        await asyncio.gather(
+            consumer_handler(uri, thrust_message_consumer),
+            hello()
+        )
 
 
     try: 
         # run all incomming messages through the consumer function
-        asyncio.run(consumer_handler(uri, thrust_message_consumer))
+        asyncio.run(main())
 
     except:
-        logger.error('An exception occured')
+        logging.error('An exception occured')
         pass    # TODO: error handling
+
+
+if __name__ == "__main__":
+
+    async def main():
+        
+        @periodic_task(delay=1)
+        async def hello() -> None:
+            logging.info('hello')
+
+        @periodic_task(2)
+        async def there() -> None:
+            logging.info('there')
+
+        await asyncio.gather(
+            hello(),
+            there()
+        )
+
+    asyncio.run(main())
