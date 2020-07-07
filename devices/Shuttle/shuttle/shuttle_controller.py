@@ -65,7 +65,6 @@ def create_thrust_updater(desired_thrust: dict):
 def quick_test():
 
     mavcon = create_mavlink_connection(MAVLINK_CONNECTION_STRING)
-    uri = get_websocket_uri()
     desired_thrust: dict = {
         'x': 0,
         'y': 0,
