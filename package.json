@@ -1,0 +1,26 @@
+{
+  "name": "eit-hub",
+  "version": "0.1.0",
+  "description": "A IoT hub for experimentation for Emerging IT",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node backend/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/equinor/EIT-hub.git"
+  },
+  "author": "Equinor ASA",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/equinor/EIT-hub/issues"
+  },
+  "homepage": "https://github.com/equinor/EIT-hub#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
