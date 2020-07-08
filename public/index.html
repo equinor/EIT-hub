@@ -1,10 +1,30 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>EIT Hub</title>
-    </head>
-    <body>
-        <h1>EIT Hub</h1>
-        This is the start of a website
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="clientRequests">
+        <h1>Controlling with gamepad</h1>
+        <p><span id="clientCount">0 clients</span> online</p>
+        <p>Your ID is <span id="myID"></span></p>
+        
+        <h3>Enter password 123 to get control</h2>
+        <div class="requestControl">
+            <label for="userPassword">Password: </label>
+            <input id="userPass" type="password" size="12">
+            <button id="submit">Submit</button>
+        </div>
+        <p id="requestAnswer"></p>
+    </div>
+    <div id="controlButtons">
+        <button id="gamepad-button">Control with gamepad</button>
+        <button id="keyboard-button">Control with keyboard</button>
+    </div>
+    <pre id="dataText"></pre>
+    <script src="app.js"></script>
+</body>
 </html>
