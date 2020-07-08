@@ -24,7 +24,7 @@ class DesiredThrust(dict):
             'z': 500,
             'r': 0,
         }
-        self.timestamp: float = None
+        self.timestamp: float = 0
 
     async def update_desired_thrust(self, x: int = 0, y: int = 0, z: int = 500, r: int = 0) -> None:
         self.__dict__['x'] = x
@@ -34,13 +34,7 @@ class DesiredThrust(dict):
         self.timestamp = datetime.timestamp()
 
     def thrust_should_be_reset(self):
-        if self.timestamp == None:
-            return False
-        if abs(self.timestamp - datetime.timestamp()) > config.THRUST_TIME_LIMIT:
-            self.timestamp = None
-            return True
-        else:
-            return False
+        return abs(self.timestamp - datetime.timestamp()) > config.THRUST_TIME_LIMIT
 
 
 def periodic_task(delay: float):
