@@ -4,9 +4,6 @@ import logging
 import json
 
 
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
-
-
 async def input_handler(uri, thrust_update_func) -> None:
     async with websockets.connect(uri) as websocket:
         async for message in websocket:

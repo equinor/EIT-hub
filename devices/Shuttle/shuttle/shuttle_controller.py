@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from datetime import datetime
+from time import time
 from shuttle import config
 from shuttle.websocket_connector import input_handler, get_websocket_uri
 from shuttle.shuttle_connector import (
@@ -11,7 +11,7 @@ from shuttle.shuttle_connector import (
 )
 
 
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
 
 class DesiredThrust(dict):
@@ -20,13 +20,12 @@ class DesiredThrust(dict):
     '''
 
     def __init__(self):
-        super().__init__()
-        self.__dict__ = {
+        super().__init__({
             'x': 0,
             'y': 0,
             'z': 500,
             'r': 0,
-        }
+        })
         self.timestamp: float = 0
 
     async def update_desired_thrust(self, x: int = 0, y: int = 0, z: int = 500, r: int = 0) -> None:
@@ -34,10 +33,10 @@ class DesiredThrust(dict):
         self.__dict__['y'] = y
         self.__dict__['z'] = z
         self.__dict__['r'] = r
-        self.timestamp = datetime.timestamp()
+        self.timestamp = time()
 
     def thrust_should_be_reset(self):
-        return abs(self.timestamp - datetime.timestamp()) > config.THRUST_TIME_LIMIT
+        return abs(self.timestamp - time()) > config.THRUST_TIME_LIMIT
 
 
 def periodic_task(delay: float):
@@ -107,7 +106,10 @@ def control_over_websocket():
 
     mavcon = create_mavlink_connection(config.MAVLINK_CONNECTION_STRING)
     uri = get_websocket_uri()
+
     desired_thrust = DesiredThrust()
+    logging.debug(desired_thrust)
+
     
     async def main():
         await asyncio.gather(

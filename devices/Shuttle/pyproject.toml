@@ -5,7 +5,6 @@ description = ""
 authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.scripts]
-keyboard_control = "shuttle.shuttle_controller:keyboard_control"
 test = "shuttle.shuttle_controller:quick_test"
 websocket_control = "shuttle.shuttle_controller:control_over_websocket"
 

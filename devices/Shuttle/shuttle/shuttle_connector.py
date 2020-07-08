@@ -1,6 +1,5 @@
 from pymavlink import mavutil
 import logging
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 
 def create_mavlink_connection(connenction_string: str):
@@ -18,7 +17,7 @@ def create_mavlink_connection(connenction_string: str):
 
     # Wait a heartbeat before sending commands
     logging.info('waiting for first heartbeat..')
-    mavcon.wait_heartbeat(blocking=False)
+    mavcon.wait_heartbeat()
     logging.info('Heartbeat recieved')
 
     # Arm thrusters 
@@ -27,6 +26,8 @@ def create_mavlink_connection(connenction_string: str):
         mavcon.arducopter_arm()
         mavcon.motors_armed_wait()
     logging.info('thrusters armed')
+
+    logging.info('setup done')
 
     return mavcon
 
@@ -63,6 +64,7 @@ async def send_thrust_command(mavcon, x=0, y=0, z=500, r=0) -> None:
         r,
         0   # controller button pressed or not
     )
+    logging.debug('Thrust cmd sent')
 
 
 async def send_heartbeat(mavcon):
@@ -75,6 +77,7 @@ async def send_heartbeat(mavcon):
         0, 
         0
     )
+    logging.debug('Heartbeat sent')
 
 
 def log_data(mavcon):
