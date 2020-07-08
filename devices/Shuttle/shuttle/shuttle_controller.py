@@ -15,6 +15,9 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 
 class DesiredThrust(dict):
+    '''
+    Specialized dict that handles async updates with tailored default values and has timestamps on updates
+    '''
 
     def __init__(self):
         super().__init__()
