@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import datetime
 from shuttle import config
 from shuttle.websocket_connector import input_handler, get_websocket_uri
 from shuttle.shuttle_connector import (
@@ -11,6 +12,35 @@ from shuttle.shuttle_connector import (
 
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+
+
+class DesiredThrust(dict):
+
+    def __init__(self):
+        super().__init__()
+        self.__dict__ = {
+            'x': 0,
+            'y': 0,
+            'z': 500,
+            'r': 0,
+        }
+        self.timestamp: float = None
+
+    async def update_desired_thrust(self, x: int = 0, y: int = 0, z: int = 500, r: int = 0) -> None:
+        self.__dict__['x'] = x
+        self.__dict__['y'] = y
+        self.__dict__['z'] = z
+        self.__dict__['r'] = r
+        self.timestamp = datetime.timestamp()
+
+    def thrust_should_be_reset(self):
+        if self.timestamp == None:
+            return False
+        if abs(self.timestamp - datetime.timestamp()) > config.THRUST_TIME_LIMIT:
+            self.timestamp = None
+            return True
+        else:
+            return False
 
 
 def periodic_task(delay: float):
@@ -48,17 +78,13 @@ async def heartbeat(mavcon):
     await send_heartbeat(mavcon)
 
 
-def create_thrust_updater(desired_thrust: dict):
+@periodic_task(config.THRUST_RESET_DELAY)
+async def thrust_resetter(desired_thrust: DesiredThrust):
     ''' 
-    Returns a function that can be used to update the desired thrust 
+    Sets desired thrust to neutral if no new commands are recieved within timelimit.
     '''
-    async def update_desired_thrust(x: int, y: int, z: int, r: int):
-        desired_thrust['x'] = x
-        desired_thrust['y'] = y
-        desired_thrust['z'] = z
-        desired_thrust['r'] = r
-
-    return update_desired_thrust
+    if desired_thrust.thrust_should_be_reset:
+        await desired_thrust.update_desired_thrust()  # default params are neutral
 
 
 def quick_test():
@@ -84,16 +110,12 @@ def control_over_websocket():
 
     mavcon = create_mavlink_connection(config.MAVLINK_CONNECTION_STRING)
     uri = get_websocket_uri()
-    desired_thrust: dict = {
-        'x': 0,
-        'y': 0,
-        'z': 500,
-        'r': 0,
-    }
-
+    desired_thrust = DesiredThrust()
+    
     async def main():
         await asyncio.gather(
-            input_handler(uri, create_thrust_updater(desired_thrust)),
+            input_handler(uri, desired_thrust.update_desired_thrust),
+            thrust_resetter(desired_thrust),
             thrust_sender(mavcon, desired_thrust),
             heartbeat(mavcon)
         )
