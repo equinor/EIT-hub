@@ -1,6 +1,6 @@
 import asyncio
 import logging
-import datetime
+from datetime import datetime
 from shuttle import config
 from shuttle.websocket_connector import input_handler, get_websocket_uri
 from shuttle.shuttle_connector import (
