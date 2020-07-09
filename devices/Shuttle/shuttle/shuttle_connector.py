@@ -1,5 +1,6 @@
 from pymavlink import mavutil
 import logging
+import sys
 
 
 def is_legal(value: float):
@@ -25,12 +26,45 @@ class ShuttleConnector:
         self.mavcon.wait_heartbeat()
         logging.info('Heartbeat recieved')
 
-        # Arm thrusters 
-        if not self.mavcon.motors_armed():
-            logging.info('arming thrusters..')
-            self.mavcon.arducopter_arm()
-            self.mavcon.motors_armed_wait()
-        logging.info('thrusters armed')
+        # Choose a mode
+        mode = 'MANUAL'
+
+        # Check if mode is available
+        if mode not in self.mavcon.mode_mapping():
+            print('Unknown mode : {}'.format(mode))
+            print('Try:', list(self.mavcon.mode_mapping().keys()))
+            sys.exit(1)
+
+        # Get mode ID
+        mode_id = self.mavcon.mode_mapping()[mode]
+
+        # Set mode
+        self.mavcon.mav.set_mode_send(
+            self.mavcon.target_system,
+            mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
+            mode_id)
+
+        # Arm thrusters
+        self.mavcon.mav.command_long_send(
+            self.mavcon.target_system,
+            self.mavcon.target_component,
+            mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
+            0,
+            1, 0, 0, 0, 0, 0, 0)
+
+        while True:
+            logging.info('ack')
+            # Wait for ACK command
+            ack_msg = self.mavcon.recv_match(type='COMMAND_ACK', blocking=True)
+            ack_msg = ack_msg.to_dict()
+
+            # Check if command in the same in `set_mode`
+            if ack_msg['command'] != mavutil.mavlink.MAVLINK_MSG_ID_SET_MODE:
+                continue
+
+            # Print the ACK result !
+            print(mavutil.mavlink.enums['MAV_RESULT'][ack_msg['result']].description)
+            break
 
         logging.info('setup done')
 
