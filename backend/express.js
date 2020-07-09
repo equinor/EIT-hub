@@ -2,12 +2,19 @@
 
 const express = require('express');
 
-function start(port) {
-    const app = express();
+class Express {
+    constructor(port, auth) {
+        this.port = port;
+        this.app = express();
 
-    app.use(express.static('public'));
+        this.app.use(express.static('public'));
+    }
 
-    app.listen(port, () => console.log(`EIT Hub is listening at http://localhost:${port}`));
+    start() {
+        this.app.listen(this.port, () => console.log(`EIT Hub is listening at http://localhost:${this.port}`));
+    }
 }
 
-module.exports.start = start;
+
+
+module.exports = Express;
