@@ -90,7 +90,7 @@ async def input_listener(websocket_connector: WebsocketConnector, desired_thrust
 
 def quick_test():
 
-    shuttle = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
+    shuttle_connector = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
     desired_thrust: dict = {
         'x': 0,
         'y': 0,
@@ -100,8 +100,8 @@ def quick_test():
 
     async def main():
         await asyncio.gather(
-            thrust_sender(shuttle, desired_thrust),
-            heartbeat(shuttle)
+            thrust_sender(shuttle_connector, desired_thrust),
+            heartbeat(shuttle_connector)
         )
 
     asyncio.run(main())
