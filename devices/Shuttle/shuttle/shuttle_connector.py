@@ -61,7 +61,7 @@ class ShuttleConnector:
             y,
             z,
             r,
-            0   # controller button pressed or not
+            1   # controller button pressed or not
         )
         logging.debug('Thrust cmd sent')
 
