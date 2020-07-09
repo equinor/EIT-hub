@@ -31,8 +31,8 @@ class WebsocketConnector:
 
         async def consumer(message):
             cmds: dict = await json_to_dict(message)
-            cmd_list = cmds.values()
-            logging.debug('cmd: ' + str(cmd_list))
+            cmd_list = [x*100 for x in cmds.values()]
+            logging.debug('Recieved thrust message: ' + str(cmd_list))
             await desired_thrust.update_desired_thrust(*cmd_list)
 
         await self.input_handler(consumer)
