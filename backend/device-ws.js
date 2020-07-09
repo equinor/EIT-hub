@@ -1,6 +1,9 @@
 const WebSocket  = require('ws');
 
-
+/** Class that deals with the low level handling of websocket to devices.
+ *
+ * This is the only class and children can use ws module when it comes to devices.
+ */
 class DeviceWs {
     constructor() {
         this.ws = new WebSocket.Server({noServer: true});
@@ -13,7 +16,9 @@ class DeviceWs {
      * @returns {boolean} If there was a connection to send message too.
      */
     sendMessage(deviceName, jsonMessage){
-        //TODO needs to handle a connection at some point. 
+        //TODO needs to handle a connection at some point.
+
+        console.log(`Trying to send message to ${deviceName} but its not implemented. Payload:\n`, jsonMessage);
         
         return false;
     }
@@ -45,13 +50,12 @@ class DeviceWs {
     }
 
     /**
+     * @param {string} deviceName
      * @param {import("http").IncomingMessage} request
      * @param {import("net").Socket} socket
      * @param {Buffer} head
      */
-    handleUpgrade(request, socket, head) {
-        //TODO find out by url what device connected.
-
+    handleUpgrade(deviceName, request, socket, head) {
         this.ws.handleUpgrade(request, socket, head, function(websocket) {
             //TODO handle websocket
         })
