@@ -21,6 +21,7 @@ class WebsocketConnector:
     async def input_handler(self, consumer) -> None:
         try:
             async with websockets.connect(self.uri) as websocket:
+                logging.info('Listening for websocket messages..')
                 async for message in websocket:
                     await consumer(message)
         except websockets.ConnectionClosed:
