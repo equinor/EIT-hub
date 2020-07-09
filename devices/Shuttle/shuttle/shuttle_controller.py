@@ -57,7 +57,7 @@ async def thrust_sender(shuttle: ShuttleConnector, desired_thrust: dict):
         desired_thrust['z'], 
         desired_thrust['r'], 
     )
-    logging.debug('Desired thrust sent as: %d %d %d %d' % (
+    logging.debug('Desired thrust sent as: %f %f %f %f' % (
         desired_thrust['x'], 
         desired_thrust['y'], 
         desired_thrust['z'], 
