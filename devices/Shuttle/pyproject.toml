@@ -7,6 +7,7 @@ authors = ["Your Name <you@example.com>"]
 [tool.poetry.scripts]
 test = "shuttle.shuttle_controller:quick_test"
 websocket_control = "shuttle.shuttle_controller:control_over_websocket"
+fake = "shuttle.shuttle_controller:fake_test"
 
 [tool.poetry.dependencies]
 python = "^3.8"

@@ -47,7 +47,14 @@ wsServer = new WebSocketServer({
 wsServer.on('request', function(request) {
   var connection = request.accept(null, request.origin);
 
-  connection.sendUTF("Client has connected to websocket");
+  var thrust_msg = {
+    'x': 0,
+    'y': 0,
+    'z': 500,
+    'r': 150,
+}
+
+  connection.sendUTF(JSON.stringify(thrust_msg))
   logger.log('info', 'A client has connected to the websocket')
 
   // This is the most important callback for us, we'll handle

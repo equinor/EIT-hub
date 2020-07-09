@@ -2,13 +2,8 @@ import asyncio
 import logging
 from time import time
 from shuttle import config
-from shuttle.websocket_connector import input_handler, get_websocket_uri
-from shuttle.shuttle_connector import (
-    create_mavlink_connection, 
-    send_thrust_command, 
-    send_heartbeat,
-    log_data
-)
+from shuttle.websocket_connector import WebsocketConnector
+from shuttle.shuttle_connector import ShuttleConnector, FakeShuttleConnector
 
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
@@ -29,20 +24,19 @@ class DesiredThrust(dict):
         self.timestamp: float = 0
 
     async def update_desired_thrust(self, x: int = 0, y: int = 0, z: int = 500, r: int = 0) -> None:
-        self.__dict__['x'] = x
-        self.__dict__['y'] = y
-        self.__dict__['z'] = z
-        self.__dict__['r'] = r
+        self['x'] = x
+        self['y'] = y
+        self['z'] = z
+        self['r'] = r
         self.timestamp = time()
+        logging.debug('Desired thrust %d updated to: %d %d %d %d' % (id(self),x,y,z,r))
 
     def thrust_should_be_reset(self):
         return abs(self.timestamp - time()) > config.THRUST_TIME_LIMIT
 
 
 def periodic_task(delay: float):
-    ''' 
-    Decorator that makes a function run every <delay> seconds 
-    '''
+    ''' Decorator that makes a function run every <delay> seconds '''
     def periodic_task_decorator(func):
         async def wrapper(*args, **kwargs):
             while True:
@@ -53,12 +47,18 @@ def periodic_task(delay: float):
 
 
 @periodic_task(config.PILOT_CMD_DELAY)
-async def thrust_sender(mavcon, desired_thrust: dict):
+async def thrust_sender(shuttle: ShuttleConnector, desired_thrust: DesiredThrust):
     '''
     Sends desired thrust to ardusub at given interval. 
     '''
-    await send_thrust_command(
-        mavcon,
+    logging.debug('Desired thrust %d sent as: %d %d %d %d' % (
+        id(desired_thrust),
+        desired_thrust['x'], 
+        desired_thrust['y'], 
+        desired_thrust['z'], 
+        desired_thrust['r']
+    ))
+    await shuttle.send_thrust_command(
         desired_thrust['x'], 
         desired_thrust['y'], 
         desired_thrust['z'], 
@@ -67,11 +67,11 @@ async def thrust_sender(mavcon, desired_thrust: dict):
 
 
 @periodic_task(config.HEARTBEAT_DELAY)
-async def heartbeat(mavcon):
+async def heartbeat(shuttle: ShuttleConnector):
     ''' 
     Send a heartbeat to ardusub every <delay> seconds 
     '''
-    await send_heartbeat(mavcon)
+    await shuttle.send_heartbeat()
 
 
 @periodic_task(config.THRUST_RESET_DELAY)
@@ -81,11 +81,18 @@ async def thrust_resetter(desired_thrust: DesiredThrust):
     '''
     if desired_thrust.thrust_should_be_reset:
         await desired_thrust.update_desired_thrust()  # default params are neutral
+        logging.debug('Desired thrust %d has been reset' % id(desired_thrust))
+
+
+
+async def input_listener(websocket_connector: WebsocketConnector, desired_thrust: DesiredThrust):
+    logging.debug('Input listener has desired thrust id %d' % id(desired_thrust))
+    await websocket_connector.thrust_input_handler(desired_thrust)
 
 
 def quick_test():
 
-    mavcon = create_mavlink_connection(config.MAVLINK_CONNECTION_STRING)
+    shuttle = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
     desired_thrust: dict = {
         'x': 0,
         'y': 0,
@@ -95,8 +102,8 @@ def quick_test():
 
     async def main():
         await asyncio.gather(
-            thrust_sender(mavcon, desired_thrust),
-            heartbeat(mavcon)
+            thrust_sender(shuttle, desired_thrust),
+            heartbeat(shuttle)
         )
 
     asyncio.run(main())
@@ -104,19 +111,40 @@ def quick_test():
 
 def control_over_websocket():
 
-    mavcon = create_mavlink_connection(config.MAVLINK_CONNECTION_STRING)
-    uri = get_websocket_uri()
+    shuttle = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
+    websocket_connector = WebsocketConnector()
 
     desired_thrust = DesiredThrust()
     logging.debug(desired_thrust)
-
     
     async def main():
         await asyncio.gather(
-            input_handler(uri, desired_thrust.update_desired_thrust),
+            websocket_connector.thrust_input_handler(desired_thrust.update_desired_thrust),
             thrust_resetter(desired_thrust),
-            thrust_sender(mavcon, desired_thrust),
-            heartbeat(mavcon)
+            thrust_sender(shuttle, desired_thrust),
+            heartbeat(shuttle)
         )
 
     asyncio.run(main())
+
+
+def fake_test():
+    shuttle = FakeShuttleConnector(config.MAVLINK_CONNECTION_STRING)
+    websocket_connector = WebsocketConnector()
+
+    desired_thrust = DesiredThrust()
+    logging.debug(desired_thrust)
+    
+    async def main():
+        await asyncio.gather(
+            input_listener(websocket_connector, desired_thrust),
+            thrust_resetter(desired_thrust),
+            thrust_sender(shuttle, desired_thrust),
+            heartbeat(shuttle)
+        )
+
+    asyncio.run(main())
+
+
+if __name__ == "__main__":
+    fake_test()
