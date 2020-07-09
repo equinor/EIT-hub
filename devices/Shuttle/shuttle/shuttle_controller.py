@@ -18,12 +18,12 @@ class DesiredThrust(dict):
         super().__init__({
             'x': 0,
             'y': 0,
-            'z': 500,
+            'z': 0,
             'r': 0,
         })
         self.timestamp: float = 0
 
-    async def update_desired_thrust(self, x: int = 0, y: int = 0, z: int = 500, r: int = 0) -> None:
+    async def update_desired_thrust(self, x: int = 0, y: int = 0, z: int = 0, r: int = 0) -> None:
         self['x'] = x
         self['y'] = y
         self['z'] = z
@@ -94,8 +94,8 @@ def quick_test():
     desired_thrust: dict = {
         'x': 0,
         'y': 0,
-        'z': 500,
-        'r': 100,
+        'z': 0,
+        'r': 0.1,
     }
 
     async def main():

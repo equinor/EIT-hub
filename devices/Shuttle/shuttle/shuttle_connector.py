@@ -2,6 +2,10 @@ from pymavlink import mavutil
 import logging
 
 
+def is_legal(value: float):
+    return value >= -1 and value <= 1
+
+
 class ShuttleConnector:
 
     def __init__(self, connenction_string: str):
@@ -33,25 +37,22 @@ class ShuttleConnector:
     async def send_thrust_command(self, x=0, y=0, z=500, r=0) -> None:
         '''
         Function that sends thrust commands to target device. 
-        Values should be in the range [-1000, 1000], where
-        1000 is full thottle ahead and negative is reverse.
-        Z is mapped to [0, 1000].
+        Values should be in the range [-1, 1], where
+        1 is full thottle ahead and negative is reverse.
         Documentation on manual control 
         https://mavlink.io/en/messages/common.html#MANUAL_CONTROL
         '''
-        
-        # Limit command values 
-        x = 1000 if x > 1000 else x
-        x = -1000 if x < -1000 else x
+        if not is_legal(x) and is_legal(y) and is_legal(z) and is_legal(r):
+            raise ValueError('Arguments are outside of boundary [-1,1]')
 
-        y = 1000 if x > 1000 else y
-        y = -1000 if x < -1000 else y
+        # mapps z to [0, 1], to comply with a weird legacy quirk in the API
+        z = (z + 1) / 2
 
-        z = 1000 if x > 1000 else z
-        z = 0 if x < 0 else z
-
-        r = 1000 if x > 1000 else r
-        r = -1000 if x < -1000 else r
+        # map from [-1,1] to [-1000, 1000]
+        x = x * 1000
+        y = y * 1000
+        z = z * 1000
+        r = r * 1000
 
         # Send command
         self.mavcon.mav.manual_control_send(
