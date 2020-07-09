@@ -49,10 +49,10 @@ class ShuttleConnector:
         z = (z + 1) / 2
 
         # map from [-1,1] to [-1000, 1000]
-        x = x * 1000
-        y = y * 1000
-        z = z * 1000
-        r = r * 1000
+        x = int(x * 1000)
+        y = int(y * 1000)
+        z = int(z * 1000)
+        r = int(r * 1000)
 
         # Send command
         self.mavcon.mav.manual_control_send(
