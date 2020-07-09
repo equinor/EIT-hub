@@ -18,7 +18,7 @@ class Auth {
      */
     getDeviceToken() {
         // TODO Return a securely generated random string.
-        return "";
+        return "token";
     }
 
     /** Express middleware to be used for device endpoints.
