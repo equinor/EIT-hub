@@ -1,0 +1,15 @@
+{
+  "name": "websocket-server",
+  "version": "1.0.0",
+  "description": "Simple nodejs server for testing websockets",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "author": "Michael Hoyer",
+  "license": "ISC",
+  "dependencies": {
+    "websocket": "^1.0.31",
+    "winston": "^3.3.3"
+  }
+}

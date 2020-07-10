@@ -1,8 +1,6 @@
-# ArduSub Pilot
+# Shuttle
 
-ArduSub Pilot is a package that enables control of a ROV running ArduSub. It uses pymavlink to establish the connection and to send commands.
-
-Its main object is `DeviceController`, which connects to a device according to its connection string. Thrust commands can then be sent to the device with the `send_thrust_command` function.
+Shuttle is a package that enables control of a ROV running ArduSub. It uses pymavlink to establish the connection and to send commands.
 
 ## Setup and running
 
@@ -10,7 +8,7 @@ Its main object is `DeviceController`, which connects to a device according to i
 2. Install dependencies and run using poetry 
 ```
 poetry install
-poetry run keyboard_control
+poetry run test
 ```
 
 

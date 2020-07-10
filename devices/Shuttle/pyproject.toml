@@ -1,17 +1,20 @@
 [tool.poetry]
-name = "ArduSubPilot"
+name = "Shuttle"
 version = "0.1.0"
 description = ""
-authors = ["Michael Hoyer <michael.hoyer3@gmail.com>"]
+authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.scripts]
-test = 'ardusubpilot.main:quick_test'
-keyboard_control = 'ardusubpilot.main:keyboard_control'
+test = "shuttle.shuttle_controller:quick_test"
+websocket_control = "shuttle.shuttle_controller:control_over_websocket"
+fake = "shuttle.shuttle_controller:fake_test"
 
 [tool.poetry.dependencies]
 python = "^3.8"
 pymavlink = "^2.4.9"
 python-dotenv = "^0.13.0"
+websockets = "^8.1"
+asyncio = "^3.4.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
