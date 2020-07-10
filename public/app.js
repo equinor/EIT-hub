@@ -1,11 +1,15 @@
 
-export default function webApp() {
 
+export default function webApp(websocket) {
   const clientCountText = document.getElementById('clientCount');
   const listOfClients = document.getElementById('listOfDevices');
   const controlText = document.getElementById("requestAnswer");
   const myIDtext = document.getElementById("myID");
   const dataText = document.getElementById("dataText");
+
+  websocket.onControl(function(msg) {
+
+  })
 
 
   var myID = 0;
@@ -24,64 +28,6 @@ export default function webApp() {
               clientCountText.innerText = clientCount === 1 ? `${clientCount} client` : `${clientCount} clients`;
   }
 
-  let ws = new WebSocket('ws://localhost:3000');
-
-  ws.onopen = function() { // When the websocket opens
-      var msg = {
-          type: "newClient",
-          text: null,
-          id:   null,
-          date: Date.now()
-      };
-      console.log('Connection opened!');
-      ws.send(JSON.stringify(msg));
-      clientCount += 1;
-      clientCountText.innerText = clientCount === 1 ? `${clientCount} client` : `${clientCount} clients`;
-  };
-
-  ws.onmessage = function(event) { // When message is received
-      var msg = JSON.parse(event.data);
-  
-      switch(msg.type) {
-
-          case "newClient": // When a new client connects to server
-              updateClients(msg);
-              break;
-
-          case "youNewClient": // If you are new client, receives number of clients online
-              myID = msg.id;
-              myIDtext.innerText = myID;
-              clientCount = msg.clientCount;
-              clients = msg.clientList;
-              clientCountText.innerText = clientCount === 1 ? `${clientCount} client` : `${clientCount} clients`;
-              break;
-
-          /*case "closeClient": //When another client disconnects, does not work yet
-              closeID = msg.id
-              clients[msg.id - 1] = 0;
-              clientCount -= 1;
-              clientCountText.innerText = clientCount === 1 ? `${clientCount} client` : `${clientCount} clients`;
-              break; */
-
-          case "requestAnswer": // Answer if you got control or not
-              console.log('got request answer' + msg.control);
-              if (msg.control === true) {
-                  controlText.innerText = "You have control"
-                  youInControl = true;
-              } else {
-                  controlText.innerText = "Wrong password"
-                  youInControl = false;
-              }
-              break;
-          /*  //
-          case "controls":
-              console.log('got controls' + msg.y + msg.x);
-              y = msg.y;
-              x = msg.x;
-              break; */
-      }
-  };
-
   document.getElementById("submit").onclick = function() { // Send password and request control
       var pass = document.getElementById("userPass").value;
       var msg = {
@@ -90,23 +36,9 @@ export default function webApp() {
           id: myID,
       }
       console.log('sent request!' + msg.pass);
-      ws.send(JSON.stringify(msg));
+      ws.sendControlRequest();
       
-    }
-  // If client closes browser, does not work yet
-  /*window.onunload = function(){
-      ws.onclose = function() {
-          var msg = {
-              type: "closeClient",
-              text: null,
-              id:   myID,
-              date: Date.now()
-          };
-          console.log('Connection closed!');
-          ws.send(JSON.stringify(msg));
-          ws = null;
-      }
-  } */
+  }
 
   // -------------------Controller-----------------
 
@@ -230,19 +162,9 @@ export default function webApp() {
       }
       console.log(x,y,z,r);
 
-      // Send inputs to server if you are in control
-      if (youInControl) {
-        var msg = {
-          type: "controls",
-          id: myID,
-          y: y,
-          x: x,
-          z: z,
-          r: r,
-        };
-        ws.send(JSON.stringify(msg));
+
+      websocket.sendInput({x:x,y:y,z:z,r:r})
       
-      }
       // Display controls in html
       dataText.innerText = "x:" + x + "  y:" + y + "  z:" + z + " r:" + r;
   }
