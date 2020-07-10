@@ -1,5 +1,5 @@
 
-function webApp() {
+export default function webApp() {
 
   const clientCountText = document.getElementById('clientCount');
   const listOfClients = document.getElementById('listOfDevices');
@@ -24,7 +24,7 @@ function webApp() {
               clientCountText.innerText = clientCount === 1 ? `${clientCount} client` : `${clientCount} clients`;
   }
 
-  ws = new WebSocket('ws://localhost:3000');
+  let ws = new WebSocket('ws://localhost:3000');
 
   ws.onopen = function() { // When the websocket opens
       var msg = {
@@ -195,7 +195,7 @@ function webApp() {
       x = y = z = r = 0;
 
       if (gamepadButton) {
-        gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
+        let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
         var gp = gamepads[0];
         y = gp.axes[1];
         x = gp.axes[0];
@@ -251,5 +251,3 @@ function webApp() {
   setInterval(getInputs, 10);
 
 }
-
-webApp();
