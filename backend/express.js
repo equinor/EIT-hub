@@ -2,12 +2,27 @@
 
 const express = require('express');
 
-function start(port) {
-    const app = express();
+class Express {
+    constructor(port, auth, browserWs, deviceWs) {
+        this.port = port;
+        this.auth = auth;
+        this.browserWs = browserWs;
+        this.deviceWs = deviceWs;
+        this.app = express();
 
-    app.use(express.static('public'));
+        this.app.use(express.static('public'));
+    }
 
-    app.listen(port, () => console.log(`EIT Hub is listening at http://localhost:${port}`));
+    start() {
+       let nodeServer = this.app.listen(this.port, () => console.log(`EIT Hub is listening at http://localhost:${this.port}`));
+       nodeServer.on('upgrade', this._upgrade.bind(this));
+    }
+
+    _upgrade(request, socket, head){
+        //TODO a lot of socket setup code.
+    }
 }
 
-module.exports.start = start;
+
+
+module.exports = Express;
