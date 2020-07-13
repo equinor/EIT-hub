@@ -1,0 +1,18 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "webRTC back end",
+  "main": "BackEnd.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Asbjorn",
+  "license": "ISC",
+  "dependencies": {
+    "azure-iothub": "^1.12.4",
+    "dotenv": "^8.2.0",
+    "modules": "^0.4.0",
+    "simple-peer": "^9.7.2",
+    "wrtc": "^0.4.5"
+  }
+}
