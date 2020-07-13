@@ -3,10 +3,15 @@ import GamePad from './gamepad.js';
 import Keyboard from './keyboard.js';
 import InputView from './inputView.js';
 import Input from './input.js';
+import TelemetryView from './telemetryView.js';
 
 function main() {
     // Setup websocket.
     const websocket = new WebSocket();
+
+    // Setup Telemetry
+    const telemetryView = new TelemetryView(document.getElementById('telemetry-view'));
+    websocket.onTelemetry(telemetryView.updateTelemetry.bind(telemetryView));
 
     // Setup GamePad.
     const gamePad = new GamePad();
