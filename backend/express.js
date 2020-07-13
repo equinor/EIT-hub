@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 const express = require('express');
+const url = require('url');
 
 class Express {
     constructor(port, auth, browserWs, deviceWs) {
@@ -19,10 +20,17 @@ class Express {
     }
 
     _upgrade(request, socket, head){
-        //TODO a lot of socket setup code.
+        const pathname = url.parse(request.url).pathname;
+        const path = pathname.split("/");
+
+        if (path[1] === 'browser') {
+            this.browserWs.handleUpgrade({}, request, socket, head);
+        } else if (path[1] === 'device') {
+            this.deviceWs.handleUpgrade(path[2], request, socket, head);
+        } else {
+            socket.destroy();
+        }
     }
 }
-
-
 
 module.exports = Express;
