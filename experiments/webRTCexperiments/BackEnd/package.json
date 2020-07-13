@@ -11,7 +11,6 @@
   "dependencies": {
     "azure-iothub": "^1.12.4",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
     "modules": "^0.4.0",
     "simple-peer": "^9.7.2",
     "wrtc": "^0.4.5"
