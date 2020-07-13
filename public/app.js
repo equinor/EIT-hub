@@ -1,6 +1,6 @@
 
 
-export default function webApp(websocket) {
+export default function webApp(websocket, gamePad) {
   const clientCountText = document.getElementById('clientCount');
   const listOfClients = document.getElementById('listOfDevices');
   const controlText = document.getElementById("requestAnswer");
@@ -127,8 +127,7 @@ export default function webApp(websocket) {
       x = y = z = r = 0;
 
       if (gamepadButton) {
-        let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
-        var gp = gamepads[0];
+        var gp = gamePad.getAxis();
         y = gp.axes[1];
         x = gp.axes[0];
         z = gp.axes[3];
