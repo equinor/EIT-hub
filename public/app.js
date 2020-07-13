@@ -1,6 +1,6 @@
 
 
-export default function webApp(websocket, gamePad) {
+export default function webApp(websocket, gamePad, keyboard) {
   const clientCountText = document.getElementById('clientCount');
   const listOfClients = document.getElementById('listOfDevices');
   const controlText = document.getElementById("requestAnswer");
@@ -55,72 +55,6 @@ export default function webApp(websocket, gamePad) {
     gamepadButton = false;
   }
 
-  var keyW, keyA, keyS, keyD, keyUp, keyLeft, keyDown, keyRight;
-  keyW = keyA = keyS = keyD = keyUp = keyLeft = keyDown = keyRight = false;
-
-  window.addEventListener("keydown", onKeyDown, false);
-  window.addEventListener("keyup", onKeyUp, false);
-
-  function onKeyDown(event) {
-    var keyCode = event.keyCode;
-    switch (keyCode) {
-      case 68: //d
-        keyD = true;
-        break;
-      case 83: //s
-        keyS = true;
-        break;
-      case 65: //a
-        keyA = true;
-        break;
-      case 87: //w
-        keyW = true;
-        break;
-      case 37: //left arrow
-        keyLeft = true;
-        break;
-      case 38: //up arrow
-        keyUp = true;
-        break;
-      case 39: //right arrow
-        keyRight = true;
-        break;
-      case 40: //down arrow
-        keyDown = true;
-        break;
-    }
-  }
-
-  function onKeyUp(event) {
-    var keyCode = event.keyCode;
-    switch (keyCode) {
-      case 68: //d
-        keyD = false;
-        break;
-      case 83: //s
-        keyS = false;
-        break;
-      case 65: //a
-        keyA = false;
-        break;
-      case 87: //w
-        keyW = false;
-        break;
-      case 37: //left arrow
-        keyLeft = false;
-        break;
-      case 38: //up arrow
-        keyUp = false;
-        break;
-      case 39: //right arrow
-        keyRight = false;
-        break;
-      case 40: //down arrow
-        keyDown = false;
-        break;
-    }
-  }
-
   var x, y, z, r;
 
   function getInputs() {
@@ -134,28 +68,28 @@ export default function webApp(websocket, gamePad) {
         r = gp.axes[2];
 
       } else if (keyobardButton) { // have to change later for smoother control
-        if (keyW) {
+        if (keyboard.keyW()) {
             y = 1;
         }
-        if (keyA) {
+        if (keyboard.keyA()) {
             x = -1;
         }
-        if (keyS) {
+        if (keyboard.keyS()) {
             y = -1;
         }
-        if (keyD) {
+        if (keyboard.keyD()) {
             x = 1;
         } 
-        if (keyUp) {
+        if (keyboard.keyUp()) {
             z = 1;
       }
-        if (keyLeft) {
+        if (keyboard.keyLeft()) {
             r = -1;
       }
-        if (keyDown) {
+        if (keyboard.keyDown()) {
             z = -1;
       }
-        if (keyRight) {
+        if (keyboard.keyRight()) {
             r = 1;
       } 
       }
