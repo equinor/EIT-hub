@@ -42,10 +42,12 @@ class BrowserWs {
     }
 
     broadcast(jsonObject) {
-
-        for (let id of this.wsMap.keys()) {
-            this.sendMessage(id,jsonObject);
-        }
+        let msg = JSON.stringify(jsonObject);
+        this.ws.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN) {
+              client.send(msg);
+            }
+          });
     }
 
     /** Register a callback new browser connections.
