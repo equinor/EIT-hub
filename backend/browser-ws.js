@@ -43,9 +43,11 @@ class BrowserWs {
 
     broadcast(jsonObject) {
 
-        for (let id of this.wsMap.keys()) {
-            this.sendMessage(id,jsonObject);
-        }
+        this.ws.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify(jsonObject));
+            }
+          });
     }
 
     /** Register a callback new browser connections.
