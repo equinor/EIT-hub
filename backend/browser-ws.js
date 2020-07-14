@@ -33,7 +33,7 @@ class BrowserWs {
     sendMessage(browserId, jsonObject){
         
         try {
-            this.wsMap.get(browserId).send(jsonObject);
+            this.wsMap.get(browserId).send(JSON.stringify(jsonObject));
             return true;
         } catch(err) {
             console.log(err)
