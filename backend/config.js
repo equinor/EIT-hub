@@ -1,34 +1,55 @@
-"use strict";
+const URL = require('url').URL;
 
-const dotenv = require('dotenv');
-
-const defaultConf = Object.freeze({
-    port: 3000
-});
-
-function applyEnv(processEnv, base = defaultConf){
-    let envConf = {};
-    if(processEnv.EITHUB_PORT) {
-        envConf.port = parseInt(processEnv.EITHUB_PORT);
+class Config {
+    constructor(){
+        this._port = 3000;
+        this._baseUrl = new URL("http://localhost:3000/");
+        this._disableDeviceAuth = true;
+        this._iotHubConnectionString = "";
     }
 
-    return Object.freeze({
-        ...base,
-        ...envConf
-    })
+    applyEnv(processEnv) {
+        if(processEnv.EITHUB_PORT) {
+            this._port = parseInt(processEnv.EITHUB_PORT);
+        }
+        if(processEnv.EITHUB_BASE_URL) {
+            this._baseUrl = new URL(processEnv.EITHUB_BASE_URL);
+        }
+        if(processEnv.EITHUB_DISABLE_DEVICE_AUTH){
+            this._disableDeviceAuth = processEnv.EITHUB_DISABLE_DEVICE_AUTH === "true";
+        }
+        if(processEnv.EITHUB_IOTHUB_CONNECTION_STRING){
+            this._iotHubConnectionString = processEnv.EITHUB_IOTHUB_CONNECTION_STRING;
+        }
+    }
+
+    get port() {
+        return this._port;
+    }
+
+    get baseUrl() {
+        return this._baseUrl;
+    }
+
+    get disableDeviceAuth() {
+        if(this._disableDeviceAuth === false) {
+            return false
+        }
+
+        // We want to disable security.
+        if(this._baseUrl.hostname === "localhost") {
+            // We are in localhost its fine.
+            return true;
+        }
+
+        // We are in production
+        console.warn("Tried to disable security in production. Ignored request")
+        return false;
+    }
+
+    get iotHubConnectionString() {
+        return this._iotHubConnectionString;
+    } 
 }
 
-/* istanbul ignore next Have untestable dotenv and process.env*/
-function main() {
-    // Run dotenv to populate process.env from .env.
-    dotenv.config();
-
-    // apply setting from environment over default
-    return applyEnv(process.env);
-}
-
-module.exports = {
-    defaultConf: defaultConf,
-    applyEnv: applyEnv,
-    main: main
-}
+module.exports = Config;
