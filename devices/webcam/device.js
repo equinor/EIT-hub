@@ -13,7 +13,7 @@ var stat = false;
 
 // Send mesasge to hub
 function sendMessage(mess, type){
-    var msg = new Message(JSON.stringify({mess: mess, type: type}));
+    var msg = new Message(JSON.stringify({type: type, message: mess}));
     console.log("Sending " + type);
 
     client.sendEvent(msg, function (err) {
@@ -25,11 +25,25 @@ function sendMessage(mess, type){
       });
 }
 
-function directMethodResponse(err) {
-    if (err) {
-        console.error("Error when sending method response:\n" + err.toString());
+// Evaluating message received and sending response 
+function msgEval(me){
+    if (me.command == "getSDP"){
+        if (stat == false){
+            startup()
+            .then(sendMessage(SDP, "SDP"));
+        } else {
+            close()
+            .then(startup)
+            .then(sendMessage(SDP, "SDP"));
+        }
+    } else if (me.command == "submitSDP"){
+        submitSDP();
+        sendMessage("Submited SDP", "message");
+    } else if (me.command == "Close"){
+        close();
+        sendMessage("Stream closed", "message");
     } else {
-        console.log("Response to method \"" + request.methodName + "\" sent successfully.");
+        sendMessage("Unvalid command", "message");
     }
 }
 
@@ -59,19 +73,11 @@ async function startup() {
 
 }
 
-client.onDeviceMethod("getSDP", function (response){
-    // Makes sure to restart if back end requests a new stream without closing the old one
-    if (stat == false){
-        startup.then(response.send(200, "Generated device SDP", directMethodResponse));
-    } else {
-        close.then(startup).then(response.send(200, "Generated device SDP", directMethodResponse));
-    } 
-});
 
 // Submits the server SDP
-async function submitSDP(request){
+async function submitSDP(payload){
 
-    await page.type("#incoming", request.payload);
+    await page.type("#incoming", payload);
     await page.click('[type="submit"]');
  
     console.log("Stream started"); 
@@ -79,9 +85,6 @@ async function submitSDP(request){
     stat = true;
 }
 
-client.onDeviceMethod("submitSDP", function (response){
-    submitSDP.then(response.send(200, "Submited SDP, Stream started", directMethodResponse));
-});
 
 // Closes the browser(and the stream)
 async function close(){
@@ -97,7 +100,6 @@ async function close(){
     stat = false;    
 }
 
-client.onDeviceMethod("Close", function (response){
-    close.then(response.send(200, "Stream closed", directMethodResponse));
-});
-
+client.on('message', function(msg) {
+    msgEval(JSON.parse(msg.getData()));
+}); 
