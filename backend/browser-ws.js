@@ -33,11 +33,18 @@ class BrowserWs {
     sendMessage(browserId, jsonObject){
         
         try {
-            this.wsMap.get(browserId).send(jsonObject);
+            this.wsMap.get(browserId).send(JSON.stringify(jsonObject));
             return true;
         } catch(err) {
             console.log(err)
             return false;
+        }
+    }
+
+    broadcast(jsonObject) {
+
+        for (let id of this.wsMap.keys()) {
+            this.sendMessage(id,jsonObject);
         }
     }
 
