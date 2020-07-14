@@ -7,13 +7,10 @@
 
 const Client = require('azure-iothub').Client;
 const Message = require('azure-iot-common').Message;
-const config = require('./config');
 
 class AzureIot {
     constructor(config) {
-        this.configObj = config.main();
-        this.connectionString = configObj.IOTHUB_CONNECTION_STRING;
-        this.client = Client.fromConnectionString(this.connectionString);
+        this.client = Client.fromConnectionString(config.iotHubConnectionString);
     }
 
     /** Try to send a message to a device. If the device do not exist then it will be dropped.
