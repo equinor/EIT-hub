@@ -42,10 +42,10 @@ class BrowserWs {
     }
 
     broadcast(jsonObject) {
-
+        let msg = JSON.stringify(jsonObject);
         this.ws.clients.forEach(function each(client) {
             if (client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify(jsonObject));
+              client.send(msg);
             }
           });
     }
