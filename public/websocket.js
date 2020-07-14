@@ -1,6 +1,6 @@
 export default class WebSocket{
     constructor(){
-        this._ws = new window.WebSocket('ws://localhost:3000');
+        this._ws = new window.WebSocket('ws://localhost:3000/browser');
 
         this._ws.onmessage = this._onMessage.bind(this);
         this._telemetryCallbacks = [];

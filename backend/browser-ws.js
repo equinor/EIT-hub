@@ -15,6 +15,13 @@ const WebSocket  = require('ws');
 class BrowserWs {
     constructor() {
         this.ws = new WebSocket.Server({noServer: true});
+
+        this.wsMap = new Map();
+        this.clientCount = 0;
+        this._connectionCallbacks = [];
+        this._onBrowserCallbacks = new Map();
+        this._onTopicCallbacks = new Map();
+
     }
 
     /** Try to send a message to a browser. If the device is not connected the message will be dropped.
@@ -24,11 +31,14 @@ class BrowserWs {
      * @returns {boolean} If there was a browser to send message too.
      */
     sendMessage(browserId, jsonObject){
-        //TODO needs to handle a connection at some point.
-
-        console.log(`Trying to send message to ${browserId} but its not implemented. Payload:\n`, jsonObject);
         
-        return false;
+        try {
+            this.wsMap.get(browserId).send(jsonObject);
+            return true;
+        } catch(err) {
+            console.log(err)
+            return false;
+        }
     }
 
     /** Register a callback new browser connections.
@@ -37,7 +47,9 @@ class BrowserWs {
      */
     onOpen(callback) {
         //TODO
+        this._connectionCallbacks.push(callback);
     }
+
 
     /** Register a callback for all future messages from this browser.
      * 
@@ -46,6 +58,13 @@ class BrowserWs {
      */
     onBrowser(browserId, callback) {
         //TODO
+        if (this._onBrowserCallbacks.has(browserId)){
+            this._onBrowserCallbacks.get(browserId).push(callback);
+        } else {
+            let emptyArr = [callback];
+            this._onBrowserCallbacks.set(browserId,emptyArr);
+        }
+
     }
 
     /** Register a callback for all future messages on a topic.
@@ -55,6 +74,13 @@ class BrowserWs {
      */
     onTopic(topic, callback) {
         //TODO
+
+        if (this._onTopicCallbacks.has(topic)){
+            this._onTopicCallbacks.get(topic).push(callback);
+        } else {
+            let emptyArr = [callback];
+            this._onTopicCallbacks.set(topic,emptyArr);
+        }
     }
 
     /** Gets the current ready state for the device in question. 3 (CLOSED) if no connections exist
@@ -63,7 +89,11 @@ class BrowserWs {
      * @return {number} WebSocket ready state.
      */
     getState(browserId) {
-        return 3
+        if (this.wsMap.has(browserId)){
+            return this.wsMap.get(browserId).readyState;
+        } else {
+            return 3;
+        }
     }
 
     /** Calls callback when a browser have disconnected.
@@ -81,8 +111,45 @@ class BrowserWs {
      * @param {Buffer} head
      */
     handleUpgrade(user, request, socket, head) {
+        let self = this;
         this.ws.handleUpgrade(request, socket, head, function(websocket) {
             //TODO handle websocket
+
+            // Open
+            let browserId = self.clientCount;
+            self.clientCount += 1;
+            self.wsMap.set(browserId, websocket);
+
+            // Message
+            websocket.on("message", (msg) => {
+                //console.log(message);
+                const message = {
+                    browserId: browserId,
+                    type: msg.type,
+                    user: user,
+                    body: msg,
+                }
+
+                if (self._onBrowserCallbacks.has(message.browserId) && self._onBrowserCallbacks.has(message.browserId).length > 0) {
+                    for (callback of self._onBrowserCallbacks.get(message.browserId)) {
+                        callback(message)
+                    }
+                }
+
+                if (self._onTopicCallbacks.has(message.type) && self._onTopicCallbacks.has(message.type).length > 0) {
+                    for (callback of self._onTopicCallbacks.get(message.type)) {
+                        callback(message)
+                    }
+                }
+
+            })
+
+            // Close
+            websocket.on("close", () => {
+                console.log("closed");
+                self.wsMap.delete(browserId);
+            }) 
+     
         })
     }
 }
