@@ -17,7 +17,6 @@ class BrowserWs {
         this.ws = new WebSocket.Server({noServer: true});
 
         this.wsMap = new Map();
-        this.userMap = new Map();
         this.clientCount = 0;
         this._connectionCallbacks = [];
         this._onBrowserCallbacks = new Map();
