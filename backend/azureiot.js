@@ -20,7 +20,7 @@ class AzureIot {
      * @returns {boolean} If there was nowhere to send to.
      */
     sendMessage(deviceName, jsonObject) {
-        var message = new Message(jsonObject);
+        var message = new Message(JSON.stringify(jsonObject));
         message.messageId = 'c2d';
         console.log(`Sending message to ${deviceName} with payload:\n`, message.getData())
         this.client.send(deviceName, message, function(err) {
