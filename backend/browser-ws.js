@@ -130,13 +130,13 @@ class BrowserWs {
                 }
                 let messageJSON = JSON.stringify(message);
  
-                if (self._onBrowserCallbacks.has(message.browserId) || self._onBrowserCallbacks.has(message.browserId).length > 0) {
+                if (self._onBrowserCallbacks.has(message.browserId) && self._onBrowserCallbacks.has(message.browserId).length > 0) {
                     for (callback of self._onBrowserCallbacks.get(message.browserId)) {
                         callback(messageJSON)
                     }
                 }
 
-                if (self._onTopicCallbacks.has(message.type) || self._onTopicCallbacks.has(message.type).length > 0) {
+                if (self._onTopicCallbacks.has(message.type) && self._onTopicCallbacks.has(message.type).length > 0) {
                     for (callback of self._onTopicCallbacks.get(message.type)) {
                         callback(messageJSON)
                     }
