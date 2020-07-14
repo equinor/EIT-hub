@@ -17,6 +17,29 @@ export default class Input{
         setInterval(this._possessInputs.bind(this), poolInterval);
     }
 
+    keySmoothing(plusKey,minusKey,oldValue) {
+        let newValue = oldValue;
+        if (plusKey || minusKey) {
+
+            if (plusKey) {
+                newValue += this.gainPressed;
+                if (newValue > 1) newValue = 1;
+
+            } else if (minusKey) {
+                newValue -= this.gainPressed;
+                if (newValue < -1)  newValue = -1; 
+            }
+        } else {
+            if (newValue > 0.06 || newValue < -0.06) {
+                let sign = newValue/Math.abs(newValue);
+                newValue -= sign*this.gainRelease;
+            } else {
+                newValue = 0;
+            }
+        }
+        return newValue;
+    }
+
     _possessInputs() {
         
         if (this._view.useGamePad()) {
@@ -29,84 +52,16 @@ export default class Input{
         } else if (this._view.useKeyboard()) {
             
             // y
-            if (this._keyboard.keyW() || this._keyboard.keyS()) {
-
-                if (this._keyboard.keyW()) {
-                    this.y += this.gainPressed;
-                    if (this.y > 1) this.y = 1;
-
-                } else if (this._keyboard.keyS()) {
-                    this.y -= this.gainPressed;
-                    if (this.y < -1)  this.y = -1; 
-                }
-            } else {
-                if (this.y > 0.06 || this.y < -0.06) {
-                    let sign = this.y/Math.abs(this.y);
-                    this.y -= sign*this.gainRelease;
-                } else {
-                    this.y = 0;
-                }
-            }
+            this.y = this.keySmoothing(this._keyboard.keyW(), this._keyboard.keyS(),this.y);
 
             // x
-            if (this._keyboard.keyA() || this._keyboard.keyD()) {
-
-                if (this._keyboard.keyD()) {
-                    this.x += this.gainPressed;
-                    if (this.x > 1) this.x = 1;
-
-                } else if (this._keyboard.keyA()) {
-                    this.x -= this.gainPressed;
-                    if (this.x < -1)  this.x = -1; 
-                }
-            } else {
-                if (this.x > 0.06 || this.x < -0.06) {
-                    let sign = this.x/Math.abs(this.x);
-                    this.x -= sign*this.gainRelease;
-                } else {
-                    this.x = 0;
-                }
-            }
+            this.x = this.keySmoothing(this._keyboard.keyD(), this._keyboard.keyA(),this.x);
 
             // z
-            if (this._keyboard.keyUp() || this._keyboard.keyDown()) {
-
-                if (this._keyboard.keyUp()) {
-                    this.z += this.gainPressed;
-                    if (this.z > 1) this.z = 1;
-
-                } else if (this._keyboard.keyDown()) {
-                    this.z -= this.gainPressed;
-                    if (this.z < -1)  this.z = -1; 
-                }
-            } else {
-                if (this.z > 0.06 || this.z < -0.06) {
-                    let sign = this.z/Math.abs(this.z);
-                    this.z -= sign*this.gainRelease;
-                } else {
-                    this.z = 0;
-                }
-            }
+            this.z = this.keySmoothing(this._keyboard.keyUp(), this._keyboard.keyDown(),this.z);
 
             // r
-            if (this._keyboard.keyRight() || this._keyboard.keyLeft()) {
-
-                if (this._keyboard.keyRight()) {
-                    this.r += this.gainPressed;
-                    if (this.r > 1) this.r = 1;
-
-                } else if (this._keyboard.keyLeft()) {
-                    this.r -= this.gainPressed;
-                    if (this.r < -1)  this.r = -1; 
-                }
-            } else {
-                if (this.r > 0.06 || this.r < -0.06) {
-                    let sign = this.r/Math.abs(this.r);
-                    this.r -= sign*this.gainRelease;
-                } else {
-                    this.r = 0;
-                }
-            } 
+            this.r = this.keySmoothing(this._keyboard.keyRight(), this._keyboard.keyLeft(),this.r);
         }
 
         let msg = {
