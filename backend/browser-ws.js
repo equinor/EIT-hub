@@ -61,8 +61,7 @@ class BrowserWs {
         if (this._onBrowserCallbacks.has(browserId)){
             this._onBrowserCallbacks.get(browserId).push(callback);
         } else {
-            emptyArr = [];
-            emptyArr.push(callback);
+            let emptyArr = [callback];
             this._onBrowserCallbacks.set(browserId,emptyArr);
         }
 
@@ -79,8 +78,7 @@ class BrowserWs {
         if (this._onTopicCallbacks.has(topic)){
             this._onTopicCallbacks.get(topic).push(callback);
         } else {
-            emptyArr = [];
-            emptyArr.push(callback);
+            let emptyArr = [callback];
             this._onTopicCallbacks.set(topic,emptyArr);
         }
     }
@@ -91,8 +89,11 @@ class BrowserWs {
      * @return {number} WebSocket ready state.
      */
     getState(browserId) {
-
-        return this.wsMap.get(browserId).readyState;
+        if (this.wsMap.has(browserId)){
+            return this.wsMap.get(browserId).readyState;
+        } else {
+            return 3;
+        }
     }
 
     /** Calls callback when a browser have disconnected.
@@ -128,17 +129,16 @@ class BrowserWs {
                     user: user,
                     body: msg,
                 }
-                let messageJSON = JSON.stringify(message);
- 
+
                 if (self._onBrowserCallbacks.has(message.browserId) && self._onBrowserCallbacks.has(message.browserId).length > 0) {
                     for (callback of self._onBrowserCallbacks.get(message.browserId)) {
-                        callback(messageJSON)
+                        callback(message)
                     }
                 }
 
                 if (self._onTopicCallbacks.has(message.type) && self._onTopicCallbacks.has(message.type).length > 0) {
                     for (callback of self._onTopicCallbacks.get(message.type)) {
-                        callback(messageJSON)
+                        callback(message)
                     }
                 }
 
