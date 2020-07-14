@@ -42,9 +42,9 @@ class BrowserWs {
     }
 
     broadcast(jsonObject) {
-        
+
         for (let id of this.wsMap.keys()) {
-            this.wsMap.forEach(this.sendMessage(id,jsonObject))
+            this.sendMessage(id,jsonObject);
         }
     }
 
