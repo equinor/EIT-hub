@@ -24,6 +24,11 @@ export default class WebSocket{
         this._ws.send(JSON.stringify(msg));
     }
 
+    sendRtc(msg){
+        //TODO define message and maybe more methods.
+        //TODO implement method.
+    }
+
     /** 
      * 
      */
@@ -33,6 +38,10 @@ export default class WebSocket{
 
     onTelemetry(callback) {
         this._telemetryCallbacks.push(callback);
+    }
+
+    onRtc(callback) {
+        //TODO
     }
 
     _onMessage(event) {

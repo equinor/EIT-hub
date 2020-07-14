@@ -10,6 +10,7 @@ const DeviceWS = require('./device-ws');
 const Express = require('./express');
 const ShuttleControl = require('./shuttle-control');
 const ShuttleTelemetry = require('./shuttle-telemetry');
+const RtcControl = require('./rtc-control');
 
 /** The main function for Eit-Hub backend.
  *  We should not have js code directly in the file.
@@ -40,12 +41,16 @@ function main() {
     //Setup ShuttleTelemetry
     const shuttleTelemetry = new ShuttleTelemetry(azureIot, browserWs, deviceWs);
 
+    //Create RtcControl
+    const rtcControl = new RtcControl(azureIot, browserWs);
+
     //Create express
     const express = new Express(config.port, auth, browserWs, deviceWs)
 
     // Start EitHub
     shuttleControl.start();
     shuttleTelemetry.start();
+    rtcControl.start();
     express.start();
 
 }
