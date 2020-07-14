@@ -1,6 +1,6 @@
 export default class WebSocket{
     constructor(){
-        this._ws = new window.WebSocket('ws://localhost:3000');
+        this._ws = new window.WebSocket('ws://localhost:3000/browser');
 
         this._ws.onmessage = this._onMessage.bind(this);
         this._telemetryCallbacks = [];
@@ -24,6 +24,11 @@ export default class WebSocket{
         this._ws.send(JSON.stringify(msg));
     }
 
+    sendRtc(msg){
+        //TODO define message and maybe more methods.
+        //TODO implement method.
+    }
+
     /** 
      * 
      */
@@ -33,6 +38,10 @@ export default class WebSocket{
 
     onTelemetry(callback) {
         this._telemetryCallbacks.push(callback);
+    }
+
+    onRtc(callback) {
+        //TODO
     }
 
     _onMessage(event) {
