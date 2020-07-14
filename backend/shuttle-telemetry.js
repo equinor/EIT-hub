@@ -13,8 +13,7 @@ class ShuttleTelemetry {
             if (message.type === 'telemetry') {
                 self.browserWs.broadcast(message);
             }
-            // TODO: Validate message when telemetry format has been chosen
-            console.warn(`Message from device has unkown type: ${message.type}`);
+            console.log(`Message from device has unkown type: ${message.type}`);
         });
 
         // Receive and forward aggregated telemetry from shuttle
