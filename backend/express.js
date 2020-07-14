@@ -23,7 +23,7 @@ class Express {
         const pathname = url.parse(request.url).pathname;
         const path = pathname.split("/");
 
-        if (path[1] === 'browser') {
+        if (path[1] === 'browser') { // path[1] !== 'browser' to test on localhost
             this.browserWs.handleUpgrade({}, request, socket, head);
         } else if (path[1] === 'device') {
             this.deviceWs.handleUpgrade(path[2], request, socket, head);
