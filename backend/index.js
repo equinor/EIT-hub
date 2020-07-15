@@ -1,24 +1,30 @@
 /* istanbul ignore file */
 "use strict";
+const dotenv = require('dotenv');
 
 const Auth = require('./auth');
 const AzureIot = require('./azureiot');
 const BrowserWs = require('./browser-ws');
-const config = require('./config');
+const Config = require('./config');
 const DeviceWS = require('./device-ws');
 const Express = require('./express');
 const ShuttleControl = require('./shuttle-control');
 const ShuttleTelemetry = require('./shuttle-telemetry');
+const RtcControl = require('./rtc-control');
 
 /** The main function for Eit-Hub backend.
  *  We should not have js code directly in the file.
  */
 function main() {
+    //run dotenv to populate possess.env from .env file if exists.
+    dotenv.config();
+
     //Get configuration
-    const configObj = config.main();
+    const config = new Config();
+    config.applyEnv(process.env);
 
     //Setup Auth
-    const auth = new Auth(configObj);
+    const auth = new Auth(config);
 
     //Setup Browser Websocket
     const browserWs = new BrowserWs();
@@ -27,7 +33,7 @@ function main() {
     const deviceWs = new DeviceWS();
 
     //Setup Azure IoT
-    const azureIot = new AzureIot(configObj);
+    const azureIot = new AzureIot(config);
 
     //Setup ShuttleControl
     const shuttleControl = new ShuttleControl(azureIot, browserWs, deviceWs);
@@ -35,12 +41,16 @@ function main() {
     //Setup ShuttleTelemetry
     const shuttleTelemetry = new ShuttleTelemetry(azureIot, browserWs, deviceWs);
 
+    //Create RtcControl
+    const rtcControl = new RtcControl(azureIot, browserWs);
+
     //Create express
-    const express = new Express(configObj.port, auth, browserWs, deviceWs)
+    const express = new Express(config.port, auth, browserWs, deviceWs)
 
     // Start EitHub
     shuttleControl.start();
     shuttleTelemetry.start();
+    rtcControl.start();
     express.start();
 
 }
