@@ -7,10 +7,7 @@ const WebSocket  = require('ws');
 class DeviceWs {
     constructor() {
         this.ws = new WebSocket.Server({noServer: true});
-
-        //this.deviceCount = 0; //need to count amount of devices connecting?
-        this.deviceMap = new Map(); //creates an array by calling a specific function on each element present in the parent array
-        this._connectionCallback = [];
+        this.deviceMap = new Map();
         this._deviceCallback = new Map();
     }
 
@@ -21,14 +18,11 @@ class DeviceWs {
      * @returns {boolean} If there was a connection to send message too.
      */
     sendMessage(deviceName, jsonMessage){
-        //TODO needs to handle a connection at some point.
         try {
             this.deviceMap.get(deviceName).send(JSON.stringify(jsonMessage));
-            console.log("a message has been sent to a device");
             return true;
         } catch(err) {
             console.log(err);
-            console.log("An error happened when trying to send a message to the device");
             console.log(`Trying to send message to ${deviceName} but its not implemented. Payload:\n`, jsonMessage);
             return false;
         }
@@ -40,12 +34,9 @@ class DeviceWs {
      * @param {Function} callback The callback return a js object with the parsed json data from device.
      */
     onMessage(deviceName, callback) {
-        //TODO
-        //this._connectionCallback.push(callback);
-
         if (this._deviceCallback.has(deviceName)){
             this._deviceCallback.get(deviceName).push(callback);
-        } else {
+        }else {
             let emptyArr = [callback];
             this._deviceCallback.set(deviceName, emptyArr);
         }
@@ -81,21 +72,15 @@ class DeviceWs {
     handleUpgrade(deviceName, request, socket, head) {
         let self = this;
         this.ws.handleUpgrade(request, socket, head, function(websocket) {
-            //TODO handle websocket
-            console.log("Hello from device");
-
             self.deviceMap.set(deviceName, websocket);
-
             websocket.on("message", (msg) => {
-                console.log("a message");
                 const message = JSON.parse(msg);
-                
                 if (self._deviceCallback.has(deviceName)) {
                     for (callback of self._deviceCallback.get(message.deviceName)) {
                         callback(message);
                     }
                 }
-            })   
+            });
 
             websocket.on("close", () => {
                 console.log("websocket closed");
