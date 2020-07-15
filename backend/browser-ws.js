@@ -132,7 +132,7 @@ class BrowserWs {
             // Message
             websocket.on("message", (msg) => {
                 let msgParse = JSON.parse(msg);
-                // console.log(msgParse.type);
+
                 const message = {
                     browserId: browserId,
                     type: msgParse.type,
