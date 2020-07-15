@@ -67,6 +67,7 @@ class BrowserWs {
      */
     onBrowser(browserId, callback) {
         //TODO
+        
         if (this._onBrowserCallbacks.has(browserId)){
             this._onBrowserCallbacks.get(browserId).push(callback);
         } else {
@@ -83,12 +84,12 @@ class BrowserWs {
      */
     onTopic(topic, callback) {
         //TODO
-
         if (this._onTopicCallbacks.has(topic)){
             this._onTopicCallbacks.get(topic).push(callback);
         } else {
             let emptyArr = [callback];
             this._onTopicCallbacks.set(topic,emptyArr);
+            console.log(this._onTopicCallbacks.get(topic));
         }
     }
 
@@ -131,26 +132,28 @@ class BrowserWs {
 
             // Message
             websocket.on("message", (msg) => {
-                //console.log(message);
+                let msgParse = JSON.parse(msg);
+                // console.log(msgParse.type);
                 const message = {
                     browserId: browserId,
-                    type: msg.type,
+                    type: msgParse.type,
                     user: user,
                     body: msg,
                 }
 
-                if (self._onBrowserCallbacks.has(message.browserId) && self._onBrowserCallbacks.has(message.browserId).length > 0) {
-                    for (callback of self._onBrowserCallbacks.get(message.browserId)) {
+                if (self._onBrowserCallbacks.has(message.browserId) && self._onBrowserCallbacks.get(message.browserId).length > 0) {
+                    for (let callback of self._onBrowserCallbacks.get(message.browserId)) {
                         callback(message)
+                        console.log("brow")
                     }
                 }
-
-                if (self._onTopicCallbacks.has(message.type) && self._onTopicCallbacks.has(message.type).length > 0) {
-                    for (callback of self._onTopicCallbacks.get(message.type)) {
+                
+                if (self._onTopicCallbacks.has(message.type) && self._onTopicCallbacks.get(message.type).length > 0) {
+                    for (let callback of self._onTopicCallbacks.get(message.type)) {
                         callback(message)
+                        console.log("topic onMessage")
                     }
                 }
-
             })
 
             // Close

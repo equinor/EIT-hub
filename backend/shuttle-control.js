@@ -8,10 +8,9 @@ class ShuttleControl {
 
     start() {
         let self = this;
-
         // Listens for all websocket messages with type 'input'
         self.browserWs.onTopic('input', function (message) {
-
+            
             let browserId = message.browserId;
             if (browserId >= self.currentBrowser) {
                 self.currentBrowser = browserId;
