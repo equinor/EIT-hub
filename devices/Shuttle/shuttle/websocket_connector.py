@@ -11,6 +11,15 @@ import json
 
 
 class WebsocketConnector:
+    '''
+    Class responsible for websocket connection to backend. 
+    Usage: 
+    1) init with websocket uri 
+    2) add handlers for recieved messages and for sending messages. 
+        Consumer handler runns every time a message is recieved, and 
+        Producer handler produces messages that are sent over the websocket
+    3) run()
+    '''
 
     def __init__(self, uri):
         self.uri: str = uri

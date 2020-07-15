@@ -90,7 +90,7 @@ async def thrust_sender(shuttle: ShuttleConnector, desired_thrust: dict):
 @periodic_task(config.HEARTBEAT_DELAY)
 async def heartbeat(shuttle: ShuttleConnector):
     ''' 
-    Send a heartbeat to ardusub every <delay> seconds 
+    Send a heartbeat to shuttle every <delay> seconds 
     '''
     await shuttle.send_heartbeat()
     logging.debug('Heartbeat sent')
@@ -107,20 +107,25 @@ async def thrust_resetter(desired_thrust: DesiredThrust):
 
 
 async def io_handler(websocket_connector: WebsocketConnector, desired_thrust: DesiredThrust):
+    '''
+    Deals with handlers for messages that are reviced and those that are sent. 
+    In this case: telemetry and thrust commands
+    '''
 
     # add consumer and producer functions to websocket_connector
-    async def producer() -> str:
+    async def get_telemetry() -> str:
         await asyncio.sleep(config.TELEMETRY_INVERVAL)
         return desired_thrust.to_json()
 
-    consumer = desired_thrust.update_desired_thrust_from_json
-    websocket_connector.add_handlers(consumer, producer)
+    update_thrust = desired_thrust.update_desired_thrust_from_json
+    websocket_connector.add_handlers(consumer=update_thrust, producer=get_telemetry)
 
     # let websocket listen for messages and send telemetry over the same socket
     await websocket_connector.run()
 
 
 def quick_test():
+    ''' simple test that sends a constant thrust command to the shuttle '''
 
     shuttle_connector = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
     desired_thrust: dict = {
@@ -139,7 +144,10 @@ def quick_test():
     asyncio.run(main())
 
 
-def control_over_websocket(use_fake_shuttel = False):
+def control_over_websocket(use_fake_shuttel=False):
+    ''' Main function for running the actual use case '''
+
+    # setup connections to backend and shuttle and create a desired_thrust object
     if use_fake_shuttel:
         shuttle_connector = FakeShuttleConnector()
     else:
@@ -148,11 +156,12 @@ def control_over_websocket(use_fake_shuttel = False):
     desired_thrust = DesiredThrust()
 
     async def main():
+        # add functions that should be run concurrently
         await asyncio.gather(
-            io_handler(websocket_connector, desired_thrust),
-            thrust_resetter(desired_thrust),
-            thrust_sender(shuttle_connector, desired_thrust),
-            heartbeat(shuttle_connector)
+            io_handler(websocket_connector, desired_thrust),    # for sending telemetry and rcv messages
+            thrust_resetter(desired_thrust),                    # reset thrust commands after a delay
+            thrust_sender(shuttle_connector, desired_thrust),   # send desired thrust to shuttle preiodically
+            heartbeat(shuttle_connector)                        # send heartbeat to shuttle periodicaly 
         )
 
     asyncio.run(main())
