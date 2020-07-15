@@ -37,7 +37,7 @@ function msgEval(me){
             .then(sendMessage(SDP, "SDP"));
         }
     } else if (me.command == "submitSDP"){
-        submitSDP();
+        submitSDP(me.CommandData);
         sendMessage("Submited SDP", "message");
     } else if (me.command == "Close"){
         close();
