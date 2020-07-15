@@ -6,6 +6,7 @@ class Config {
         this._baseUrl = new URL("http://localhost:3000/");
         this._disableDeviceAuth = true;
         this._iotHubConnectionString = "";
+        this._iotHubStreamDevices = "";
     }
 
     applyEnv(processEnv) {
