@@ -113,13 +113,15 @@ class ShuttleConnector:
         logging.debug('Heartbeat sent')
 
 
-    def log_data(self):
-        pass
+    def telemetry(self):
+        return {
+            'fake_telemetry': 0.5
+        }
 
 
 class FakeShuttleConnector:
 
-    def __init__(self, connenction_string: str):
+    def __init__(self, connenction_string: str = ''):
         logging.info('Fake shuttle created')
 
     async def send_thrust_command(self, x=0, y=0, z=500, r=0) -> None:
@@ -128,5 +130,7 @@ class FakeShuttleConnector:
     async def send_heartbeat(self):
         pass
     
-    def log_data(self):
-        pass
+    def telemetry(self) -> dict:
+        return {
+            'fake_telemetry': 0.5
+        }

@@ -8,6 +8,9 @@ load_dotenv()
 # String used for connection to azure iot hub
 IOTHUB_CONNECTION_STRING = os.getenv('IOTHUB_CONNECTION_STRING')
 
+# URI of backend server websocket
+WEBSOCKET_URI = 'ws://localhost:3000/device/shuttle'        # alternative: 'ws://localhost:3000/'
+
 # String used by pymavlink to connect with the ROV or simulator.
 # Needs to be changed depending on the physical setup. Documentation: 
 # http://mavlink.io/en/mavgen_python/
@@ -17,3 +20,4 @@ HEARTBEAT_DELAY = 1
 PILOT_CMD_DELAY = 0.1
 THRUST_RESET_DELAY = 0.5    # how often need for thrust reset is checked 
 THRUST_TIME_LIMIT = 2       # how long before thrust should be reset to neutral
+TELEMETRY_INVERVAL = 1      # How long between telemetry messages are sent

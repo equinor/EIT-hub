@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import json
 from time import time
 from shuttle import config
 from shuttle.websocket_connector import WebsocketConnector
@@ -29,10 +30,31 @@ class DesiredThrust(dict):
         self['z'] = z
         self['r'] = r
         self.timestamp = time()
-        logging.debug('Desired thrust updated to: %d %d %d %d at %d' % (x, y, z, r, self.timestamp))
+        logging.info('Desired thrust updated to: %d %d %d %d at %d' % (x, y, z, r, self.timestamp))
+
+    async def update_desired_thrust_from_json(self, message: str) -> None:
+        try:
+            content: dict = json.loads(message)
+        except ValueError:
+            logging.exception('Incomming message has invalid json format')
+
+        cmd_list = content.values()
+        logging.debug('Recieved thrust message: ' + str(cmd_list))
+
+        await self.update_desired_thrust(*cmd_list)
 
     def thrust_should_be_reset(self):
         return abs(self.timestamp - time()) > config.THRUST_TIME_LIMIT
+
+    def to_json(self) -> str:
+        return json.dumps({
+            'desired_thrust': {
+                'x': self['x'],
+                'y': self['y'],
+                'z': self['z'],
+                'r': self['r']
+            }
+        })
 
 
 def periodic_task(delay: float):
@@ -84,8 +106,18 @@ async def thrust_resetter(desired_thrust: DesiredThrust):
         logging.debug('Desired thrust has been reset')
 
 
-async def input_listener(websocket_connector: WebsocketConnector, desired_thrust: DesiredThrust):
-    await websocket_connector.thrust_input_handler(desired_thrust)
+async def io_handler(websocket_connector: WebsocketConnector, desired_thrust: DesiredThrust):
+
+    # add consumer and producer functions to websocket_connector
+    async def producer() -> str:
+        await asyncio.sleep(config.TELEMETRY_INVERVAL)
+        return desired_thrust.to_json()
+
+    consumer = desired_thrust.update_desired_thrust_from_json
+    websocket_connector.add_handlers(consumer, producer)
+
+    # let websocket listen for messages and send telemetry over the same socket
+    await websocket_connector.run()
 
 
 def quick_test():
@@ -107,14 +139,17 @@ def quick_test():
     asyncio.run(main())
 
 
-def control_over_websocket():
-    shuttle_connector = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
-    websocket_connector = WebsocketConnector()
+def control_over_websocket(use_fake_shuttel = False):
+    if use_fake_shuttel:
+        shuttle_connector = FakeShuttleConnector()
+    else:
+        shuttle_connector = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
+    websocket_connector = WebsocketConnector(config.WEBSOCKET_URI)
     desired_thrust = DesiredThrust()
-    
+
     async def main():
         await asyncio.gather(
-            input_listener(websocket_connector, desired_thrust),
+            io_handler(websocket_connector, desired_thrust),
             thrust_resetter(desired_thrust),
             thrust_sender(shuttle_connector, desired_thrust),
             heartbeat(shuttle_connector)
@@ -124,19 +159,7 @@ def control_over_websocket():
 
 
 def fake_test():
-    shuttle_connector = FakeShuttleConnector(config.MAVLINK_CONNECTION_STRING)
-    websocket_connector = WebsocketConnector()
-    desired_thrust = DesiredThrust()
-    
-    async def main():
-        await asyncio.gather(
-            input_listener(websocket_connector, desired_thrust),
-            thrust_resetter(desired_thrust),
-            thrust_sender(shuttle_connector, desired_thrust),
-            heartbeat(shuttle_connector)
-        )
-
-    asyncio.run(main())
+    control_over_websocket(use_fake_shuttel=True)
 
 
 if __name__ == "__main__":
