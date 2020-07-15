@@ -1,0 +1,20 @@
+{
+  "name": "headlessdevice",
+  "version": "1.0.0",
+  "description": "Stream from browser using headless chrome to get mediastreams and stream video (the easy way) ",
+  "main": "device.js",
+  "dependencies": {
+    "azure-iot-device": "^1.16.0",
+    "azure-iot-device-mqtt": "^1.14.1",
+    "dotenv": "^8.2.0",
+    "modules": "^0.4.0",
+    "puppeteer": "^5.0.0",
+    "simple-peer": "^9.7.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Equinor ASA",
+  "license": "MIT"
+}

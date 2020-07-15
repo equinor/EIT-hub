@@ -1,0 +1,13 @@
+
+#outgoing {
+    width: 600px;
+    word-wrap: break-word;
+    white-space: normal;
+  }
+
+  
+.content {
+    font-size: 16px;
+    font-family: "Lucida Grande", "Arial", sans-serif;
+    width: 760px;
+}
