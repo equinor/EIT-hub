@@ -67,6 +67,7 @@ class BrowserWs {
      */
     onBrowser(browserId, callback) {
         //TODO
+        
         if (this._onBrowserCallbacks.has(browserId)){
             this._onBrowserCallbacks.get(browserId).push(callback);
         } else {
@@ -83,7 +84,6 @@ class BrowserWs {
      */
     onTopic(topic, callback) {
         //TODO
-
         if (this._onTopicCallbacks.has(topic)){
             this._onTopicCallbacks.get(topic).push(callback);
         } else {
@@ -131,26 +131,26 @@ class BrowserWs {
 
             // Message
             websocket.on("message", (msg) => {
-                //console.log(message);
+                let msgParse = JSON.parse(msg);
+
                 const message = {
                     browserId: browserId,
-                    type: msg.type,
+                    type: msgParse.type,
                     user: user,
-                    body: msg,
+                    body: msgParse,
                 }
 
-                if (self._onBrowserCallbacks.has(message.browserId) && self._onBrowserCallbacks.has(message.browserId).length > 0) {
-                    for (callback of self._onBrowserCallbacks.get(message.browserId)) {
+                if (self._onBrowserCallbacks.has(message.browserId) && self._onBrowserCallbacks.get(message.browserId).length > 0) {
+                    for (let callback of self._onBrowserCallbacks.get(message.browserId)) {
                         callback(message)
                     }
                 }
-
-                if (self._onTopicCallbacks.has(message.type) && self._onTopicCallbacks.has(message.type).length > 0) {
-                    for (callback of self._onTopicCallbacks.get(message.type)) {
+                
+                if (self._onTopicCallbacks.has(message.type) && self._onTopicCallbacks.get(message.type).length > 0) {
+                    for (let callback of self._onTopicCallbacks.get(message.type)) {
                         callback(message)
                     }
                 }
-
             })
 
             // Close
