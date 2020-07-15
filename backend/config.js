@@ -21,6 +21,9 @@ class Config {
         if(processEnv.EITHUB_IOTHUB_CONNECTION_STRING){
             this._iotHubConnectionString = processEnv.EITHUB_IOTHUB_CONNECTION_STRING;
         }
+        if(processEnv.EITHUB_IOTHUB_STREAM_DEVICES){
+            this._iotHubStreamDevices = processEnv.EITHUB_IOTHUB_STREAM_DEVICES;
+        }
     }
 
     get port() {
@@ -49,7 +52,10 @@ class Config {
 
     get iotHubConnectionString() {
         return this._iotHubConnectionString;
-    } 
+    }
+    get iotHubStreamDevices() {
+        return this._iotHubStreamDevices;
+    }
 }
 
 module.exports = Config;
