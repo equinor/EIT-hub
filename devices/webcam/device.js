@@ -67,10 +67,6 @@ async function startup() {
     while (SDP == null){        
         await page.waitFor(100);
     } 
-
-    // Sending SDP as a message
-    sendMessage(SDP, "SDP");
-
 }
 
 
