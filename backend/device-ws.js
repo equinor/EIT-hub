@@ -76,7 +76,7 @@ class DeviceWs {
             websocket.on("message", (msg) => {
                 const message = JSON.parse(msg);
                 if (self._deviceCallback.has(deviceName)) {
-                    for (callback of self._deviceCallback.get(message.deviceName)) {
+                    for (callback of self._deviceCallback.get(deviceName)) {
                         callback(message);
                     }
                 }
