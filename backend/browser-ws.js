@@ -89,7 +89,6 @@ class BrowserWs {
         } else {
             let emptyArr = [callback];
             this._onTopicCallbacks.set(topic,emptyArr);
-            console.log(this._onTopicCallbacks.get(topic));
         }
     }
 
@@ -138,20 +137,18 @@ class BrowserWs {
                     browserId: browserId,
                     type: msgParse.type,
                     user: user,
-                    body: msg,
+                    body: msgParse,
                 }
 
                 if (self._onBrowserCallbacks.has(message.browserId) && self._onBrowserCallbacks.get(message.browserId).length > 0) {
                     for (let callback of self._onBrowserCallbacks.get(message.browserId)) {
                         callback(message)
-                        console.log("brow")
                     }
                 }
                 
                 if (self._onTopicCallbacks.has(message.type) && self._onTopicCallbacks.get(message.type).length > 0) {
                     for (let callback of self._onTopicCallbacks.get(message.type)) {
                         callback(message)
-                        console.log("topic onMessage")
                     }
                 }
             })
