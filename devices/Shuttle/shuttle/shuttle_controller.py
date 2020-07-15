@@ -17,20 +17,20 @@ class DesiredThrust(dict):
 
     def __init__(self):
         super().__init__({
-            'x': 0,
-            'y': 0,
-            'z': 0,
-            'r': 0,
+            'x': 0.0,
+            'y': 0.0,
+            'z': 0.0,
+            'r': 0.0,
         })
         self.timestamp: float = 0
 
-    async def update_desired_thrust(self, x: int = 0, y: int = 0, z: int = 0, r: int = 0) -> None:
+    async def update_desired_thrust(self, x: float = 0, y: float = 0, z: float = 0, r: float = 0) -> None:
         self['x'] = x
         self['y'] = y
         self['z'] = z
         self['r'] = r
         self.timestamp = time()
-        logging.info('Desired thrust updated to: %d %d %d %d at %d' % (x, y, z, r, self.timestamp))
+        logging.info('Desired thrust updated to: %f %f %f %f at %d' % (x, y, z, r, self.timestamp))
 
     async def update_desired_thrust_from_json(self, message: str) -> None:
         try:
