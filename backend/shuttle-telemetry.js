@@ -10,10 +10,7 @@ class ShuttleTelemetry {
 
         // Receive and forward real time telemetry from shuttle
         self.deviceWs.onMessage('shuttle', function(message)  {
-            if (message.type === 'telemetry') {
                 self.browserWs.broadcast(message);
-            }
-            console.log(`Message from device has unkown type: ${message.type}`);
         });
 
         // Receive and forward aggregated telemetry from shuttle
