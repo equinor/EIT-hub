@@ -52,7 +52,7 @@ export default class WebSocket{
                 callback(msg)
             }
         }else if(msg.type === "telemetry") {
-            for (callback of this._telemetryCallbacks) {
+            for (let callback of this._telemetryCallbacks) {
                 callback(msg)
             }
         }else {
