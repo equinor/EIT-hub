@@ -5,7 +5,7 @@ class Config {
         this._port = 3000;
         this._baseUrl = new URL("http://localhost:3000/");
         this._disableDeviceAuth = true;
-        this._iotHubConnectionString = "HostName=eit-hub.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=HcDZaCnK4AibnNsYvVhz359lNd3tolUZWZMN4AhxFWU=";
+        this._iotHubConnectionString = "";
     }
 
     applyEnv(processEnv) {
