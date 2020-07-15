@@ -7,7 +7,7 @@ from shuttle.websocket_connector import WebsocketConnector
 from shuttle.shuttle_connector import ShuttleConnector, FakeShuttleConnector
 
 
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 
 class DesiredThrust(dict):

@@ -9,7 +9,8 @@ load_dotenv()
 IOTHUB_CONNECTION_STRING = os.getenv('IOTHUB_CONNECTION_STRING')
 
 # URI of backend server websocket
-WEBSOCKET_URI = 'ws://localhost:3000/device/shuttle'        # alternative: 'ws://localhost:3000/'
+WEBSOCKET_URI = 'ws://localhost:3000/device/shuttle'
+#WEBSOCKET_URI = 'ws://localhost:3000/'
 
 # String used by pymavlink to connect with the ROV or simulator.
 # Needs to be changed depending on the physical setup. Documentation: 
