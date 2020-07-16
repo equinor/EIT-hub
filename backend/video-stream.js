@@ -10,19 +10,19 @@ const wrtc = require("wrtc");
 
 class VideoStream {
 
-    /** Creates device peer connection on offer. Returns SDP answer, peer and stream.
+    /** Creates device peer connection on offer. Returns SDP answer, peer and stream in callback.
      * 
      * @param {string} DeviceSDP
-     * @returns {any} json object that contains SDP answer, peer and stream 
+     * @param {function} callback     
      */
 
-    createDevicePeer(DeviceSDP) {
+    createDevicePeer(DeviceSDP, callback) {
 
-        var video;
-        var sdp;
-        var returnObj;
+        let video;
+        let sdp;
+        let DataObj;
         
-        var DevicePeer = new SimplePeer({
+        let DevicePeer = new SimplePeer({
             trickle: false,
             wrtc: wrtc
         }); 
@@ -38,25 +38,25 @@ class VideoStream {
         DevicePeer.signal(JSON.parse(DeviceSDP));
         console.log("Submited device SDP");
 
-        returnObj = { stream: video, peer: DevicePeer, sdp: sdp };
+        DataObj = { stream: video, peer: DevicePeer, sdp: sdp };
 
-        return returnObj;
+        callback(DataObj);
         
     }
 
 
-    /** Creates client peer on browser request. Returns SDP offer and peer.  
+    /** Creates client peer on browser request. Returns SDP offer and peer in callback.  
      * 
      * @param {any} Stream
-     * @returns {any} json object that contains SDP offer and peer
+     * @param {function} callback
      */
 
-    createClientPeer(Stream) {
+    createClientPeer(Stream, callback) {
 
-        var sdp;
-        var returnObj;
+        let sdp;
+        let DataObj;
 
-        ClientPeer = new SimplePeer({
+        let ClientPeer = new SimplePeer({
             initiator: true,
             stream: Stream,
             trickle: false,
@@ -70,9 +70,9 @@ class VideoStream {
             sdp = JSON.stringify(data); 
         });
 
-        returnObj = { peer: ClientPeer, sdp: sdp };
+        DataObj = { peer: ClientPeer, sdp: sdp };
 
-        return returnObj;
+        callback(DataObj);
         
     }
 
@@ -92,11 +92,12 @@ class VideoStream {
     /** Destroys selected peer conection.
      * 
      * @param {any} Peer 
+     * @param {any} PeerId
      */
 
-    PeerDestroy(Peer){
+    PeerDestroy(Peer, PeerId){
         Peer.destroy();
-        console.log("Peer connection destroyed");
+        console.log(`Peer ${PeerId} connection destroyed`);
     }
 
 
