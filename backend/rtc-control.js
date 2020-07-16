@@ -43,6 +43,7 @@ class RtcControl {
         }
         setTimeout(timeout, 20000);
 
+        // Azure IoT message listeners with apropriate responses
         for (const property in Devices.Devices) {
             self.azureIot.onMessage(Device.Devices[property], function (message) {
 
@@ -74,6 +75,7 @@ class RtcControl {
             });
         }
 
+        // Adds browser variables to Client object and starts device streams if it is the only browser connected 
         self.browserWS.onOpen(function (browserId) {
 
             if (count == 0) {
@@ -89,6 +91,7 @@ class RtcControl {
 
         });
 
+        // Destroying apropriate peer and deletes browser info when a browser disconnects, 
         self.browserWS.onClosed(function (browserId) {
 
             Client.Count -= 1;
@@ -100,7 +103,7 @@ class RtcControl {
                 delete Client.sdpIn[browserId];
             }
 
-
+            // Checks if there is no browser connected and stops device streams if there is none
             if (Client.Count == 0) {
                 for (const property in Device.Devices) {
                     self.azureIot.sendMessage(Device.Devices[property], { command: "Close", commandData: null });
@@ -110,10 +113,12 @@ class RtcControl {
 
         });
 
+        // Browser message listener with apropriate responses
         self.browserWS.onTopic("rtc", function (message) {
 
             let browserId = message.browserId;
 
+            // When asked the server will provide server SDP to the client(and stream device)
             if (message.body.data.type == "SDPrequest") {
                 for (const property in Device.Devices) {
                     self.VideoStream.createClientPeer(Device.Streams[property], function (DataObj) {
@@ -125,6 +130,7 @@ class RtcControl {
 
                     });
                 }
+            // Submits client SDP. When this is done the video stream will show in browser 
             } else if (message.body.data.type == "SDP") {
 
                 let StreamDevice = message.body.data.Device;
