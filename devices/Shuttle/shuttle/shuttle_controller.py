@@ -69,16 +69,24 @@ def periodic_task(delay: float):
 
 
 @periodic_task(config.PILOT_CMD_DELAY)
-async def thrust_sender(shuttle: ShuttleConnector, desired_thrust: dict):
+async def thrust_sender(shuttle: ShuttleConnector, desired_thrust: dict, rc_mode: bool):
     '''
     Sends desired thrust to ardusub at given interval. 
     '''
-    await shuttle.send_thrust_command(
-        desired_thrust['x'], 
-        desired_thrust['y'], 
-        desired_thrust['z'], 
-        desired_thrust['r'], 
-    )
+    if rc_mode:
+        await shuttle.send_rc(
+            desired_thrust['x'], 
+            desired_thrust['y'], 
+            desired_thrust['z'], 
+            desired_thrust['r'], 
+        )
+    else:
+        await shuttle.send_thrust_command(
+            desired_thrust['x'], 
+            desired_thrust['y'], 
+            desired_thrust['z'], 
+            desired_thrust['r'], 
+        )
     logging.debug('Desired thrust sent as: %f %f %f %f' % (
         desired_thrust['x'], 
         desired_thrust['y'], 
@@ -94,6 +102,10 @@ async def heartbeat(shuttle: ShuttleConnector):
     '''
     await shuttle.send_heartbeat()
     logging.debug('Heartbeat sent')
+
+@periodic_task(config.TELEMETRY_INVERVAL)
+async def telemetry_receiver(shuttle: ShuttleConnector):
+    await shuttle.recv_telemetry()
 
 
 @periodic_task(config.THRUST_RESET_DELAY)
@@ -158,10 +170,12 @@ def control_over_websocket(use_fake_shuttel=False):
     async def main():
         # add functions that should be run concurrently
         await asyncio.gather(
-            io_handler(websocket_connector, desired_thrust),    # for sending telemetry and rcv messages
-            thrust_resetter(desired_thrust),                    # reset thrust commands after a delay
-            thrust_sender(shuttle_connector, desired_thrust),   # send desired thrust to shuttle preiodically
-            heartbeat(shuttle_connector)                        # send heartbeat to shuttle periodicaly 
+            io_handler(websocket_connector, desired_thrust),                  # for sending telemetry and rcv messages
+            # FIXME: Make a working thrust_resetter
+            # thrust_resetter(desired_thrust),                                # reset thrust commands after a delay
+            thrust_sender(shuttle_connector, desired_thrust, config.RC_MODE)  # send desired thrust to shuttle periodically
+            heartbeat(shuttle_connector),                                     # send heartbeat to shuttle periodicaly 
+            telemetry_receiver(shuttle_connector)                             # receive telemetry from shuttle periodically
         )
 
     asyncio.run(main())
