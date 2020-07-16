@@ -68,6 +68,24 @@ class ShuttleConnector:
 
         logging.info('setup done')
 
+    async def send_rc(self, x=0, y=0, z=500, r=0) -> None:
+
+        if not is_legal(x) and is_legal(y) and is_legal(z) and is_legal(r):
+            raise ValueError('Arguments are outside of boundary [-1,1]')
+
+        # There are 8 RC channels
+        data = [1500] * 8
+
+        # We use 4 of them
+        data[5] += int(x * 200)
+        data[4] += int(y * 200)
+        data[2] += int(z * 200)
+        data[3] += int(r * 200)
+
+        self.mavcon.mav.rc_channels_override_send(self.mavcon.target_system, self.mavcon.target_component, *data)
+        logging.debug('RC sent')
+        
+
     async def send_thrust_command(self, x=0, y=0, z=500, r=0) -> None:
         '''
         Function that sends thrust commands to target device. 
@@ -111,6 +129,13 @@ class ShuttleConnector:
             0
         )
         logging.debug('Heartbeat sent')
+
+    async def recv_telemetry(self):
+        """Listens for selected types of telemetry from shuttle"""
+
+        # GLOBAL_POSITION_INT contains data on shuttle speed and shuttle altitude
+        telemetry = self.mavcon.recv_match(type='GLOBAL_POSITION_INT', blocking=True)
+        logging.info(f'Position telemetry received: {telemetry}')
 
 
     def telemetry(self):
