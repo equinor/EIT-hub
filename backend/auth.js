@@ -27,7 +27,8 @@ class Auth {
     getDeviceToken(deviceName) {
         let key = this._deviceAuth.generateKey(deviceName);
         let url = new URL(`/device/${deviceName}`, this._baseUrl);
-        if(this._baseUrl.protocol === "http") {
+
+        if (this._baseUrl.protocol === "http:") {
             url.protocol = "ws"
         } else {
             url.protocol = "wss"
@@ -35,7 +36,7 @@ class Auth {
         return {
             url: url,
             token: key,
-            authorization: `Bearer ${key}` 
+            authorization: `Bearer ${key}`
         }
     }
 
@@ -45,19 +46,19 @@ class Auth {
     getDeviceMiddleware() {
         // TODO Write a middleware that do not just accept all.
 
-        return function(_req, _res, next) {
+        return function (_req, _res, next) {
             console.log("Device Auth not implemented. Accepting request.");
             next();
         }
     }
-    
+
     /** Express middleware to be used for browser endpoints.
      * @returns Express Middleware
      */
     getBrowserMiddleware() {
         // TODO Current version accept everything.
 
-        return function(_req, _res, next) {
+        return function (_req, _res, next) {
             console.log("Browser auth not implemented. Accepting request.");
             next();
         }
