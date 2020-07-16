@@ -69,7 +69,7 @@ def periodic_task(delay: float):
 
 
 @periodic_task(config.PILOT_CMD_DELAY)
-async def thrust_sender(shuttle: ShuttleConnector, desired_thrust: dict, rc_mode: bool):
+async def thrust_sender(shuttle: ShuttleConnector, desired_thrust: dict, rc_mode: bool = False):
     '''
     Sends desired thrust to ardusub at given interval. 
     '''
