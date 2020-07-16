@@ -31,15 +31,15 @@ class DeviceAuth {
         const newKeys = [];
         let isAllowed = false;
         const notBefore = this._time.now();
-        notBefore.setSeconds(notBefore.getSeconds - 60);
+        notBefore.setSeconds(notBefore.getSeconds() - 60);
 
         for (const keyObj of this._keys) {
             if(keyObj.created >= notBefore ) {
                 newKeys.push[key];
-            }
-            if(keyObj.name === deviceName) {
-                if(keyObj.key === key) {
-                    isAllowed = true;
+                if(keyObj.name === deviceName) {
+                    if(keyObj.key === key) {
+                        isAllowed = true;
+                    }
                 }
             }
         }
