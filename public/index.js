@@ -34,7 +34,7 @@ function main() {
     const rtcConnector = new RtcConnector(websocket,videoView);
 
     // Start client
-    input.start(10);
+    input.start(100);
     rtcConnector.start();
 }
 

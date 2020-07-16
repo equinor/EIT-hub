@@ -5,8 +5,8 @@ export default class Input{
         this._keyboard = keyboard;
         this._view = view;
         
-        this.gainPressed = 0.005;
-        this.gainRelease = 0.01;
+        this.gainPressed = 0.15;
+        this.gainRelease = 0.1;
         this.x = 0;
         this.y = 0;
         this.z = 0;
