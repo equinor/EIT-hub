@@ -9,11 +9,13 @@ def is_legal(value: float):
 
 class ShuttleConnector:
 
-    def __init__(self, connenction_string: str):
+    def __init__(self, connenction_string: str, use_rc=True):
         '''
         Establishes and vertifies a connection to a ArduPilot device through the given 
         connection string. 
         '''
+
+        self.use_rc = use_rc
 
         # Create the connection
         # Documentation on connection strings
@@ -68,25 +70,8 @@ class ShuttleConnector:
 
         logging.info('setup done')
 
-    async def send_rc(self, x=0, y=0, z=500, r=0) -> None:
 
-        if not is_legal(x) and is_legal(y) and is_legal(z) and is_legal(r):
-            raise ValueError('Arguments are outside of boundary [-1,1]')
-
-        # There are 8 RC channels
-        data = [1500] * 8
-
-        # We use 4 of them
-        data[5] += int(x * 200)
-        data[4] += int(y * 200)
-        data[2] += int(z * 200)
-        data[3] += int(r * 200)
-
-        self.mavcon.mav.rc_channels_override_send(self.mavcon.target_system, self.mavcon.target_component, *data)
-        logging.debug('RC sent')
-        
-
-    async def send_thrust_command(self, x=0, y=0, z=500, r=0) -> None:
+    async def send_thrust_command(self, x=0, y=0, z=0, r=0) -> None:
         '''
         Function that sends thrust commands to target device. 
         Values should be in the range [-1, 1], where
@@ -97,25 +82,45 @@ class ShuttleConnector:
         if not is_legal(x) and is_legal(y) and is_legal(z) and is_legal(r):
             raise ValueError('Arguments are outside of boundary [-1,1]')
 
-        # mapps z to [0, 1], to comply with a weird legacy quirk in the API
-        z = (z + 1) / 2
+        if self.use_rc: 
 
-        # map from [-1,1] to [-1000, 1000]
-        x = int(x * 1000)
-        y = int(y * 1000)
-        z = int(z * 1000)
-        r = int(r * 1000)
+            # There are 8 RC channels
+            data = [1500] * 8
 
-        # Send command
-        self.mavcon.mav.manual_control_send(
-            self.mavcon.target_system,
-            x,
-            y,
-            z,
-            r,
-            1   # controller button pressed or not
-        )
-        logging.debug('Thrust cmd sent')
+            # We use 4 of them
+            data[5] += int(x * 200)
+            data[4] += int(y * 200)
+            data[2] += int(z * 200)
+            data[3] += int(r * 200)
+
+            self.mavcon.mav.rc_channels_override_send(
+                self.mavcon.target_system, 
+                self.mavcon.target_component, 
+                *data
+            )
+            logging.debug('RC sent')
+
+
+        else:
+
+            # mapps z to [0, 1], to comply with a weird legacy quirk in the API
+            z = (z + 1) / 2
+
+            # map from [-1,1] to [-1000, 1000]
+            x = int(x * 1000)
+            y = int(y * 1000)
+            z = int(z * 1000)
+            r = int(r * 1000)
+
+            self.mavcon.mav.manual_control_send(
+                self.mavcon.target_system,
+                x,
+                y,
+                z,
+                r,
+                1   # controller button pressed or not
+            )
+            logging.debug('Thrust cmd sent')
 
 
     async def send_heartbeat(self):
