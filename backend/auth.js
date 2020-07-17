@@ -11,6 +11,7 @@ class Auth {
      */
     constructor(config) {
         this._baseUrl = config.baseUrl;
+        this._disableDeviceAuth = config.disableDeviceAuth;
         this._deviceAuth = new DeviceAuth(new Time())
     }
 
@@ -41,6 +42,11 @@ class Auth {
     }
 
     validateDeviceRequest(deviceName, request) {
+        if(this._disableDeviceAuth === true) {
+            // Auth is disabled.
+            return true;
+        }
+
         var authorization = request.headers.authorization;
         if(authorization) {
             const auth = authorization.split(" ");
