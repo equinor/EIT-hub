@@ -40,16 +40,17 @@ class Auth {
         }
     }
 
-    /** Express middleware to be used for device endpoints.
-     * @returns Express Middleware
-     */
-    getDeviceMiddleware() {
-        // TODO Write a middleware that do not just accept all.
-
-        return function (_req, _res, next) {
-            console.log("Device Auth not implemented. Accepting request.");
-            next();
+    validateDeviceRequest(deviceName, request) {
+        var authorization = request.headers.authorization;
+        if(authorization) {
+            const auth = authorization.split(" ");
+            if(auth[0] !== "Bearer"){
+                return false
+            }
+            return this._deviceAuth.checkKey(auth[1], deviceName);
         }
+
+        return false;
     }
 
     /** Express middleware to be used for browser endpoints.

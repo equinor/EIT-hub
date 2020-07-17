@@ -32,11 +32,30 @@ test("Happy path device authentication", (done) => {
     });
 
     websocket.on("open", () => {
-        websocket.terminate();
+        websocket.close();
         done();
     });
 
     websocket.on('error', (err) => {
         done(err);
+    });
+});
+
+test("Wrong key", (done) => {
+    let token = auth.getDeviceToken("test");
+
+    let websocket = new WebSocket(token.url, {
+        headers: {
+            "Authorization": "Bearer pleaseLetMeIn"
+        }
+    });
+
+    websocket.on("open", () => {
+        websocket.close();
+        done("Connection accepted with wrong key");
+    });
+
+    websocket.on('error', (err) => {
+        done();
     });
 });

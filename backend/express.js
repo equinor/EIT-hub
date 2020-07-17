@@ -31,7 +31,12 @@ class Express {
         if (path[1] === 'browser') { 
             this.browserWs.handleUpgrade({}, request, socket, head);
         } else if (path[1] === 'device') {
-            this.deviceWs.handleUpgrade(path[2], request, socket, head);
+            if(this.auth.validateDeviceRequest(path[2], request)) {
+                this.deviceWs.handleUpgrade(path[2], request, socket, head);
+            }else{
+                socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+                socket.destroy();
+            }
         } else {
             socket.destroy();
         }
