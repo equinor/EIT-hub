@@ -1,8 +1,7 @@
-export default class ClientRequests{
+export default class ClientRequestView{
     constructor(websocket,element) {
         this._rootElem = element;
         this._websocket = websocket;
-        this._control = false;
         let self = this;
 
         this._rootElem.querySelector("#requestControlButton").onclick = function() {
