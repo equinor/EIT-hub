@@ -166,7 +166,7 @@ class BrowserWs {
 
                 console.log("closed");
                 self.wsMap.delete(browserId);
-                if (self._onOpenCallbacks.length > 0) {
+                if (self._onCloseCallbacks.length > 0) {
                     for (let callback of this._onCloseCallbacks) {
                         callback(browserId,user)
                     }
