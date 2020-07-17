@@ -48,6 +48,7 @@ function main() {
     const express = new Express(config.port, auth, browserWs, deviceWs)
 
     // Start EitHub
+    azureIot.start();
     shuttleControl.start();
     shuttleTelemetry.start();
     rtcControl.start();

@@ -7,10 +7,13 @@
 
 const Client = require('azure-iothub').Client;
 const Message = require('azure-iot-common').Message;
+const { EventHubConsumerClient } = require("@azure/event-hubs");
 
 class AzureIot {
     constructor(config) {
-        this.client = Client.fromConnectionString(config.iotHubConnectionString);
+        this._onMessageCallbacks = new Map();
+        this.iotHubClient = Client.fromConnectionString(config.iotHubConnectionString);
+        this.eventHubConsumer = new EventHubConsumerClient("$Default", config.eventHubConnectionString);
     }
 
     /** Try to send a message to a device. If the device do not exist then it will be dropped.
@@ -38,8 +41,39 @@ class AzureIot {
      * @param {Function} callback called with a js object with the message from device as argument.
      */
     onMessage(deviceName, callback) {
-        //TODO
+        if (this._onMessageCallbacks.has(deviceName)){
+            this._onMessageCallbacks.get(deviceName).push(callback);
+        } else {
+            let emptyArr = [callback];
+            this._onMessageCallbacks.set(deviceName,emptyArr);
+        }
     }
+
+    async start() {
+        let self = this;
+
+        let _processMessage = function(messages) {
+            for (const message of messages) {
+                let deviceName = message.systemProperties['iothub-connection-device-id'];
+
+                if (self._onMessageCallbacks.has(deviceName) && self._onMessageCallbacks.get(deviceName).length > 0) {
+                    for (let callback of self._onMessageCallbacks.get(deviceName)) {
+                        callback(message);
+                    }
+                }
+            }
+        };
+
+        let _processError = function(err) {
+            console.log(err);
+        };
+      
+        // Subscribe to messages from all partitions as below
+        self.eventHubConsumer.subscribe({
+          processEvents: _processMessage,
+          processError: _processError
+        });
+      }
 }
 
 module.exports = AzureIot;
