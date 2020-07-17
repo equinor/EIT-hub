@@ -6,6 +6,7 @@ import Input from './input.js';
 import TelemetryView from './telemetryView.js';
 import VideoView from './videoView.js';
 import RtcConnector from './rtcConnector.js';
+import ClientRequests from './clientRequests.js';
 
 function main() {
     // Setup websocket.
@@ -32,6 +33,10 @@ function main() {
 
     // Setup RtcConnector
     const rtcConnector = new RtcConnector(websocket,videoView);
+
+    // Setup ClientRequests
+    const clientRequests = new ClientRequests(websocket,document.getElementById('clientRequests'))
+    websocket.onControl(clientRequests.updateControl.bind(clientRequests));
 
     // Start client
     input.start(10);
