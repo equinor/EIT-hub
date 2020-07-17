@@ -61,7 +61,7 @@ class AzureIot {
         }
     }
 
-    async start() {
+    start() {
         let self = this;
 
         if (self.config.eventHubConnectionString !== "") {
