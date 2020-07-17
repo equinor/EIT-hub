@@ -10,53 +10,6 @@ from shuttle.shuttle_connector import ShuttleConnector, FakeShuttleConnector
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 
-class DesiredThrust(dict):
-    '''
-    Specialized dict that handles async updates with tailored default values and has timestamps on updates
-    '''
-
-    def __init__(self):
-        super().__init__({
-            'x': 0.0,
-            'y': 0.0,
-            'z': 0.0,
-            'r': 0.0,
-        })
-        self.timestamp: float = 0
-
-    async def update_desired_thrust(self, x: float = 0, y: float = 0, z: float = 0, r: float = 0) -> None:
-        self['x'] = x
-        self['y'] = y
-        self['z'] = z
-        self['r'] = r
-        self.timestamp = time()
-        logging.info('Desired thrust updated to: %f %f %f %f at %d' % (x, y, z, r, self.timestamp))
-
-    async def update_desired_thrust_from_json(self, message: str) -> None:
-        try:
-            content: dict = json.loads(message)
-        except ValueError:
-            logging.exception('Incomming message has invalid json format')
-
-        cmd_list = content.values()
-        logging.debug('Recieved thrust message: ' + str(cmd_list))
-
-        await self.update_desired_thrust(*cmd_list)
-
-    def thrust_should_be_reset(self):
-        return abs(self.timestamp - time()) > config.THRUST_TIME_LIMIT
-
-    def to_json(self) -> str:
-        return json.dumps({
-            'desired_thrust': {
-                'x': self['x'],
-                'y': self['y'],
-                'z': self['z'],
-                'r': self['r']
-            }
-        })
-
-
 def periodic_task(delay: float):
     ''' Decorator that makes a function run every <delay> seconds '''
     def periodic_task_decorator(func):
@@ -68,33 +21,6 @@ def periodic_task(delay: float):
     return periodic_task_decorator
 
 
-@periodic_task(config.PILOT_CMD_DELAY)
-async def thrust_sender(shuttle: ShuttleConnector, desired_thrust: dict, rc_mode: bool = False):
-    '''
-    Sends desired thrust to ardusub at given interval. 
-    '''
-    if rc_mode:
-        await shuttle.send_rc(
-            desired_thrust['x'], 
-            desired_thrust['y'], 
-            desired_thrust['z'], 
-            desired_thrust['r'], 
-        )
-    else:
-        await shuttle.send_thrust_command(
-            desired_thrust['x'], 
-            desired_thrust['y'], 
-            desired_thrust['z'], 
-            desired_thrust['r'], 
-        )
-    logging.debug('Desired thrust sent as: %f %f %f %f' % (
-        desired_thrust['x'], 
-        desired_thrust['y'], 
-        desired_thrust['z'], 
-        desired_thrust['r']
-    ))
-
-
 @periodic_task(config.HEARTBEAT_DELAY)
 async def heartbeat(shuttle: ShuttleConnector):
     ''' 
@@ -103,57 +29,23 @@ async def heartbeat(shuttle: ShuttleConnector):
     await shuttle.send_heartbeat()
     logging.debug('Heartbeat sent')
 
-@periodic_task(config.TELEMETRY_INVERVAL)
-async def telemetry_receiver(shuttle: ShuttleConnector):
-    await shuttle.recv_telemetry()
 
-
-@periodic_task(config.THRUST_RESET_DELAY)
-async def thrust_resetter(desired_thrust: DesiredThrust):
-    ''' 
-    Sets desired thrust to neutral if no new commands are recieved within timelimit.
-    '''
-    if desired_thrust.thrust_should_be_reset:
-        await desired_thrust.update_desired_thrust()  # default params are neutral
-        logging.debug('Desired thrust has been reset')
-
-
-async def io_handler(websocket_connector: WebsocketConnector, desired_thrust: DesiredThrust):
+async def io_handler(websocket_connector: WebsocketConnector, consumer, producer):
     '''
     Deals with handlers for messages that are reviced and those that are sent. 
     In this case: telemetry and thrust commands
     '''
-
-    # add consumer and producer functions to websocket_connector
-    async def get_telemetry() -> str:
-        await asyncio.sleep(config.TELEMETRY_INVERVAL)
-        return desired_thrust.to_json()
-
-    update_thrust = desired_thrust.update_desired_thrust_from_json
-    websocket_connector.add_handlers(consumer=update_thrust, producer=get_telemetry)
-
-    # let websocket listen for messages and send telemetry over the same socket
+    websocket_connector.add_handlers(consumer, producer)
     await websocket_connector.run()
 
 
-def quick_test():
-    ''' simple test that sends a constant thrust command to the shuttle '''
+async def consumer(message):
+    pass
 
-    shuttle_connector = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
-    desired_thrust: dict = {
-        'x': 0,
-        'y': 0,
-        'z': 0,
-        'r': 0.1,
-    }
 
-    async def main():
-        await asyncio.gather(
-            thrust_sender(shuttle_connector, desired_thrust),
-            heartbeat(shuttle_connector)
-        )
-
-    asyncio.run(main())
+async def producer(shuttle_connector: ShuttleConnector):
+    await asyncio.sleep(config.TELEMETRY_INVERVAL)
+    return shuttle_connector.get_telemetry()
 
 
 def control_over_websocket(use_fake_shuttel=False):
@@ -165,17 +57,12 @@ def control_over_websocket(use_fake_shuttel=False):
     else:
         shuttle_connector = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
     websocket_connector = WebsocketConnector(config.WEBSOCKET_URI)
-    desired_thrust = DesiredThrust()
 
     async def main():
         # add functions that should be run concurrently
         await asyncio.gather(
-            io_handler(websocket_connector, desired_thrust),                  # for sending telemetry and rcv messages
-            # FIXME: Make a working thrust_resetter
-            # thrust_resetter(desired_thrust),                                # reset thrust commands after a delay
-            thrust_sender(shuttle_connector, desired_thrust, config.RC_MODE)  # send desired thrust to shuttle periodically
-            heartbeat(shuttle_connector),                                     # send heartbeat to shuttle periodicaly 
-            telemetry_receiver(shuttle_connector)                             # receive telemetry from shuttle periodically
+            io_handler(consumer, producer),     # for sending telemetry and rcv messages
+            heartbeat(shuttle_connector),       # send heartbeat to shuttle periodicaly 
         )
 
     asyncio.run(main())
