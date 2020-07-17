@@ -39,11 +39,17 @@ async def io_handler(websocket_connector: WebsocketConnector, consumer, producer
     await websocket_connector.run()
 
 
-async def consumer(message):
+async def websocket_consumer(message):
+    '''
+    Reads message and executes according action
+    '''
     pass
 
 
-async def producer(shuttle_connector: ShuttleConnector):
+async def websocket_producer(shuttle_connector: ShuttleConnector):
+    '''
+    Sends messages periodically over websocket
+    '''
     await asyncio.sleep(config.TELEMETRY_INVERVAL)
     return shuttle_connector.get_telemetry()
 
@@ -61,8 +67,8 @@ def control_over_websocket(use_fake_shuttel=False):
     async def main():
         # add functions that should be run concurrently
         await asyncio.gather(
-            io_handler(consumer, producer),     # for sending telemetry and rcv messages
-            heartbeat(shuttle_connector),       # send heartbeat to shuttle periodicaly 
+            io_handler(websocket_consumer, websocket_producer),     # for sending telemetry and rcv messages
+            heartbeat(shuttle_connector),                           # send heartbeat to shuttle periodicaly 
         )
 
     asyncio.run(main())
