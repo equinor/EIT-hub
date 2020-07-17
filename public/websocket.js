@@ -54,7 +54,7 @@ export default class WebSocket{
         var msg = JSON.parse(event.data);
 
         if(msg.type === "inputControl") {
-            for (callback of this._controlCallbacks) {
+            for (let callback of this._controlCallbacks) {
                 callback(msg)
             }
         }else if(msg.type === "telemetry") {
