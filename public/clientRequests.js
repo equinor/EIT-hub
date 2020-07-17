@@ -13,7 +13,7 @@ export default class ClientRequests{
 
     updateControl(msg) {
 
-        if (msg.answer) {
+        if (msg.body) {
             this._rootElem.querySelector("#requestAnswer").innerText = "You have control";
         } else {
             this._rootElem.querySelector("#requestAnswer").innerText = "You are not in control"
