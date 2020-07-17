@@ -7,6 +7,7 @@ class Config {
         this._disableDeviceAuth = true;
         this._iotHubConnectionString = "";
         this._iotHubStreamDevices = "";
+        this._eventHubConnectionString = "";
     }
 
     applyEnv(processEnv) {
@@ -24,6 +25,8 @@ class Config {
         }
         if(processEnv.EITHUB_IOTHUB_STREAM_DEVICES){
             this._iotHubStreamDevices = processEnv.EITHUB_IOTHUB_STREAM_DEVICES;
+        if(process.env.EITHUB_EVENTHUB_CONNECTION_STRING){
+            this._eventHubConnectionString = processEnv.EITHUB_EVENTHUB_CONNECTION_STRING;
         }
     }
 
@@ -56,6 +59,10 @@ class Config {
     }
     get iotHubStreamDevices() {
         return this._iotHubStreamDevices;
+    } 
+
+    get eventHubConnectionString() {
+        return this._eventHubConnectionString;
     }
 }
 
