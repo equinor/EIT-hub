@@ -10,13 +10,18 @@ class Express {
         this.browserWs = browserWs;
         this.deviceWs = deviceWs;
         this.app = express();
+        this.server = undefined;
 
         this.app.use(express.static('public'));
     }
 
     start() {
-       let nodeServer = this.app.listen(this.port, () => console.log(`EIT Hub is listening at http://localhost:${this.port}`));
-       nodeServer.on('upgrade', this._upgrade.bind(this));
+        this.server = this.app.listen(this.port, () => console.log(`EIT Hub is listening at http://localhost:${this.port}`));
+        this.server.on('upgrade', this._upgrade.bind(this));
+    }
+
+    stop() {
+        this.server.close();
     }
 
     _upgrade(request, socket, head){
