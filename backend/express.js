@@ -10,13 +10,18 @@ class Express {
         this.browserWs = browserWs;
         this.deviceWs = deviceWs;
         this.app = express();
+        this.server = undefined;
 
         this.app.use(express.static('public'));
     }
 
     start() {
-       let nodeServer = this.app.listen(this.port, () => console.log(`EIT Hub is listening at http://localhost:${this.port}`));
-       nodeServer.on('upgrade', this._upgrade.bind(this));
+        this.server = this.app.listen(this.port, () => console.log(`EIT Hub is listening at http://localhost:${this.port}`));
+        this.server.on('upgrade', this._upgrade.bind(this));
+    }
+
+    stop() {
+        this.server.close();
     }
 
     _upgrade(request, socket, head){
@@ -26,7 +31,12 @@ class Express {
         if (path[1] === 'browser') { 
             this.browserWs.handleUpgrade({}, request, socket, head);
         } else if (path[1] === 'device') {
-            this.deviceWs.handleUpgrade(path[2], request, socket, head);
+            if(this.auth.validateDeviceRequest(path[2], request)) {
+                this.deviceWs.handleUpgrade(path[2], request, socket, head);
+            }else{
+                socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+                socket.destroy();
+            }
         } else {
             socket.destroy();
         }
