@@ -1,7 +1,7 @@
 EIT-Hub Minium Viable Product
 ============================
 
-The goal of EIT-Hub is to create a platform for hosting and development of IoT application. (And all the off label use we will use it for.) By removing some of the annoying not fun stuff. This first MVP have goal of removing 3 hazels: 
+The goal of EIT-Hub help development of IoT prototypes. By removing some of the annoying not fun stuff. This first MVP have goal of removing 3 hazels: 
 
 1. Gui.
 2. Security. 
@@ -12,21 +12,27 @@ Top level concepts
 
 EIT-Hub have 2 top level concepts applications and modules.
 
-### EIT-Module 
+### EIT-Hub Module 
 Modules are core part of EIT-Hub. They may not be the there own separate blocks of code. For this MVP will have 3 modules that correspond to the 3 hazels:
-* Gui is browser based dashboard solution that lay out widgets and alow them to communicate using an event bus. Also give a nice simple no hazel to communicate with backend.
 
-* Securely. Is not its own part per se but it makes sure that everything is encrypted and at least authenticated. And as long as you stay inside the platform you can know that everything is secure enoughs for Prof of concepts at least.
+* **Gui** is a browser based dashboard solution. Using predefined widgets that communicate over an event bus. With easy communications with backend.
 
-* Communications. A system for both how messages are moved and how they are defined with the hope of some reuse. The tech we use will be chosen for ease of use and firewall bustling potential not speed and performance. Will model event buses with topics you can listen for.
+* **Security**s goal is to be as secure as possible with little to no hazel. You should not be temped to apply an allow everything hack.
+
+* **Communication** is based on both well defined and custom messages. There the module will handle the most locked down and impolite networks. No more weeks of hacking to bypass a corporate firewall for a small demo.
 
 ### EIT-Hub application
-The top level unit in EIT-Hub is the app that can contain:
-* Dashboards. Almost full pages canvases that can hold widgets from inside the application or form other applications.
-* Widgets. Components that can be as simple as button to as complex as the whole of vscode.
-* Services. Backend code running in the cloud that can talk to browsers and devices.
-* Devices. You know software running on a PI somewhere. That can communicate wit services.
+EIT-Hub is an application platform. So the top level unit is an application. That can contain zero or more of:
 
-### EIT-Hub users
+* **Dashboards** a grid you can lay out widgets. Your own or from other apps. Every dashboard will also have an event bus for inter widget communication on the same page.
+
+* **Widget** custom tags that can be composed similar to AFrame. Will have some isolation to enable use of crazy tech and solutions.
+
+* **Services** server code that can comminate with both browser widgets and devices. And can also do everything a normal server can.
+
+* **Devices**. Use a simple SDK to bring your PI online. Can communicate over both an always on and a realtime link.
+
+User of EIT-Hub
+---------------
 
 For this MVP the users will be the EIT team and few invited guests. The admin ui will be developer friendly as in no way user friendly. For this first version separation between applications is more of a nice to have and its assumed that everyone play nice. Or we will delete the code.
