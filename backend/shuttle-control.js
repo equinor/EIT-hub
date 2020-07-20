@@ -45,7 +45,7 @@ class ShuttleControl {
             // Update client view
             self.browserWs.sendMessage(self.currentBrowser, inputControlFeedback)
 
-            console.log("This browser is now in control of the shuttle"); 
+            console.log(`Browser ${self.currentBrowser} is now in control of the shuttle`); 
         });
     }
 }
