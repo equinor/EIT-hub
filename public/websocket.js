@@ -24,6 +24,14 @@ export default class WebSocket{
         this._ws.send(JSON.stringify(msg));
     }
 
+    /** Let server know that we want to give up control.
+     * 
+     */
+    giveUpControl() {
+        const msg = {type:"giveUpControl"}
+        this._ws.send(JSON.stringify(msg));
+    }
+
     sendRtc(msg){
         //TODO define message and maybe more methods.
         //TODO implement method.

@@ -8,6 +8,10 @@ export default class ClientRequestView{
             self._websocket.sendControlRequest();
         }
 
+        this._rootElem.querySelector("#cancelControlButton").onclick = function() {
+            self._websocket.giveUpControl();
+        }
+
     }
 
     updateControl(msg) {
