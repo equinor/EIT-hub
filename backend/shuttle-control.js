@@ -12,9 +12,8 @@ class ShuttleControl {
         self.browserWs.onTopic('input', function (message) {
             
             let browserId = message.browserId;
-            if (browserId == self.currentBrowser) {
-                self.currentBrowser = browserId;
-                
+            if (browserId === self.currentBrowser) {
+            
                 let input = message.body;
 
                 let newObj = { x: input.x, y: input.y, z: input.z, r: input.r };
