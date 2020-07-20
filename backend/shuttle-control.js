@@ -12,7 +12,7 @@ class ShuttleControl {
         self.browserWs.onTopic('input', function (message) {
             
             let browserId = message.browserId;
-            if (browserId >= self.currentBrowser) {
+            if (browserId == self.currentBrowser) {
                 self.currentBrowser = browserId;
                 
                 let input = message.body;
@@ -30,16 +30,11 @@ class ShuttleControl {
         });
 
         self.browserWs.onTopic('inputControl', function (message) {
+            
             let browserId = message.browserId;
-            if (browserId >= self.currentBrowser) {
-                self.currentBrowser = browserId;
-                let input = message.body;
-                console.log("This browser is now in control of the shuttle");
-                return true;
-            } else {
-                console.log("This browser is no longer in control of the shuttle")
-                return false;
-            }
+            self.currentBrowser = browserId;
+
+            console.log("This browser is now in control of the shuttle"); 
         });
     }
 }
