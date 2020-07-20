@@ -1,15 +1,99 @@
-
 body {
-  background-color: #eeeeee;
+  background-color: #ffffff;
+  font-family: sans-serif;
+
+}
+
+
+#logo-equinor {
+  display: block;
+  top: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: 150px;
+  height: auto;
+  opacity: 0.8;
+  
+}
+
+#body-title {
+  margin-top: 10px;
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  font-size: 40px;
+  margin-bottom: 50px;
+  border-bottom: 5px solid gray;
+  padding-bottom: 5px;
+  
+}
+
+#left-side {
+  display: inline-block;
+}
+#video {
+  display: inline-block;
+  margin-left: 150px;
+}
+#video-view {
+  border: 5px solid gray;
+}
+
+#input-view {
+  display: inline-block;
+  margin-right: 40px;
+  padding-right: 40px;
+  border-right: 2px solid rgb(138, 138, 138);
+  border-width: 4px;
+}
+
+#clientRequests {
+
+  text-align: center;
+  display: inline-block;
+  padding-bottom: 30px;
+}
+#reqButtonText {
+  font-size: 15px;
 }
 
 #requestAnswer {
   font-size: 10px;
 }
 
+.button {
+  display: inline-block;
+  padding: 10px 15px;
+  font-size: 15px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: rgb(0, 0, 0);
+  background-color:  rgb(207, 207, 207);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+.button:hover {background-color:  rgb(100, 100, 100);} 
+.button:active {
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+  background-color:  rgb(33, 46, 230);
+}
+
+.control-info {
+  font-size: 12px;
+}
+
+
+#telemetry {
+  margin-top: 50px;
+}
+
 #telemetry-view {
   width: 400px;
   padding: 20px;
   border: 5px solid gray;
-  margin: 0;
+  margin: 5px;
 }

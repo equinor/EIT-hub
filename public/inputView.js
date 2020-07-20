@@ -10,11 +10,17 @@ export default class InputView{
 
         this._rootElem.querySelector("#gamepad-button").onclick = function() {
             self._selection = 1;
+
+            self._rootElem.querySelector("#gamepad-info").style.display='block';
+            self._rootElem.querySelector("#keyboard-info").style.display='none';
         }
 
         
         this._rootElem.querySelector("#keyboard-button").onclick = function() {
             self._selection = 2;
+
+            self._rootElem.querySelector("#keyboard-info").style.display='block';
+            self._rootElem.querySelector("#gamepad-info").style.display='none';
         }
     }
 
@@ -28,6 +34,6 @@ export default class InputView{
 
     setData(msg) {
         this._rootElem.querySelector("#dataText")
-            .innerText = `x: ${msg.x}  y: ${msg.y}  z: ${msg.z}  r: ${msg.r}  `;
+            .innerText = ` Input values:\n x: ${msg.x.toFixed(5)}  y: ${msg.y.toFixed(5)}  z: ${msg.z.toFixed(5)}  r: ${msg.r.toFixed(5)}  `;
     }
 }
