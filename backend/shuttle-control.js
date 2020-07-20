@@ -30,9 +30,21 @@ class ShuttleControl {
         });
 
         self.browserWs.onTopic('inputControl', function (message) {
+
+            let inputControlFeedback = new Object();
+            inputControlFeedback.type = 'inputControl';
+            inputControlFeedback.body = false;
+            console.log(inputControlFeedback);
+            // Update client view
+            self.browserWs.sendMessage(self.currentBrowser, inputControlFeedback)
             
+            // Give new websocket control
             let browserId = message.browserId;
             self.currentBrowser = browserId;
+            inputControlFeedback.body = true;
+            console.log(inputControlFeedback);
+            // Update client view
+            self.browserWs.sendMessage(self.currentBrowser, inputControlFeedback)
 
             console.log("This browser is now in control of the shuttle"); 
         });
