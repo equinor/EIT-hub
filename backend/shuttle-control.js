@@ -3,7 +3,7 @@ class ShuttleControl {
         this.azureIot = azureIot;
         this.browserWs = browserWs;
         this.deviceWs = deviceWs;
-        this.currentBrowser = 0;
+        this.currentBrowser = null;
     }
 
     start() {
@@ -12,9 +12,8 @@ class ShuttleControl {
         self.browserWs.onTopic('input', function (message) {
             
             let browserId = message.browserId;
-            if (browserId >= self.currentBrowser) {
-                self.currentBrowser = browserId;
-                
+            if (browserId === self.currentBrowser) {
+            
                 let input = message.body;
 
                 let newObj = { x: input.x, y: input.y, z: input.z, r: input.r };
@@ -27,6 +26,26 @@ class ShuttleControl {
             } else {
                 return;
             }
+        });
+
+        self.browserWs.onTopic('inputControl', function (message) {
+
+            let inputControlFeedback = new Object();
+            inputControlFeedback.type = 'inputControl';
+            inputControlFeedback.body = false;
+            console.log(inputControlFeedback);
+            // Update client view
+            self.browserWs.sendMessage(self.currentBrowser, inputControlFeedback)
+            
+            // Give new websocket control
+            let browserId = message.browserId;
+            self.currentBrowser = browserId;
+            inputControlFeedback.body = true;
+            console.log(inputControlFeedback);
+            // Update client view
+            self.browserWs.sendMessage(self.currentBrowser, inputControlFeedback)
+
+            console.log(`Browser ${self.currentBrowser} is now in control of the shuttle`); 
         });
     }
 }
