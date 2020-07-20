@@ -3,7 +3,7 @@ class ShuttleControl {
         this.azureIot = azureIot;
         this.browserWs = browserWs;
         this.deviceWs = deviceWs;
-        this.currentBrowser = 0;
+        this.currentBrowser = null;
     }
 
     start() {
