@@ -1,4 +1,5 @@
 const WebSocket  = require('ws');
+const { json } = require('express');
 
 /** Class that deals with the low level websocket connections from browsers.
  *
@@ -132,7 +133,7 @@ class BrowserWs {
 
             // onOpen
             if (self._onOpenCallbacks.length > 0) {
-                for (let callback of this._onOpenCallbacks) {
+                for (let callback of self._onOpenCallbacks) {
                     callback(browserId,user)
                 }
             }

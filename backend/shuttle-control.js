@@ -35,41 +35,32 @@ class ShuttleControl {
             let inputControlFeedback = new Object();
             inputControlFeedback.type = 'inputControl';
 
-            // Client pressed request control:
-            if (wantsControl) {
-                // Nobody has control currently
-                if (self.currentBrowser === null) {
-                    self.currentBrowser = browserId;
-
-                    inputControlFeedback.body = 'You have control';
-                // Somebody is already in control
-                } else {
-                    if (browserId === self.currentBrowser) {
-                        inputControlFeedback.body = 'You are already in control!'
-                    } else {
-                        inputControlFeedback.body = `Browser ${self.currentBrowser} is already in control!`;
-                    }
-                }
-            // Client pressed give up control:
-            } else {
-                // Client was in control
-                if (browserId === self.currentBrowser) {
-                    self.currentBrowser = null;
-
-                    inputControlFeedback.body = 'You are no longer in control';
-                // Client was not in control
-                } else {
-                    inputControlFeedback.body = 'You are not in control'
-                }
+            if (wantsControl && self.currentBrowser === null) {
+                self.currentBrowser = browserId;
+                inputControlFeedback.body = browserId;
+                self.browserWs.broadcast(inputControlFeedback);
+            } else if (!wantsControl && browserId === self.currentBrowser) {
+                self.currentBrowser = null;
+                inputControlFeedback.body = null;
+                self.browserWs.broadcast(inputControlFeedback);
             }
-            // Give feedback to client
-            self.browserWs.sendMessage(browserId, inputControlFeedback);
         });
 
         self.browserWs.onClosed(function (browserId, user) {
             if (browserId === self.currentBrowser) {
+                let inputControlFeedback = new Object();
+                inputControlFeedback.type = 'inputControl';
+                inputControlFeedback.body = null;
+                self.browserWs.broadcast(inputControlFeedback);
                 self.currentBrowser = null;
             }
+        });
+
+        self.browserWs.onOpen(function (browserId, user) {
+            let inputControlFeedback = new Object();
+            inputControlFeedback.type = 'inputControl';
+            inputControlFeedback.body = self.currentBrowser;
+            self.browserWs.sendMessage(browserId, inputControlFeedback);
         });
     }
 }
