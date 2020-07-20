@@ -14,11 +14,7 @@ export default class ClientRequestView{
     }
 
     updateControl(msg) {
-
-        if (msg.body) {
-            this._rootElem.querySelector("#requestAnswer").innerText = "You have control";
-        } else {
-            this._rootElem.querySelector("#requestAnswer").innerText = "You are not in control"
-        }
+        let feedbackText = msg.body;
+        this._rootElem.querySelector("#requestAnswer").innerText = feedbackText;
     }
 }
