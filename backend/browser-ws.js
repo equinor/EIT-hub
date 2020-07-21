@@ -1,5 +1,4 @@
 const WebSocket  = require('ws');
-const { json } = require('express');
 
 /** Class that deals with the low level websocket connections from browsers.
  *
