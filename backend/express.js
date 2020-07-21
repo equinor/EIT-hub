@@ -1,6 +1,8 @@
 /* istanbul ignore file */
 
 const express = require('express');
+const cookieParser = require('cookie-parser');
+
 const url = require('url');
 
 class Express {
@@ -12,6 +14,8 @@ class Express {
         this.app = express();
         this.server = undefined;
 
+        this.app.use(cookieParser());
+        this.app.use(this.auth.getBrowserMiddleware());
         this.app.use(express.static('public'));
     }
 

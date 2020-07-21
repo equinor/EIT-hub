@@ -23,6 +23,7 @@
   "dependencies": {
     "@azure/event-hubs": "^5.2.2",
     "azure-iothub": "^1.12.4",
+    "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "uuid": "^8.2.0",
@@ -38,6 +39,9 @@
       "backend/**/*.js",
       "!**/*.test.js"
     ],
-    "coverageReporters": ["html", "text"]
+    "coverageReporters": [
+      "html",
+      "text"
+    ]
   }
 }

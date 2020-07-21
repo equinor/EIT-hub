@@ -1,5 +1,6 @@
 const DeviceAuth = require("./auth/device-auth");
 const Time = require("./utils/time");
+const UserAuth = require("./auth/user-auth");
 
 /** A class that handles authentication and access controls needs for EitHub
  *  Must be integrated with express to generate any security.
@@ -12,7 +13,8 @@ class Auth {
     constructor(config) {
         this._baseUrl = config.baseUrl;
         this._disableDeviceAuth = config.disableDeviceAuth;
-        this._deviceAuth = new DeviceAuth(new Time())
+        this._deviceAuth = new DeviceAuth(new Time());
+        this._userAuth = new UserAuth();
     }
 
     /** Generates a new token that devices to connect device endpoints.
@@ -63,10 +65,17 @@ class Auth {
      * @returns Express Middleware
      */
     getBrowserMiddleware() {
-        // TODO Current version accept everything.
+        const self = this;
 
-        return function (_req, _res, next) {
-            console.log("Browser auth not implemented. Accepting request.");
+        return function (req, res, next) {
+            let sessionId;
+            if (self._userAuth.hasSession(req.cookies["session"])){
+                sessionId = req.cookies["session"];
+            } else {
+                // first time we have seen this user.
+                sessionId = self._userAuth.getNewSessionId();
+                res.cookie("session",sessionId);
+            }
             next();
         }
     }
