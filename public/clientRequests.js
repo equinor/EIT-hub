@@ -14,11 +14,14 @@ export default class ClientRequestView{
     }
 
     updateControl(msg) {
-
-        if (msg.body) {
-            this._rootElem.querySelector("#requestAnswer").innerText = "You have control";
+        let browserId = msg.body;
+        let feedbackText = "";
+        if (browserId === null) {
+            feedbackText = 'No one is in control of the shuttle.'
         } else {
-            this._rootElem.querySelector("#requestAnswer").innerText = "You are not in control"
+            feedbackText = `Browser ${browserId} is in control of shuttle.`
         }
+        this._rootElem.querySelector("#requestAnswer").innerText = feedbackText;
+        
     }
 }
