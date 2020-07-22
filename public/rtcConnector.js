@@ -40,7 +40,6 @@ export default class RtcConnector {
             } else if(Type === "Devices") {
                 self._devices = message;
                 for (const property in self._devices){
-                    console.log(property);
                     self._peers[property] = new SimplePeer({
                         trickle: false
                     });
@@ -60,6 +59,9 @@ export default class RtcConnector {
             } else if (Type === "SDP") {
                 console.log(strDev);
                 self._peers[strDev].signal(JSON.parse(message));
+
+            } else if (Type === "message") {
+                self._videoView.setStatus("No stream devices given");
             }
 
         });
