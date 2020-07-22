@@ -35,7 +35,7 @@ class AzureIot {
             let message = new Message(JSON.stringify(jsonObject));
             message.messageId = 'c2d';
             console.log(`Sending message to ${deviceName} with payload:\n`, message.getData())
-            this.client.send(deviceName, message, function (err) {
+            self.iotHubClient.send(deviceName, message, function (err) {
                 if (err) {
                     return false;
                 } else {
