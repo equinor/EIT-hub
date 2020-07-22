@@ -12,15 +12,15 @@ export default class WebSocket{
      * @param {{x:number, y:number, z:number, r:number}} input 
      */
     sendInput(input) {
-        input.type = "input";
-        this._ws.send(JSON.stringify(input));
+        const msg = {type: "input", body: input}
+        this._ws.send(JSON.stringify(msg));
     }
 
     /** Ask server to let us have control or give up our control. Do nothing if connection is not working.
      * 
      */
     sendControlRequest(bool) {
-        const msg = {type:"inputControl", body: bool}
+        const msg = {type: "inputControl", body: bool}
         this._ws.send(JSON.stringify(msg));
     }
 

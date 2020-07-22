@@ -13,7 +13,6 @@ class ShuttleControl {
 
             let browserId = message.browserId;
             if (browserId === self.currentBrowser) {
-
                 let input = message.body;
 
                 let newObj = { type: 'input', x: input.x, y: input.y, z: input.z, r: input.r };
@@ -31,7 +30,7 @@ class ShuttleControl {
         // Listens for all websocket messages with type 'inputControl'
         self.browserWs.onTopic('inputControl', function (message) {
 
-            let wantsControl = message.body.body;
+            let wantsControl = message.body;
             let browserId = message.browserId;
             let inputControlFeedback = new Object();
             inputControlFeedback.type = 'inputControl';
@@ -52,7 +51,7 @@ class ShuttleControl {
 
             let browserId = message.browserId;
             if (browserId === self.currentBrowser) {
-                let flightMode = message.body.flightMode;
+                let flightMode = message.body;
                 // These are the only flight modes we use
                 if (['MANUAL', 'STABILIZE', 'DEPTH_HOLD'].indexOf(flightMode) > -1) {
                     let newObj = { type: 'changeFlightMode', flightMode: flightMode };
@@ -69,7 +68,7 @@ class ShuttleControl {
 
             let browserId = message.browserId;
             if (browserId === self.currentBrowser) {
-                let armShuttle = message.body.armShuttle;
+                let armShuttle = message.body;
                 if (typeof(armShuttle) === 'boolean') {
                     let newObj = { type: 'armShuttle', armShuttle: armShuttle };
                     self.deviceWs.sendMessage('shuttle', newObj);
