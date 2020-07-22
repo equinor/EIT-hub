@@ -13,13 +13,13 @@ class VideoStream {
     /** Creates device peer connection on offer. Returns SDP answer, peer and stream in callback.
      * 
      * @param {string} DeviceSDP
-     * @param {function} callback     
+     * @param {Function} callback     
      */
 
     createDevicePeer(DeviceSDP, callback) {
 
         let video;
-        let sdp;
+        let sdp = null;
         let DataObj;
         
         let DevicePeer = new SimplePeer({
@@ -33,14 +33,15 @@ class VideoStream {
         DevicePeer.on('signal', data => {
             console.log("Generated SDP answer for device");
             sdp = JSON.stringify(data);
+            DataObj = { stream: video, peer: DevicePeer, sdp: sdp };
+
+            callback(DataObj);
         });
 
         DevicePeer.signal(JSON.parse(DeviceSDP));
         console.log("Submited device SDP");
 
-        DataObj = { stream: video, peer: DevicePeer, sdp: sdp };
 
-        callback(DataObj);
         
     }
 
@@ -48,7 +49,7 @@ class VideoStream {
     /** Creates client peer on browser request. Returns SDP offer and peer in callback.  
      * 
      * @param {any} Stream
-     * @param {function} callback
+     * @param {Function} callback
      */
 
     createClientPeer(Stream, callback) {
@@ -68,11 +69,11 @@ class VideoStream {
         ClientPeer.on('signal', data => {
             console.log("Generated client SDP");
             sdp = JSON.stringify(data); 
+            DataObj = { peer: ClientPeer, sdp: sdp };
+
+            callback(DataObj);
         });
 
-        DataObj = { peer: ClientPeer, sdp: sdp };
-
-        callback(DataObj);
         
     }
 
@@ -84,7 +85,7 @@ class VideoStream {
      */
 
     submitClientSDP(ClientPeer, ClientSDP) {
-        ClientPeer.signal(JSON.parse(ClientSDP));
+        ClientPeer.signal(ClientSDP);
         console.log("Submited client SDP");
     }
 
@@ -97,7 +98,7 @@ class VideoStream {
 
     PeerDestroy(Peer, PeerId){
         Peer.destroy();
-        console.log(`Peer ${PeerId} connection destroyed`);
+        console.log(`${PeerId} peer connection destroyed`);
     }
 
 

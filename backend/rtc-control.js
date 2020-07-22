@@ -3,111 +3,134 @@
  */
 
 class RtcControl {
-    constructor(azureIot, browserWS, VideoStream, config) {
+    constructor(azureIot, browserWS, videoStream, config) {
         this.azureIot = azureIot;
         this.browserWS = browserWS;
-        this.VideoStream = VideoStream;
-        this.Devices = JSON.parse(config.iotHubStreamDevices)
-    }
+        this.videoStream = videoStream;
+        this.config = config;
+        this.Devices = JSON.parse(this.config.iotHubStreamDevices);
 
-    start() {
-        let self = this;
-
-        let Device = {
-            Devices: {},
+        this.Device = {
             Status: {},
+            Status2: {},
             Peers: {},
             sdpIn: {},
             sdpOut: {},
             Streams: {}
         };
 
-        let Client = {
+        this.Client = {
             Count: 0,
             Peers: {},
             sdpIn: {},
             sdpOut: {}
         };
+    }
 
-        Device.Devices = self.Devices;
+    start() {
+        let self = this;
 
         // Checking if the stream status is updating (every 20 sec) 
         function timeout() {
-            for (const property in Device.Devices) {
-                if (Device.Status[property] == null) {
+            for (const property in self.Devices) {
+                if (self.Device.Status2[property] === null) {
                     console.log(`${property} is off`);
+                    self.browserWS.broadcast({type: "rtc", data: {type: "Status", message: "off", Device: property}});
                 }
-                Device.Status[property] = null;
+                self.Device.Status2[property] = null;
             }
             setTimeout(timeout, 20000);
         }
         setTimeout(timeout, 20000);
 
         // Azure IoT message listeners with apropriate responses
-        for (const property in Devices.Devices) {
-            self.azureIot.onMessage(Device.Devices[property], function (message) {
+        for (const property in self.Devices) {
+            self.azureIot.onMessage(self.Devices[property], function (msg) {
 
-                if (message.type == "SDP") {
 
-                    Device.sdpIn[property] = message.message;
+                let message = msg.body;
 
-                    self.VideoStream.createDevicePeer(Device.sdpIn[property], function (DataObj) {
+                if (message.type === "SDP") {
 
-                        Device.sdpOut[property] = DataObj.sdp;
-                        Device.Peers[property] = DataObj.peer;
-                        Device.Streams[property] = DataObj.stream;
+                    self.Device.sdpIn[property] = message.message;
 
-                        self.azureIot.sendMessage(Device.Devices[property], { command: "submitSDP", commandData: Device.sdpOut[property] });
+                    self.videoStream.createDevicePeer(self.Device.sdpIn[property], function (DataObj) {
+
+                        self.Device.sdpOut[property] = DataObj.sdp;
+                        self.Device.Peers[property] = DataObj.peer;
+                        self.Device.Streams[property] = DataObj.stream;
+
+                        self.azureIot.sendMessage(self.Devices[property], { command: "submitSDP", commandData: self.Device.sdpOut[property] });
                     });
 
-                } else if (message.type == "message") {
+                } else if (message.type === "message") {
 
                     console.log(message.message);
 
-                } else if (message.type == "Status") {
+                } else if (message.type === "Status") {
 
-                    Device.Status[property] = message.message;
-                    message.Device = Device.Devices[property];
+                    self.Device.Status[property] = message.message;
+                    self.Device.Status2[property] = message.message; // For timeout purposes
+                    message.Device = property;
                     msg = { type: "rtc", data: message };
-                    self.browserWS.brodcast(msg);
+                    self.browserWS.broadcast(msg);
 
                 }
             });
         }
 
+
         // Adds browser variables to Client object and starts device streams if it is the only browser connected 
         self.browserWS.onOpen(function (browserId) {
+            
+            self.browserWS.sendMessage(browserId, { type: "rtc", data: { type: "Devices", message: self.Devices } });
 
-            if (count == 0) {
-                for (const property in Device.Devices) {
-                    self.azureIot.sendMessage(Device.Devices[property], { command: "getSDP", commandData: null });
+            function open() {
+                if (self.Client.Count === 0) {
+                    for (const property in self.Devices) {
+                        self.azureIot.sendMessage(self.Devices[property], { command: "getSDP", commandData: null });
+                    }
                 }
-            }
 
-            Client.Count += 1;
-            Client.Peers[browserId] = {};
-            Client.sdpOut[browserId] = {};
-            Client.sdpIn[browserId] = {};
+                for (const property in self.Devices) {
+                    self.browserWS.sendMessage(browserId, { type: "rtc", data: {type: "Status", message: self.Device.Status[property], Device: property}});
+                }
+
+                self.Client.Count += 1;
+                self.Client.Peers[browserId] = {};
+                self.Client.sdpOut[browserId] = {};
+                self.Client.sdpIn[browserId] = {};
+
+            }
+            // Preventing start and stop command being sent almost simultaneously when the only browser connected hits refresh. Longer loading time for setting up device stream, however solves a bigger problem 
+            // Can be done better, but this was the easy quickfix
+            setTimeout(open, 700);
 
         });
 
         // Destroying apropriate peer and deletes browser info when a browser disconnects, 
         self.browserWS.onClosed(function (browserId) {
 
-            Client.Count -= 1;
+            self.Client.Count -= 1;
 
-            for (const property in Device.Devices) {
-                self.VideoStream.PeerDestroy(Client.Peers[browserId][property], browserId);
-                delete Client.Peers[browserId];
-                delete Client.sdpOut[browserId];
-                delete Client.sdpIn[browserId];
+
+            for (const property in self.Devices) {
+                if (self.Client.Peers[browserId][property] !== undefined) {
+                    self.videoStream.PeerDestroy(self.Client.Peers[browserId][property], browserId);
+                    delete self.Client.Peers[browserId];
+                    delete self.Client.sdpOut[browserId];
+                    delete self.Client.sdpIn[browserId];
+                }
             }
 
+
             // Checks if there is no browser connected and stops device streams if there is none
-            if (Client.Count == 0) {
-                for (const property in Device.Devices) {
-                    self.azureIot.sendMessage(Device.Devices[property], { command: "Close", commandData: null });
-                    self.VideoStream.PeerDestroy(Device.Peers[property], property);
+            if (self.Client.Count === 0) {
+                for (const property in self.Devices) {
+                    if (self.Device.Status[property] === true) {
+                        self.azureIot.sendMessage(self.Devices[property], { command: "Close", commandData: null });
+                        self.videoStream.PeerDestroy(self.Device.Peers[property], property);
+                    }
                 }
             }
 
@@ -117,27 +140,27 @@ class RtcControl {
         self.browserWS.onTopic("rtc", function (message) {
 
             let browserId = message.browserId;
+            let reqDev = message.body.data.Device;
 
             // When asked the server will provide server SDP to the client(and stream device)
-            if (message.body.data.type == "SDPrequest") {
-                for (const property in Device.Devices) {
-                    self.VideoStream.createClientPeer(Device.Streams[property], function (DataObj) {
+            if (message.body.data.type === "SDPrequest") {
 
-                        Client.Peers[browserId][property] = DataObj.peer;
-                        Client.sdpOut[browserId][property] = DataObj.sdp;
+                self.videoStream.createClientPeer(self.Device.Streams[reqDev], function (DataObj) {
 
-                        self.browserWS.sendMessage(browserId, { type: "rtc", data: { type: "SDP", message: Client.sdpOut[browserId][property], Device: property }});
+                    self.Client.Peers[browserId][reqDev] = DataObj.peer;
+                    self.Client.sdpOut[browserId][reqDev] = DataObj.sdp;
 
-                    });
-                }
-            // Submits client SDP. When this is done the video stream will show in browser 
-            } else if (message.body.data.type == "SDP") {
+                    self.browserWS.sendMessage(browserId, { type: "rtc", data: { type: "SDP", message: self.Client.sdpOut[browserId][reqDev], Device: reqDev } });
 
-                let StreamDevice = message.body.data.Device;
-                Client.sdpIn[browserId][StreamDevice] = message.body.data.message;
+                });
 
-                self.VideoStream.submitClientSDP(Client.Peers[browserId][StreamDevice], Client.sdpIn[browserId][StreamDevice]); 
-            } 
+                // Submits client SDP. When this is done the video stream will show in browser 
+            } else if (message.body.data.type === "SDP") {
+
+                self.Client.sdpIn[browserId][reqDev] = message.body.data.message;
+
+                self.videoStream.submitClientSDP(self.Client.Peers[browserId][reqDev], self.Client.sdpIn[browserId][reqDev]);
+            }
 
         });
 
