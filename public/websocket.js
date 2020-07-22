@@ -24,7 +24,11 @@ export default class WebSocket{
         this._ws.send(JSON.stringify(msg));
     }
 
-    
+    sendShuttleCommand(type,value) {
+        const msg = {type: type, body: value}
+        this._ws.send(JSON.stringify(msg));
+    }
+
     sendRtc(msg){
         //TODO define message and maybe more methods.
         //TODO implement method.
