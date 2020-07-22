@@ -23,6 +23,10 @@ class WebsocketConnector:
 
     def __init__(self, uri):
         self.uri: str = uri
+
+
+    def get_shuttle_connector(self, shuttle_connector):
+        self.shuttle_connector = shuttle_connector
         
     
     def add_handlers(self, consumer, producer):
@@ -54,28 +58,7 @@ class WebsocketConnector:
 
     async def producer_handler(self, websocket, path):
         while True:
-            message = await self.producer()
+            # producer needs to have access to the ShuttleConnector to retrieve telemetry
+            message = await self.producer(self.shuttle_connector)
             logging.debug('message sent: ' + str(message))
             await websocket.send(message)
-
-
-if __name__ == "__main__":
-
-    from shuttle.shuttle_controller import DesiredThrust
-
-    uri = 'ws://localhost:3000/'
-
-    async def printer(message):
-        logging.info('message: ' + str(message))
-
-    async def talker() -> str:
-        await asyncio.sleep(1)
-        telemetry = DesiredThrust()
-        return json.dumps(telemetry)
-
-    async def main():
-        websocket_connector = WebsocketConnector(uri)
-        websocket_connector.add_handlers(printer, talker)
-        await websocket_connector.run()
-
-    asyncio.run(main())
