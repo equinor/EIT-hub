@@ -8,7 +8,7 @@ class RtcControl {
         this.browserWS = browserWS;
         this.videoStream = videoStream;
         this.config = config;
-        this.Devices = JSON.parse(this.config.iotHubStreamDevices);
+        this.Devices;
 
         this.Device = {
             Status: {},
@@ -42,6 +42,15 @@ class RtcControl {
             setTimeout(timeout, 20000);
         }
         setTimeout(timeout, 20000);
+
+        if (self.config.iotHubStreamDevices !== ""){
+            self.Devices = JSON.parse(self.config.iotHubStreamDevices);
+        } else {
+            console.log("No stream devices given");
+            self.browserWS.onOpen( function(browserId){
+                self.browserWS.sendMessage(browserId, {type: "rtc", data:{ type: "message", message: "No stream devices given"}});
+            });
+        }
 
         // Azure IoT message listeners with apropriate responses
         for (const property in self.Devices) {
