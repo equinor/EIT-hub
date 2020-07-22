@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,14 +9,15 @@
     <link href="style.css" rel="stylesheet" type="text/css">
     <script type="module" src="index.js"></script>
 </head>
+
 <body>
     <h1 id="bodyTitle">EIT-hub browser</h1>
-    <div id="clientRequests">       
+    <div id="clientRequests">
         <h4>Press "Request" button below for control (not working yet)</h4>
         <button id="requestControlButton">Request</button>
         <p id="requestAnswer">You are not in control</p>
     </div>
-    
+
     <div id="input-view">
         <button id="gamepad-button">Control with gamepad</button>
         <button id="keyboard-button">Control with keyboard</button>
@@ -24,6 +26,11 @@
 
     <pre id="telemetry-view"></pre>
 
-    <video id="video-view"></video>
+    <div id="video-view">
+        <video id="video"></video>
+        <button id="play-button">Watch stream</button>
+        <p id="StreamStatus">The device is not streaming</p>
+    </div>
 </body>
+
 </html>

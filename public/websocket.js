@@ -7,7 +7,7 @@ export default class WebSocket{
         this._controlCallbacks = [];
         this._rtcCallbacks = [];
     }
-
+ 
     /** Try to send input information to the server. Do nothing if connection is not working.
      * 
      * @param {{x:number, y:number, z:number, r:number}} input 
@@ -46,7 +46,6 @@ export default class WebSocket{
     }
 
     onRtc(callback) {
-        //Note adding this callback was c/p not certain of functionality
         this._rtcCallbacks.push(callback);
     }
 
@@ -62,6 +61,7 @@ export default class WebSocket{
                 callback(msg)
             }
         } else if(msg.type === "rtc") {
+            console.log(msg);
             for (let callback of this._rtcCallbacks) {
                 callback(msg);   
             }
