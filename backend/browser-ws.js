@@ -132,7 +132,7 @@ class BrowserWs {
 
             // onOpen
             if (self._onOpenCallbacks.length > 0) {
-                for (let callback of this._onOpenCallbacks) {
+                for (let callback of self._onOpenCallbacks) {
                     callback(browserId,user)
                 }
             }
@@ -164,10 +164,10 @@ class BrowserWs {
             // onClose
             websocket.on("close", () => {
 
-                console.log("closed");
+                console.log(`Browser ${browserId} closed`);
                 self.wsMap.delete(browserId);
                 if (self._onCloseCallbacks.length > 0) {
-                    for (let callback of this._onCloseCallbacks) {
+                    for (let callback of self._onCloseCallbacks) {
                         callback(browserId,user)
                     }
                 }
