@@ -58,11 +58,11 @@ async def websocket_producer(shuttle_connector: ShuttleConnector):
     return json.dumps(shuttle_connector.telemetry())
 
 
-def control_over_websocket(use_fake_shuttel=False):
+def control_over_websocket(use_fake_shuttle=False):
     ''' Main function for running the actual use case '''
 
     # setup connections to backend and shuttle and create a desired_thrust object
-    if use_fake_shuttel:
+    if use_fake_shuttle:
         shuttle_connector = FakeShuttleConnector()
     else:
         shuttle_connector = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
@@ -82,7 +82,7 @@ def control_over_websocket(use_fake_shuttel=False):
 
 
 def fake_test():
-    control_over_websocket(use_fake_shuttel=True)
+    control_over_websocket(use_fake_shuttle=True)
 
 
 if __name__ == "__main__":

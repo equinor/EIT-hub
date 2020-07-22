@@ -9,9 +9,9 @@ def is_legal(value: float):
 
 class ShuttleConnector:
 
-    def __init__(self, connenction_string: str, use_rc=True):
+    def __init__(self, connection_string: str, use_rc=True):
         '''
-        Establishes and vertifies a connection to a ArduPilot device through the given 
+        Establishes and verifies a connection to a ArduPilot device through the given 
         connection string. 
         '''
 
@@ -21,10 +21,10 @@ class ShuttleConnector:
         # Documentation on connection strings
         # http://mavlink.io/en/mavgen_python/
         logging.info('Creating connection..')
-        self.mavcon = mavutil.mavlink_connection(connenction_string)
+        self.mavcon = mavutil.mavlink_connection(connection_string)
 
         # Wait a heartbeat before sending commands
-        logging.info('waiting for first heartbeat..')
+        logging.info('Waiting for first heartbeat..')
         self.mavcon.wait_heartbeat()
         logging.info('Heartbeat recieved')
 
@@ -70,7 +70,6 @@ class ShuttleConnector:
 
         logging.info('setup done')
 
-
     async def send_thrust_command(self, x=0, y=0, z=0, r=0) -> None:
         '''
         Function that sends thrust commands to target device. 
@@ -83,7 +82,6 @@ class ShuttleConnector:
             raise ValueError('Arguments are outside of boundary [-1,1]')
 
         if self.use_rc: 
-
             # There are 8 RC channels
             data = [1500] * 8
 
@@ -100,10 +98,8 @@ class ShuttleConnector:
             )
             logging.debug('RC sent')
 
-
         else:
-
-            # mapps z to [0, 1], to comply with a weird legacy quirk in the API
+            # maps z to [0, 1], to comply with a weird legacy quirk in the API
             z = (z + 1) / 2
 
             # map from [-1,1] to [-1000, 1000]
@@ -118,10 +114,9 @@ class ShuttleConnector:
                 y,
                 z,
                 r,
-                1   # controller button pressed or not
+                1  # controller button pressed or not
             )
             logging.debug('Thrust cmd sent')
-
 
     async def send_heartbeat(self):
         ''' sends heartbeat from GCS to ardusub '''
@@ -151,7 +146,7 @@ class ShuttleConnector:
 
 class FakeShuttleConnector:
 
-    def __init__(self, connenction_string: str = ''):
+    def __init__(self, connection_string: str = ''):
         logging.info('Fake shuttle created')
 
     async def send_thrust_command(self, x=0, y=0, z=500, r=0) -> None:
