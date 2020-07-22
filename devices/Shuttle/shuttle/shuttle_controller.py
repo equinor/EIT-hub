@@ -42,14 +42,14 @@ async def io_handler(websocket_connector: WebsocketConnector, shuttle_connector:
 
 async def websocket_consumer(shuttle_connector: ShuttleConnector, message):
     '''
-    Reads message and executes according action
+    Reads message and passes it to a message handler in ShuttleConnector
     '''
     jsonMsg = json.loads(message)
-    # Log the messages to the console for now
-    # TODO: Send the messages to ShuttleConnector
-    #print(jsonMsg)
-    await asyncio.sleep(config.PILOT_CMD_DELAY)
-    await shuttle_connector.send_thrust_command(jsonMsg['x'],jsonMsg['y'],jsonMsg['z'],jsonMsg['r'])
+    # Pilot input should only be sent periodically
+    if jsonMsg['type'] == 'input':
+        await asyncio.sleep(config.PILOT_CMD_DELAY)
+
+    await shuttle_connector.handle_ws_message(jsonMsg)
 
 
 async def websocket_producer(shuttle_connector: ShuttleConnector):

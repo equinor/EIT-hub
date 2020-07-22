@@ -84,6 +84,16 @@ class ShuttleConnector:
         else:
             return val
 
+    async def handle_ws_message(self, message):
+        '''Handles all websocket messages by running the appropriate method'''
+
+        if message['type'] == 'input':
+            await self.send_thrust_command(message['x'], message['y'], message['z'], message['r'])
+        elif message['type'] == 'changeFlightMode':
+            await self.change_flight_mode(message['flightMode'])
+        elif message['type'] == 'armShuttle':
+            await self.arm_shuttle(message['armShuttle'])
+
     async def send_thrust_command(self, x=0, y=0, z=0, r=0) -> None:
         '''
         Function that sends thrust commands to target device. 
@@ -137,6 +147,47 @@ class ShuttleConnector:
             )
             logging.debug('Thrust cmd sent')
 
+    async def change_flight_mode(self, flight_mode):
+        '''Change the shuttle's flight mode'''
+
+        # Check if mode is available
+        if flight_mode not in self.mavcon.mode_mapping():
+            print('Unknown mode : {}'.format(mode))
+            print('Try:', list(self.mavcon.mode_mapping().keys()))
+        else:
+            # Get mode ID
+            mode_id = self.mavcon.mode_mapping()[flight_mode]
+
+            # Set mode
+            self.mavcon.mav.set_mode_send(
+                self.mavcon.target_system,
+                mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
+                mode_id)
+
+            logging.debug(f'Set mode to {flight_mode}')
+
+    async def arm_shuttle(self, arm_shuttle: bool):
+        '''Arm or disarm the shuttle'''
+
+        if arm_shuttle:
+            # Arm thrusters
+            self.mavcon.mav.command_long_send(
+                self.mavcon.target_system,
+                self.mavcon.target_component,
+                mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 0,
+                1,  # 1 = arm, 0 = disarm
+                0, 0, 0, 0, 0, 0)
+            logging.debug('Armed shuttle')
+        else:
+            # Disarm thrusters
+            self.mavcon.mav.command_long_send(
+                self.mavcon.target_system,
+                self.mavcon.target_component,
+                mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 0,
+                0,  # 1 = arm, 0 = disarm
+                0, 0, 0, 0, 0, 0)
+            logging.debug('Disarmed shuttle')
+
     async def send_heartbeat(self):
         ''' sends heartbeat from GCS to ardusub '''
 
@@ -173,6 +224,16 @@ class FakeShuttleConnector:
         self.r = 0
         self.rateLimit = 0.2
 
+    async def handle_ws_message(self, message):
+        '''Handles all websocket messages by running the appropriate method'''
+
+        if message['type'] == 'input':
+            await self.send_thrust_command(message['x'], message['y'], message['y'], message['r'])
+        elif message['type'] == 'changeFlightMode':
+            await self.change_flight_mode(message['flightMode'])
+        elif message['type'] == 'armShuttle':
+            await self.arm_shuttle(message['armShuttle'])
+
     def rate_limiter(self,old,val):
         if (abs(val-old) > self.rateLimit):
             sign = (val-old)/abs(val-old) 
@@ -187,6 +248,18 @@ class FakeShuttleConnector:
         self.z = self.rate_limiter(self.z,z)
         self.r = self.rate_limiter(self.r,r)
 
+    async def change_flight_mode(self, flight_mode):
+        '''Change the shuttle's flight mode'''
+
+        logging.info(f'Successfully received new flight mode: {flight_mode}.')
+    
+    async def arm_shuttle(self, arm_shuttle):
+        '''Arm or disarm the shuttle'''
+
+        if arm_shuttle:
+            logging.info('Successfully received arming command.')
+        else:
+            logging.info('Successfully received disarming command.')
 
     async def send_heartbeat(self):
         pass
