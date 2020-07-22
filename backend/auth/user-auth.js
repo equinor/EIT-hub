@@ -14,6 +14,10 @@ class UserAuth{
     hasSession(sessionId) {
         return this._session.has(sessionId);
     }
+
+    getUser(sessionId) {
+        return this._session.get(sessionId);
+    }
 }
 
 module.exports = UserAuth;

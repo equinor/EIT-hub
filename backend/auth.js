@@ -76,7 +76,12 @@ class Auth {
                 sessionId = self._userAuth.getNewSessionId();
                 res.cookie("session",sessionId);
             }
-            next();
+
+            if( self._userAuth.getUser() !== null) {
+                // we have user.
+                next();
+            }
+            
         }
     }
 }
