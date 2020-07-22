@@ -126,11 +126,12 @@ class RtcControl {
             for (const property in self.Devices) {
                 if (self.Client.Peers[browserId][property] !== undefined) {
                     self.videoStream.PeerDestroy(self.Client.Peers[browserId][property], browserId);
-                    delete self.Client.Peers[browserId];
-                    delete self.Client.sdpOut[browserId];
-                    delete self.Client.sdpIn[browserId];
                 }
             }
+
+            delete self.Client.Peers[browserId];
+            delete self.Client.sdpOut[browserId];
+            delete self.Client.sdpIn[browserId];
 
 
             // Checks if there is no browser connected and stops device streams if there is none

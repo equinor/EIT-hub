@@ -29,7 +29,7 @@
                     A/D translates left/right. &#8593 &#8595 controls up/down <br> and &#8592 &#8594 rotates left/right.</p>           
                 <pre id="dataText"></pre>
             </div>
-
+ 
 
             <div id="clientRequests">       
                 <p id="reqButtonText">Press "Request" button <br> below for control</p>
@@ -43,9 +43,11 @@
         
         <div id="video-view">
             <p>Video</p>
-            <video id="video"></video>
-            <button id="play-button">Watch stream</button>
-            <p id="StreamStatus">The device is not streaming</p>
+            <video class="video" id="video1">video1</video>
+            <video class="video" id="video2">video2</video>
+            <button class="button" id="play-button">Watch stream</button>
+            <p class="info" id="StreamStatus1"></p>
+            <p class="info" id="StreamStatus2"></p>
         </div>
     </div>
     <div id="telemetry">
