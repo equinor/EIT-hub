@@ -48,7 +48,7 @@ class WebsocketConnector:
     async def consumer_handler(self, websocket, path):
         async for message in websocket:
             logging.debug('message recieved: ' + str(message))
-            await self.consumer(message)
+            await self.consumer(self.shuttle_connector,message)
 
     async def producer_handler(self, websocket, path):
         while True:
