@@ -83,7 +83,7 @@ class DeviceWs {
             });
 
             websocket.on("close", () => {
-                console.log("websocket closed");
+                console.log(`${deviceName} websocket closed`);
                 self.deviceMap.delete(deviceName);
             });
         });

@@ -6,6 +6,7 @@ class Config {
         this._baseUrl = new URL("http://localhost:3000/");
         this._disableDeviceAuth = true;
         this._iotHubConnectionString = "";
+        this._eventHubConnectionString = "";
     }
 
     applyEnv(processEnv) {
@@ -20,6 +21,9 @@ class Config {
         }
         if(processEnv.EITHUB_IOTHUB_CONNECTION_STRING){
             this._iotHubConnectionString = processEnv.EITHUB_IOTHUB_CONNECTION_STRING;
+        }
+        if(process.env.EITHUB_EVENTHUB_CONNECTION_STRING){
+            this._eventHubConnectionString = processEnv.EITHUB_EVENTHUB_CONNECTION_STRING;
         }
     }
 
@@ -50,6 +54,10 @@ class Config {
     get iotHubConnectionString() {
         return this._iotHubConnectionString;
     } 
+
+    get eventHubConnectionString() {
+        return this._eventHubConnectionString;
+    }
 }
 
 module.exports = Config;

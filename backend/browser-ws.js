@@ -18,7 +18,8 @@ class BrowserWs {
 
         this.wsMap = new Map();
         this.clientCount = 0;
-        this._connectionCallbacks = [];
+        this._onOpenCallbacks = [];
+        this._onCloseCallbacks = [];
         this._onBrowserCallbacks = new Map();
         this._onTopicCallbacks = new Map();
 
@@ -55,8 +56,8 @@ class BrowserWs {
      * @param {Function} callback is called with the browserId and user object as parameters.
      */
     onOpen(callback) {
-        //TODO
-        this._connectionCallbacks.push(callback);
+
+        this._onOpenCallbacks.push(callback);
     }
 
 
@@ -66,7 +67,6 @@ class BrowserWs {
      * @param {Function} callback The callback return a js object with the parsed json data from device.
      */
     onBrowser(browserId, callback) {
-        //TODO
         
         if (this._onBrowserCallbacks.has(browserId)){
             this._onBrowserCallbacks.get(browserId).push(callback);
@@ -83,7 +83,7 @@ class BrowserWs {
      * @param {Function} callback is called with all the messages from all the browsers on a topic.
      */
     onTopic(topic, callback) {
-        //TODO
+
         if (this._onTopicCallbacks.has(topic)){
             this._onTopicCallbacks.get(topic).push(callback);
         } else {
@@ -98,6 +98,7 @@ class BrowserWs {
      * @return {number} WebSocket ready state.
      */
     getState(browserId) {
+
         if (this.wsMap.has(browserId)){
             return this.wsMap.get(browserId).readyState;
         } else {
@@ -110,7 +111,8 @@ class BrowserWs {
      * @param {Function} callback called with the browserId and user object as properties.
      */
     onClosed(callback) {
-        //TODO
+
+        this._onCloseCallbacks.push(callback);
     }
 
     /**
@@ -120,19 +122,25 @@ class BrowserWs {
      * @param {Buffer} head
      */
     handleUpgrade(user, request, socket, head) {
+
         let self = this;
         this.ws.handleUpgrade(request, socket, head, function(websocket) {
-            //TODO handle websocket
 
-            // Open
             let browserId = self.clientCount;
             self.clientCount += 1;
             self.wsMap.set(browserId, websocket);
 
-            // Message
+            // onOpen
+            if (self._onOpenCallbacks.length > 0) {
+                for (let callback of self._onOpenCallbacks) {
+                    callback(browserId,user)
+                }
+            }
+            
+            // onMessage
             websocket.on("message", (msg) => {
-                let msgParse = JSON.parse(msg);
 
+                let msgParse = JSON.parse(msg);
                 const message = {
                     browserId: browserId,
                     type: msgParse.type,
@@ -153,10 +161,16 @@ class BrowserWs {
                 }
             })
 
-            // Close
+            // onClose
             websocket.on("close", () => {
-                console.log("closed");
+
+                console.log(`Browser ${browserId} closed`);
                 self.wsMap.delete(browserId);
+                if (self._onCloseCallbacks.length > 0) {
+                    for (let callback of self._onCloseCallbacks) {
+                        callback(browserId,user)
+                    }
+                }
             }) 
      
         })

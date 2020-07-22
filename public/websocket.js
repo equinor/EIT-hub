@@ -16,14 +16,15 @@ export default class WebSocket{
         this._ws.send(JSON.stringify(input));
     }
 
-    /** Ask server to let us have control. Do nothing if connection is not working.
+    /** Ask server to let us have control or give up our control. Do nothing if connection is not working.
      * 
      */
-    sendControlRequest() {
-        const msg = {type:"inputControl"}
+    sendControlRequest(bool) {
+        const msg = {type:"inputControl", body: bool}
         this._ws.send(JSON.stringify(msg));
     }
 
+    
     sendRtc(msg){
         //TODO define message and maybe more methods.
         //TODO implement method.
@@ -48,7 +49,7 @@ export default class WebSocket{
         var msg = JSON.parse(event.data);
 
         if(msg.type === "inputControl") {
-            for (callback of this._controlCallbacks) {
+            for (let callback of this._controlCallbacks) {
                 callback(msg)
             }
         }else if(msg.type === "telemetry") {
