@@ -39,7 +39,7 @@ function main() {
     websocket.onControl(clientRequestView.updateControl.bind(clientRequestView));
 
     // Start client
-    input.start(100000);
+    input.start(10);
     rtcConnector.start();
 }
 
