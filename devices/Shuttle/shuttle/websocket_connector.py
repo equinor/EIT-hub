@@ -24,15 +24,12 @@ class WebsocketConnector:
     def __init__(self, uri):
         self.uri: str = uri
 
-
     def get_shuttle_connector(self, shuttle_connector):
         self.shuttle_connector = shuttle_connector
         
-    
     def add_handlers(self, consumer, producer):
         self.consumer = consumer
         self.producer = producer
-
 
     async def run(self):
         try: 
@@ -41,7 +38,6 @@ class WebsocketConnector:
         except websockets.ConnectionClosed:
             logging.error('lost connection to websocket')
 
-
     async def handler(self, websocket, path):
         consumer_task = asyncio.create_task(self.consumer_handler(websocket, path))
         producer_task = asyncio.create_task(self.producer_handler(websocket, path))
@@ -49,12 +45,10 @@ class WebsocketConnector:
         for task in pending:
             task.cancel()
 
-
     async def consumer_handler(self, websocket, path):
         async for message in websocket:
             logging.debug('message recieved: ' + str(message))
             await self.consumer(message)
-
 
     async def producer_handler(self, websocket, path):
         while True:
