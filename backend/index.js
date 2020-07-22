@@ -7,6 +7,7 @@ const AzureIot = require('./azureiot');
 const BrowserWs = require('./browser-ws');
 const Config = require('./config');
 const DeviceWS = require('./device-ws');
+const VideoStream = require('./video-stream')
 const Express = require('./express');
 const ShuttleControl = require('./shuttle-control');
 const ShuttleTelemetry = require('./shuttle-telemetry');
@@ -32,6 +33,9 @@ function main() {
     //Setup Device Websocket
     const deviceWs = new DeviceWS();
 
+    //For peer control
+    const videoStream = new VideoStream(); 
+
     //Setup Azure IoT
     const azureIot = new AzureIot(config);
 
@@ -42,7 +46,7 @@ function main() {
     const shuttleTelemetry = new ShuttleTelemetry(azureIot, browserWs, deviceWs);
 
     //Create RtcControl
-    const rtcControl = new RtcControl(azureIot, browserWs);
+    const rtcControl = new RtcControl(azureIot, browserWs, videoStream, config);
 
     //Create express
     const express = new Express(config.port, auth, browserWs, deviceWs)

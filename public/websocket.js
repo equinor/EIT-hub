@@ -5,6 +5,7 @@ export default class WebSocket{
         this._ws.onmessage = this._onMessage.bind(this);
         this._telemetryCallbacks = [];
         this._controlCallbacks = [];
+        this._rtcCallbacks = [];
     }
 
     /** Try to send input information to the server. Do nothing if connection is not working.
@@ -29,9 +30,13 @@ export default class WebSocket{
         this._ws.send(JSON.stringify(msg));
     }
 
+    /** Send rtc request or client SDP. 
+     *
+     *@param {any} msg 
+     */
     sendRtc(msg){
-        //TODO define message and maybe more methods.
-        //TODO implement method.
+        msg.type = "rtc";
+        this._ws.send(JSON.stringify(msg));
     }
 
     /** 
@@ -46,7 +51,7 @@ export default class WebSocket{
     }
 
     onRtc(callback) {
-        //TODO
+        this._rtcCallbacks.push(callback);
     }
 
     _onMessage(event) {
@@ -60,7 +65,12 @@ export default class WebSocket{
             for (let callback of this._telemetryCallbacks) {
                 callback(msg)
             }
-        }else {
+        } else if(msg.type === "rtc") {
+            console.log(msg);
+            for (let callback of this._rtcCallbacks) {
+                callback(msg);   
+            }
+        } else {
             console.warn("Unknown message from server:", msg);
         }
     }
