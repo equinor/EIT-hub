@@ -5,12 +5,19 @@ export default class Input{
         this._keyboard = keyboard;
         this._view = view;
         
-        this.gainPressed = 0.15;
-        this.gainRelease = 0.1;
+        this.gainPressed = 0.005;
+        this.gainRelease = 0.01;
         this.x = 0;
         this.y = 0;
         this.z = 0;
         this.r = 0;
+
+        this.arm = 0;
+        this.disarm = 0;
+
+        this.manual = 0;
+        this.stabilize = 0;
+        this.depthHold = 0;
     }
 
     start(poolInterval) {
@@ -42,12 +49,21 @@ export default class Input{
 
     _possessInputs() {
         
-        if (this._view.useGamePad()) {
-            var axes = this._gamePad.getAxes();
+        if (this._view.useGamePad() && this._gamePad.getGamepad() !== null) {
+            var [axes, buttons] = this._gamePad.getGamepad();
+            // Inputs that control the shuttle's movement
             this.y = axes[1];
             this.x = axes[0];
             this.z = axes[3];
             this.r = axes[2];
+
+            // Arm or disarm the shuttle's motors
+            this.arm = buttons[5].value;
+            this.disarm = buttons[4].value;
+            // Change the shuttle's flight mode
+            this.manual = buttons[0].value;
+            this.stabilize = buttons[1].value;
+            this.depthHold = buttons[2].value;
 
         } else if (this._view.useKeyboard()) {
             
@@ -64,14 +80,28 @@ export default class Input{
             this.r = this.keySmoothing(this._keyboard.keyRight(), this._keyboard.keyLeft(),this.r);
         }
 
-        let msg = {
+        let inputMsg = {
             y: this.y,
             x: this.x,
             z: this.z,
             r: this.r
         }
 
-        this._websocket.sendInput(msg);
-        this._view.setData(msg);
+        this._websocket.sendInput(inputMsg);
+        this._view.setData(inputMsg);
+
+        if (this.arm) {
+            this._websocket.sendShuttleCommand('armShuttle', true);
+        } else if (this.disarm === 1) {
+            this._websocket.sendShuttleCommand('armShuttle', false);
+        }
+
+        if (this.manual === 1) {
+            this._websocket.sendShuttleCommand('changeFlightMode', 'MANUAL');
+        } else if (this.stabilize === 1) {
+            this._websocket.sendShuttleCommand('changeFlightMode', 'STABILIZE');
+        } else if (this.depthHold === 1) {
+            this._websocket.sendShuttleCommand('changeFlightMode', 'DEPTH_HOLD');
+        }
     }
 }
