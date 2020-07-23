@@ -1,16 +1,14 @@
 body {
   background-color: #ffffff;
-  font-family: sans-serif;
-
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; color: #333333
 }
-
 
 #logo-equinor {
   display: block;
   top: 0;
   margin-right: auto;
   margin-left: auto;
-  width: 150px;
+  width: 250px;
   height: auto;
   opacity: 0.8;
   
@@ -23,42 +21,64 @@ body {
   font-weight: bold;
   font-size: 40px;
   margin-bottom: 50px;
-  border-bottom: 5px solid gray;
+  border: 5px solid #007079;
   padding-bottom: 5px;
-  
+  background-color: #c9e1e3;
 }
 
-#left-side {
-  display: inline-block;
+.left-side {
+  display: flex;
+  flex-direction: row;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  justify-content: center;
 }
+
+.shuttle-pictures {
+  display: flex;
+  flex-direction: row;
+  margin-top: 50px;
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-bottom: 50px;
+  justify-content: center;
+  justify-content: space-evenly;
+}
+
 #video {
   display: inline-block;
   margin-left: 150px;
 }
 #video-view {
-  border: 5px solid gray;
+  border: 5px solid #007079;
 }
 
 #input-view {
   display: inline-block;
-  margin-right: 40px;
-  padding-right: 40px;
+  padding-left: 30px;
+  padding-right: 30px;
+  border-left: 2px solid rgb(138, 138, 138);
   border-right: 2px solid rgb(138, 138, 138);
   border-width: 4px;
+  text-align: center;
 }
 
 #clientRequests {
-
   text-align: center;
   display: inline-block;
+  padding-left: 30px;
+  padding-right: 30px;
   padding-bottom: 30px;
+  border-left: 2px solid rgb(138, 138, 138);
+  border-right: 2px solid rgb(138, 138, 138);
+  border-width: 4px;
 }
 #reqButtonText {
   font-size: 15px;
 }
 
 #requestAnswer {
-  font-size: 10px;
+  font-size: 15px;
 }
 
 .button {
@@ -77,13 +97,13 @@ body {
 }
 .button:hover {background-color:  rgb(100, 100, 100);} 
 .button:active {
-  box-shadow: 0 5px #666;
+  box-shadow: 0 5px #879199;
   transform: translateY(4px);
-  background-color:  rgb(33, 46, 230);
+  background-color:  #007079;
 }
 
 .control-info {
-  font-size: 12px;
+  font-size: 15px;
 }
 
 
@@ -94,6 +114,7 @@ body {
 #telemetry-view {
   width: 400px;
   padding: 20px;
-  border: 5px solid gray;
+  border: 5px solid #007079;
   margin: 5px;
+  background-color: #75b1b5;
 }
