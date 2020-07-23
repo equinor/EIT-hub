@@ -13,24 +13,24 @@ class ShuttleControl {
 
             let browserId = message.browserId;
             if (browserId === self.currentBrowser) {
-
                 let input = message.body;
 
-                let newObj = { x: input.x, y: input.y, z: input.z, r: input.r };
-                if (Object.values(newObj).every(value => (value >= -1 && value <= 1))) {
+                let newObj = { type: 'input', x: input.x, y: input.y, z: input.z, r: input.r };
+                let { type, ...inputValues } = newObj;
+                // Input values should be in [-1,1]
+                if (Object.values(inputValues).every(value => (value >= -1 && value <= 1))) {
                     self.deviceWs.sendMessage('shuttle', newObj);
                 } else {
                     console.error('JSON object contains invalid data.');
                     return;
                 }
-            } else {
-                return;
             }
         });
 
+        // Listens for all websocket messages with type 'inputControl'
         self.browserWs.onTopic('inputControl', function (message) {
 
-            let wantsControl = message.body.body;
+            let wantsControl = message.body;
             let browserId = message.browserId;
             let inputControlFeedback = new Object();
             inputControlFeedback.type = 'inputControl';
@@ -43,6 +43,39 @@ class ShuttleControl {
                 self.currentBrowser = null;
                 inputControlFeedback.body = null;
                 self.browserWs.broadcast(inputControlFeedback);
+            }
+        });
+
+        // Listens for all websocket messages with type 'changeFlightMode'
+        self.browserWs.onTopic('changeFlightMode', function (message) {
+
+            let browserId = message.browserId;
+            if (browserId === self.currentBrowser) {
+                let flightMode = message.body;
+                // These are the only flight modes we use
+                if (['MANUAL', 'STABILIZE', 'DEPTH_HOLD'].indexOf(flightMode) > -1) {
+                    let newObj = { type: 'changeFlightMode', flightMode: flightMode };
+                    self.deviceWs.sendMessage('shuttle', newObj);
+                } else {
+                    console.error('JSON object contains invalid data.');
+                    return;
+                }
+            }
+        });
+
+        // Listens for all websocket messages with type 'armShuttle'
+        self.browserWs.onTopic('armShuttle', function (message) {
+
+            let browserId = message.browserId;
+            if (browserId === self.currentBrowser) {
+                let armShuttle = message.body;
+                if (typeof(armShuttle) === 'boolean') {
+                    let newObj = { type: 'armShuttle', armShuttle: armShuttle };
+                    self.deviceWs.sendMessage('shuttle', newObj);
+                } else {
+                    console.error('JSON object contains invalid data.');
+                    return;
+                }
             }
         });
 

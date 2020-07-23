@@ -7,21 +7,26 @@ export default class WebSocket{
         this._controlCallbacks = [];
         this._rtcCallbacks = [];
     }
- 
+
     /** Try to send input information to the server. Do nothing if connection is not working.
      * 
      * @param {{x:number, y:number, z:number, r:number}} input 
      */
     sendInput(input) {
-        input.type = "input";
-        this._ws.send(JSON.stringify(input));
+        const msg = {type: "input", body: input}
+        this._ws.send(JSON.stringify(msg));
     }
 
-    /** Ask server to let us have control. Do nothing if connection is not working.
+    /** Ask server to let us have control or give up our control. Do nothing if connection is not working.
      * 
      */
-    sendControlRequest() {
-        const msg = {type:"inputControl"}
+    sendControlRequest(bool) {
+        const msg = {type: "inputControl", body: bool}
+        this._ws.send(JSON.stringify(msg));
+    }
+
+    sendShuttleCommand(type,value) {
+        const msg = {type: type, body: value}
         this._ws.send(JSON.stringify(msg));
     }
 
@@ -70,4 +75,3 @@ export default class WebSocket{
         }
     }
 }
-
