@@ -15,6 +15,7 @@ pymavlink = "^2.4.9"
 python-dotenv = "^0.13.0"
 websockets = "^8.1"
 asyncio = "^3.4.3"
+azure-iot-device = "^2.1.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

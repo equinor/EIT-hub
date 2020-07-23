@@ -5,6 +5,7 @@ from time import time
 from shuttle import config
 from shuttle.websocket_connector import WebsocketConnector
 from shuttle.shuttle_connector import ShuttleConnector, FakeShuttleConnector
+from shuttle.azure_messages import AzureMessageListener
 
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
@@ -63,12 +64,15 @@ async def websocket_producer(shuttle_connector: ShuttleConnector):
 def control_over_websocket(use_fake_shuttle=False):
     ''' Main function for running the actual use case '''
 
+    azure_message_listener = AzureMessageListener(config.SHUTTLE_CONNECTION_STRING)
+    url, token = azure_message_listener.message_listener()
+
     # setup connections to backend and shuttle and create a desired_thrust object
     if use_fake_shuttle:
         shuttle_connector = FakeShuttleConnector()
     else:
         shuttle_connector = ShuttleConnector(config.MAVLINK_CONNECTION_STRING)
-    websocket_connector = WebsocketConnector(config.WEBSOCKET_URI)
+    websocket_connector = WebsocketConnector(url, token)
 
     async def main():
         # add functions that should be run concurrently
