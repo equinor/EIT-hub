@@ -4,7 +4,7 @@ class Config {
     constructor(){
         this._port = 3000;
         this._baseUrl = new URL("http://localhost:3000/");
-        this._disableDeviceAuth = true;
+        this._disableDeviceAuth = false;
         this._iotHubConnectionString = "";
         this._iotHubStreamDevices = "";
         this._eventHubConnectionString = "";

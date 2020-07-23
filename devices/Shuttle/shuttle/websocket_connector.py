@@ -33,7 +33,7 @@ class WebsocketConnector:
 
     async def run(self):
         try: 
-            async with websockets.connect(self.uri) as websocket:
+            async with websockets.connect(self.uri, extra_headers = {'authorization':'token'}) as websocket:
                 await self.handler(websocket, websocket.path)
         except websockets.ConnectionClosed:
             logging.error('lost connection to websocket')
