@@ -3,15 +3,22 @@ export default class VideoView {
         this._rootElem = element;
 
         this._usedElements = {};
-        this._counter = {cnt: 1};
 
         // Need this button to start watching the stream. Problems may arise with autoplay
-        this._rootElem.querySelector("#play-button").style.visibility = "hidden";
+        
+
+        let self = this;
+
+        this._rootElem.querySelector("#play-button").onclick = function () {
+            for(var i = 0; i< self._rootElem.querySelectorAll(".video").length; i++){
+                self._rootElem.querySelector("#"+self._rootElem.querySelectorAll(".video").item(i).id).play();
+            }
+            
+        };
 
     }
 
     setStream(stream, i) {
-        let self = this;
         let id = "#" + i;
     
 
@@ -19,22 +26,6 @@ export default class VideoView {
             console.log("Can't write, add element")
         } else {
             this._rootElem.querySelector(id).srcObject = stream;
-
-            // Activates the button when every stream has loaded. Need to add or condition (aka if one device is off now the stream will never start) 
-            if (self._counter.num === self._counter.cnt){
-                self._rootElem.querySelector("#play-button").style.visibility = "visible";
-                self._counter.cnt = null;
-            } else if (self._counter.cnt !== null) {
-                self._counter.cnt += 1;
-            }  
-            
-
-            this._rootElem.querySelector("#play-button").onclick = function () {
-                for(var i = 0; i< self._rootElem.querySelectorAll(".video").length; i++){
-                    self._rootElem.querySelector("#"+self._rootElem.querySelectorAll(".video").item(i).id).play();
-                }
-                self._rootElem.querySelector("#play-button").style.visibility = "hidden";
-            };
         }
     }
 
@@ -46,11 +37,6 @@ export default class VideoView {
         } else {
             this._rootElem.querySelector(id).innerText = status;
         }
-    }
-
-    setNumDev(devices){
-        let self = this;
-        self._counter.num = Object.keys(devices).length;
     }
 
     getFreeTag(tagType) {
