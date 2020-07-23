@@ -23,9 +23,10 @@ export default class VideoView {
             // Activates the button when every stream has loaded. Need to add or condition (aka if one device is off now the stream will never start) 
             if (self._counter.num === self._counter.cnt){
                 self._rootElem.querySelector("#play-button").style.visibility = "visible";
-            } else {
+                self._counter.cnt = null;
+            } else if (self._counter.cnt !== null) {
                 self._counter.cnt += 1;
-            } 
+            }  
             
 
             this._rootElem.querySelector("#play-button").onclick = function () {
@@ -47,10 +48,14 @@ export default class VideoView {
         }
     }
 
+    setNumDev(devices){
+        let self = this;
+        self._counter.num = Object.keys(devices).length;
+    }
+
     getFreeTag(tagType) {
         let self = this;
         let tagClass = this._rootElem.querySelectorAll(tagType);
-        self._counter.num = tagClass.length;
         for (var i = 0; i < tagClass.length; i++) {
             if (tagClass.item(i).id !== self._usedElements[tagClass.item(i).id]) {
                 self._usedElements[tagClass.item(i).id] = tagClass.item(i).id;

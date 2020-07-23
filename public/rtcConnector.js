@@ -43,6 +43,8 @@ export default class RtcConnector {
                 self._tags.vTag = {};
                 self._tags.iTag = {};
 
+                self._videoView.setNumDev(self._devices);
+
                 for (const property in self._devices){
                     self._tags.vTag[property] = self._videoView.getFreeTag(".video");
                     self._tags.iTag[property] = self._videoView.getFreeTag(".info");
