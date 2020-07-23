@@ -12,4 +12,4 @@ class AzureMessageListener:
     def message_listener(self):
         message = self.device_client.receive_message()  # blocking call
         jsonMsg = json.loads(message.data)
-        return jsonMsg['url'], jsonMsg['token']
+        return jsonMsg['url'], jsonMsg['authorization']
