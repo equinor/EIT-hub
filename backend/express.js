@@ -31,8 +31,6 @@ class Express {
         if (path[1] === 'browser') { 
             this.browserWs.handleUpgrade({}, request, socket, head);
         } else if (path[1] === 'device') {
-            let token = this.auth.getDeviceToken(path[2]);
-            request.headers.authorization = token.authorization;
             if(this.auth.validateDeviceRequest(path[2], request)) {
                 this.deviceWs.handleUpgrade(path[2], request, socket, head);
             }else{
