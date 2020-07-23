@@ -7,6 +7,8 @@ class Config {
         this._disableDeviceAuth = true;
         this._iotHubConnectionString = "";
         this._eventHubConnectionString = "";
+        this._clientId = "";
+        this._tenantId = "";
     }
 
     applyEnv(processEnv) {
@@ -25,6 +27,13 @@ class Config {
         if(process.env.EITHUB_EVENTHUB_CONNECTION_STRING){
             this._eventHubConnectionString = processEnv.EITHUB_EVENTHUB_CONNECTION_STRING;
         }
+        if(process.env.EITHUB_TENANT_ID){
+            this._tenantId = processEnv.EITHUB_TENANT_ID;
+        }
+        if(process.env.EITHUB_CLIENT_ID){
+            this._clientId = processEnv.EITHUB_CLIENT_ID;
+        }
+        
     }
 
     get port() {
@@ -57,6 +66,14 @@ class Config {
 
     get eventHubConnectionString() {
         return this._eventHubConnectionString;
+    }
+
+    get clientId() {
+        return this._clientId;
+    }
+
+    get tenantId() {
+        return this._tenantId;
     }
 }
 
