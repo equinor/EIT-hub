@@ -12,6 +12,7 @@ export default class VideoView {
         this._rootElem.querySelector("#play-button").onclick = function () {
             for(var i = 0; i< self._rootElem.querySelectorAll(".video").length; i++){
                 self._rootElem.querySelector("#"+self._rootElem.querySelectorAll(".video").item(i).id).play();
+                self._rootElem.querySelector("#play-button").style.visibility = "hidden";
             }
             
         };
