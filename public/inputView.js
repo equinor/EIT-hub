@@ -36,4 +36,49 @@ export default class InputView{
         this._rootElem.querySelector("#dataText")
             .innerText = ` Input values:\n x: ${msg.x.toFixed(5)}  y: ${msg.y.toFixed(5)}  z: ${msg.z.toFixed(5)}  r: ${msg.r.toFixed(5)}  `;
     }
+
+    updateGamepadImage(x,y,z,r,armButton,disarmButton,manual,stabilize,depthHold) {
+
+        if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1 ) {
+            this._rootElem.querySelector("#svg_1").style.fill = "red";  //arm
+        } else {
+            this._rootElem.querySelector("#svg_1").style.fill = "cecece";  
+        }
+
+        if (Math.abs(z) > 0.1 || Math.abs(r) > 0.1 ) {
+            this._rootElem.querySelector("#svg_2").style.fill = "red";  //arm
+        } else {
+            this._rootElem.querySelector("#svg_2").style.fill = "cecece";  
+        }
+
+        if (armButton) {
+            this._rootElem.querySelector("#svg_17").style.fill = "red";  //arm
+        } else {
+            this._rootElem.querySelector("#svg_17").style.fill = "cecece";  
+        }
+
+        if (disarmButton) {
+            this._rootElem.querySelector("#svg_8").style.fill = "red";  //disarm
+        } else {
+            this._rootElem.querySelector("#svg_8").style.fill = "cecece";  
+        }
+
+        if (manual) {
+            this._rootElem.querySelector("#svg_6").style.fill = "red";  //arm
+        } else {
+            this._rootElem.querySelector("#svg_6").style.fill = "cecece";  
+        }
+
+        if (stabilize) {
+            this._rootElem.querySelector("#svg_7").style.fill = "red";  //disarm
+        } else {
+            this._rootElem.querySelector("#svg_7").style.fill = "cecece";  
+        }
+
+        if (depthHold) {
+            this._rootElem.querySelector("#svg_5").style.fill = "red";  //disarm
+        } else {
+            this._rootElem.querySelector("#svg_5").style.fill = "cecece";  
+        }
+    }
 }
