@@ -10,8 +10,13 @@ class ShuttleControl {
     start() {
         let self = this;
 
-        let token = self.auth.getDeviceToken('shuttle');
-        self.azureIot.sendMessage('shuttle',token);
+        self.azureIot.onMessage('shuttle', function (message) {
+            let messageType = message.systemProperties.messageId;
+            if (messageType === 'requestToken') {
+                let token = self.auth.getDeviceToken('shuttle');
+                self.azureIot.sendMessage('shuttle',token);
+            }
+        });
         
         // Listens for all websocket messages with type 'input'
         self.browserWs.onTopic('input', function (message) {
