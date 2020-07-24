@@ -40,7 +40,7 @@ function main() {
     const azureIot = new AzureIot(config);
 
     //Setup ShuttleControl
-    const shuttleControl = new ShuttleControl(azureIot, browserWs, deviceWs);
+    const shuttleControl = new ShuttleControl(azureIot, browserWs, deviceWs, auth);
 
     //Setup ShuttleTelemetry
     const shuttleTelemetry = new ShuttleTelemetry(azureIot, browserWs, deviceWs);

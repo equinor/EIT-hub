@@ -21,8 +21,9 @@ class WebsocketConnector:
     3) run()
     '''
 
-    def __init__(self, uri):
+    def __init__(self, uri, token):
         self.uri: str = uri
+        self.token = token
 
     def get_shuttle_connector(self, shuttle_connector):
         self.shuttle_connector = shuttle_connector
@@ -33,7 +34,7 @@ class WebsocketConnector:
 
     async def run(self):
         try: 
-            async with websockets.connect(self.uri) as websocket:
+            async with websockets.connect(self.uri, extra_headers = {'authorization': self.token}) as websocket:
                 await self.handler(websocket, websocket.path)
         except websockets.ConnectionClosed:
             logging.error('lost connection to websocket')

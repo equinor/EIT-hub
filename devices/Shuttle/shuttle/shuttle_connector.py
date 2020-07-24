@@ -228,7 +228,7 @@ class FakeShuttleConnector:
         '''Handles all websocket messages by running the appropriate method'''
 
         if message['type'] == 'input':
-            await self.send_thrust_command(message['x'], message['y'], message['y'], message['r'])
+            await self.send_thrust_command(message['x'], message['y'], message['z'], message['r'])
         elif message['type'] == 'changeFlightMode':
             await self.change_flight_mode(message['flightMode'])
         elif message['type'] == 'armShuttle':
