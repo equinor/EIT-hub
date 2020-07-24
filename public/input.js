@@ -114,6 +114,7 @@ export default class Input{
 
         if (this.flightMode !== this.prevFlightMode) {
             this._websocket.sendShuttleCommand('changeFlightMode', this.flightMode);
+            this.prevFlightMode = this.flightMode;
         }
     }
 }
