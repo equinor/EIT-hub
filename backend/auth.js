@@ -4,6 +4,7 @@ const UserAuth = require("./auth/user-auth");
 const AuthConfig = require("./auth/auth-config");
 const fetch = require('node-fetch');
 const { URLSearchParams } = require('url');
+var cookie = require('cookie')
 
 /** A class that handles authentication and access controls needs for EitHub
  *  Must be integrated with express to generate any security.
@@ -72,6 +73,11 @@ class Auth {
         const self = this;
 
         return function (req, res, next) {
+            if(self._config.isDisabled()){
+                next();
+                return;
+            }
+
             let sessionId;
             if (self._userAuth.hasSession(req.cookies["session"])) {
                 sessionId = req.cookies["session"];
@@ -111,7 +117,17 @@ class Auth {
             res.redirect(self._config.createAuthorizationUrl(sessionId));
         }
     }
-}
 
+    getUser(request) {
+        if (this._config.isDisabled() === true) {
+            // Auth is disabled.
+            return {};
+        }
+
+        //get cookie
+        let sessionId = cookie.parse(request.headers.cookie)["session"];
+        return this._userAuth.getUser(sessionId);
+    }
+}
 
 module.exports = Auth;

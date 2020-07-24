@@ -13,6 +13,15 @@ class AuthConfig {
         this.redirectUri = new URL("/azuread", this.baseUrl).toString();
     }
 
+    isDisabled() {
+        if(this.baseUrl.hostname === "localhost") {
+            if(!this.clientId){
+                return true;
+            }
+        }
+        return false;
+    }
+
     createAuthorizationUrl(token) {
         let url = new URL("https://login.microsoftonline.com/");
         url.pathname = `/${this.tenantId}/oauth2/v2.0/authorize`;
