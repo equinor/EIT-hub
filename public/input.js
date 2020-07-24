@@ -18,9 +18,9 @@ export default class Input{
         this.flightMode = null;
         this.prevFlightMode = null;
         this.flightModes = {
-            MANUAL = 'MANUAL',
-            STABILIZE = 'STABILIZE',
-            DEPTH_HOLD = 'DEPTH_HOLD'
+            MANUAL: 'MANUAL',
+            STABILIZE: 'STABILIZE',
+            DEPTH_HOLD: 'DEPTH_HOLD'
         }
     }
 
