@@ -18,6 +18,10 @@ class UserAuth{
     getUser(sessionId) {
         return this._session.get(sessionId);
     }
+
+    setUser(sessionId, user) {
+        this._session.set(sessionId, user);
+    }
 }
 
 module.exports = UserAuth;

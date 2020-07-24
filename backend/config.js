@@ -9,6 +9,7 @@ class Config {
         this._eventHubConnectionString = "";
         this._clientId = "";
         this._tenantId = "";
+        this._clientSecret = "";
     }
 
     applyEnv(processEnv) {
@@ -32,6 +33,9 @@ class Config {
         }
         if(process.env.EITHUB_CLIENT_ID){
             this._clientId = processEnv.EITHUB_CLIENT_ID;
+        }
+        if(process.env.EITHUB_CLIENT_SECRET){
+            this._clientSecret = processEnv.EITHUB_CLIENT_SECRET;
         }
         
     }
@@ -74,6 +78,10 @@ class Config {
 
     get tenantId() {
         return this._tenantId;
+    }
+
+    get clientSecret() {
+        return this._clientSecret;
     }
 }
 

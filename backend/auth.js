@@ -1,6 +1,9 @@
 const DeviceAuth = require("./auth/device-auth");
 const Time = require("./utils/time");
 const UserAuth = require("./auth/user-auth");
+const AuthConfig = require("./auth/auth-config");
+const fetch = require('node-fetch');
+const { URLSearchParams } = require('url');
 
 /** A class that handles authentication and access controls needs for EitHub
  *  Must be integrated with express to generate any security.
@@ -15,6 +18,7 @@ class Auth {
         this._disableDeviceAuth = config.disableDeviceAuth;
         this._deviceAuth = new DeviceAuth(new Time());
         this._userAuth = new UserAuth();
+        this._config = AuthConfig.fromConfig(config);
     }
 
     /** Generates a new token that devices to connect device endpoints.
@@ -44,15 +48,15 @@ class Auth {
     }
 
     validateDeviceRequest(deviceName, request) {
-        if(this._disableDeviceAuth === true) {
+        if (this._disableDeviceAuth === true) {
             // Auth is disabled.
             return true;
         }
 
         var authorization = request.headers.authorization;
-        if(authorization) {
+        if (authorization) {
             const auth = authorization.split(" ");
-            if(auth[0] !== "Bearer"){
+            if (auth[0] !== "Bearer") {
                 return false
             }
             return this._deviceAuth.checkKey(auth[1], deviceName);
@@ -69,19 +73,42 @@ class Auth {
 
         return function (req, res, next) {
             let sessionId;
-            if (self._userAuth.hasSession(req.cookies["session"])){
+            if (self._userAuth.hasSession(req.cookies["session"])) {
                 sessionId = req.cookies["session"];
             } else {
                 // first time we have seen this user.
                 sessionId = self._userAuth.getNewSessionId();
-                res.cookie("session",sessionId);
+                res.cookie("session", sessionId);
             }
 
-            if( self._userAuth.getUser() !== null) {
+            console.log(sessionId);
+
+            if (req.path === "/azuread") {
+                fetch(self._config.authorityUrl(), { method: 'POST', body: self._config.accessTokenParam(req.body.code) })
+                    .then(res => res.json())
+                    .then(json => {
+                        if(json.access_token) {
+                            let body = json.access_token.split(".")[1];
+                            let buff = new Buffer(body, 'base64');
+                            let userJson = buff.toString('ascii');
+                            let user = JSON.parse(userJson);
+
+                            self._userAuth.setUser(sessionId,user);
+                            res.redirect("/");
+                        }else {
+                            res.status(401).send(json).end();
+                        }
+                    });
+                return;
+            }
+
+            if (self._userAuth.getUser(sessionId) !== null) {
                 // we have user.
                 next();
+                return;
             }
-            
+
+            res.redirect(self._config.createAuthorizationUrl(sessionId));
         }
     }
 }
