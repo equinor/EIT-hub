@@ -22,3 +22,5 @@ PILOT_CMD_DELAY = 0.1
 THRUST_RESET_DELAY = 0.1    # how often need for thrust reset is checked 
 THRUST_TIME_LIMIT = 0.5       # how long before thrust should be reset to neutral
 TELEMETRY_INVERVAL = 1      # How long between telemetry messages are sent
+
+RC_MODE = True  # Send thrust commands as RC or manual control

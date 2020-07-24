@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,9 @@
     <link href="style.css" rel="stylesheet" type="text/css">
     <script type="module" src="index.js"></script>
 </head>
+
 <body>
+
 
     <img src="images/equinor_logo.jpg" alt="logo" id="logo-equinor">
 
@@ -27,20 +30,32 @@
                 <pre id="dataText"></pre>
             </div>
 
+
             <div id="clientRequests">       
                 <p id="reqButtonText">Press "Request" button <br> below for control</p>
                 <button class="button" id="requestControlButton">Request control</button>
                 <button class="button" id="cancelControlButton">Give up control</button>
-
                 <p id="requestAnswer"></p>
+                <div id="shuttle-buttons">
+                    <button class="shuttle-button" id="arm-button">Arm</button>
+                    <button class="shuttle-button" id="disarm-button">Disarm</button>
+                    <select id="flight-modes">
+                        <option value="none">--Choose Flight Mode--</option>
+                        <option value="MANUAL">Manual</option>
+                        <option value="STABILIZE">Stabilize</option>
+                        <option value="DEPTH_HOLD">Depth Hold</option>
+                    </select>
+                    
+                </div>
             </div>
             
         </div>
         
-        <div id="video">
+        <div id="video-view">
             <p>Video</p>
-            <video id="video-view"></video>
-
+            <video id="video"></video>
+            <button id="play-button">Watch stream</button>
+            <p id="StreamStatus">The device is not streaming</p>
         </div>
     </div>
     <div id="telemetry">
@@ -48,4 +63,5 @@
         <pre id="telemetry-view"></pre>
     </div>
 </body>
+
 </html>

@@ -145,7 +145,7 @@ class BrowserWs {
                     browserId: browserId,
                     type: msgParse.type,
                     user: user,
-                    body: msgParse,
+                    body: msgParse.body,
                 }
 
                 if (self._onBrowserCallbacks.has(message.browserId) && self._onBrowserCallbacks.get(message.browserId).length > 0) {
