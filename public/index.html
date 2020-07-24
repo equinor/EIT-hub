@@ -21,14 +21,13 @@
                 <button class="button" id="keyboard-button">Control with keyboard</button>
                 <p class="control-info" id="gamepad-info" style="display: none;"> <b>GAMEPAD:</b> Left joystick controls forward/backward <br> (up/down) and translation (left/right). <br>Right joystick controls up/down (up/down) <br> and rotation (left/right).<br>
                     <img src = "https://media.giphy.com/media/1fjDhbR2pDy33ZsuFU/giphy.gif" style="width:68px;height:68px;"><br> Choose Flight Mode of the shuttle by pressing one of  <br> the buttons shown below on your gamepad controller. <br> You can also choose to arm or disarm the shuttle. <br>
-                    <img src = "images/cross.jpg" id = "cross-button" style="width:38px;height:38px;"> <br> MANUAL<br>
-                    <img src = "images/circle.jpg" id = "circle-button" style="width:38px;height:38px;"> <br> STABILIZE <br> 
-                    <img src = "images/square.jpg" id = "square-button" style="width:38px;height:38px;"> <br> DEPTH HOLD <br>
-                    <img src = "images/triangle.jpg" id = "triangle-button" style="width:38px;height:38px;"> <br> nothing yet<br><br>
+                    <img src = "images/cross.jpg" id = "cross-button" style="width:38px;height:38px;">   MANUAL
+                    <img src = "images/circle.jpg" id = "circle-button" style="width:38px;height:38px;">   STABILIZE <br> 
+                    <img src = "images/square.jpg" id = "square-button" style="width:38px;height:38px;"> DEPTH HOLD
+                    <img src = "images/triangle.jpg" id = "triangle-button" style="width:38px;height:38px;"> nothing yet<br><br>
                     <img src = "images/L1.jpg" id = "L1-button" style="width:38px;height:38px;"> Disarm shuttle 
                     <img src = "images/R1.jpg" id = "R1-button" style="width:38px;height:38px;"> Arm shuttle <br>
                 </p>
-
                 <p class="control-info" id="keyboard-info" style="display: none;"> <b>KEYBOARD:</b> Keys W/S controls forward/backward <br> and keys A/D translates left/right. <br> &#8593 &#8595 controls up/down and &#8592 &#8594 rotates left/right.<br>
                     <img src = "https://media.giphy.com/media/RhMmGFlRGT1UtgGTaD/giphy.gif" style="width:68px;height:68px;"></p>           
                 <pre id="dataText"></pre>
@@ -50,6 +49,12 @@
                 </div>
              </div>         
         </div>
+        <div id="video-view">
+            <p>Video of the shuttle</p>
+                <video id="video"></video>
+            <button id="play-button">Watch stream</button>
+                <p id="StreamStatus">The device is not streaming</p>
+        </div>
         <div class = "shuttle-pictures">
             <div class = "1">
                 <img src ="https://communicationtoolbox.equinor.com/fr/gallery/12366/images/lowres/e4641b051e02477ca409c2fbb49a2737.png" style="width: 350px; height: 200px;">
@@ -57,12 +62,6 @@
             <div class = "2">
                 <img src="https://communicationtoolbox.equinor.com/fr/gallery/12366/images/lowres/2e6a932674ed41df9da92759598fb625.png" style="width: 350px; height: 200px;">
             </div>
-        </div>
-        <div id="video-view">
-            <p>Video of the shuttle</p>
-                <video id="video"></video>
-            <button id="play-button">Watch stream</button>
-                <p id="StreamStatus">The device is not streaming</p>
         </div>
     </div>
     <div id="telemetry">
