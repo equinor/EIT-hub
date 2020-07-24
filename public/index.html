@@ -19,15 +19,63 @@
                 <p id="input-info">Press one of the buttons below to choose <br> what to control the shuttle with.</p>
                 <button class="button" id="gamepad-button">Control with gamepad</button>
                 <button class="button" id="keyboard-button">Control with keyboard</button>
-                <p class="control-info" id="gamepad-info" style="display: none;"> <b>GAMEPAD:</b> Left joystick controls forward/backward <br> (up/down) and translation (left/right). <br>Right joystick controls up/down (up/down) <br> and rotation (left/right).<br>
-                    <img src = "https://media.giphy.com/media/1fjDhbR2pDy33ZsuFU/giphy.gif" style="width:68px;height:68px;"><br> Choose Flight Mode of the shuttle by pressing one of  <br> the buttons shown below on your gamepad controller. <br> You can also choose to arm or disarm the shuttle. <br>
-                    <img src = "images/cross.jpg" id = "cross-button" style="width:38px;height:38px;">   MANUAL
-                    <img src = "images/circle.jpg" id = "circle-button" style="width:38px;height:38px;">   STABILIZE <br> 
-                    <img src = "images/square.jpg" id = "square-button" style="width:38px;height:38px;"> DEPTH HOLD
-                    <img src = "images/triangle.jpg" id = "triangle-button" style="width:38px;height:38px;"> nothing yet<br><br>
-                    <img src = "images/L1.jpg" id = "L1-button" style="width:38px;height:38px;"> Disarm shuttle 
-                    <img src = "images/R1.jpg" id = "R1-button" style="width:38px;height:38px;"> Arm shuttle <br>
-                </p>
+                
+                <svg id="gamepad-info" width="256" height="170" xmlns="http://www.w3.org/2000/svg" style="display: none;  margin-left:auto; margin-right:auto; margin-top: 20px" >
+
+                    <metadata>image/svg+xmlOpenclipart</metadata>
+                    <g>
+                     <title>background</title>
+                     <rect fill="none" id="canvas_background" height="172" width="258" y="-1" x="-1"/>
+                    </g>
+                    <g>
+                     <title>Layer 1</title>
+                     <g id="layer1">
+                      <path fill="#212121" d="m53.702538,1.280781c-0.47597,-0.007 -0.95982,0.005 -1.438,0.0167c-3.8255,0.097 -7.7038,0.77663 -11.333,1.6092c-3.3992,0.77986 -7.0506,2.0811 -9.3643,4.6907c-3.6256,4.0892 -5.5124,15.425 -5.5124,
+                      15.425s-10.619,7.0994 -14.329,12.138c-3.4896,4.7395 -5.3216,10.576 -6.8991,16.246c-1.0445,3.7543 -1.291,7.6918 -1.6435,11.573c-2.3278,25.63 -5.0152,48.958 -3.0301,77.157c0.70842,10.064 5.0934,14.999 11.025,19.567c5.4892,
+                      4.2276 13.256,6.215 20.115,5.2385c5.3841,-0.7665 10.178,-4.4895 14.004,-8.3542c7.9784,-8.0589 15.483,-28.016 17.137,-29.394c1.6533,-1.3777 3.8519,-4.6907 3.8519,-4.6907s5.2928,4.7838 8.5426,6.0603c4.5704,1.7951 9.7365,
+                      2.5903 14.603,1.9345c6.323,-0.85208 12.786,-3.2986 17.633,-7.4469c3.447,-2.95 7.173,-11.573 7.173,-11.573l26.449,0s3.726,8.6227 7.173,11.573c4.8474,4.1484 11.31,6.5948 17.633,7.4469c4.8663,0.65579 10.032,-0.13934 14.603,
+                      -1.9345c3.2498,-1.2764 8.5426,-6.0603 8.5426,-6.0603s2.1986,3.313 3.8518,4.6907c1.6533,1.3778 9.141,21.335 17.119,29.394c3.8262,3.8648 8.6367,7.5878 14.021,8.3542c6.8593,0.9765 14.626,-1.0109 20.115,-5.2385c5.9315,-4.5682 10.316,
+                      -9.5038 11.025,-19.567c1.985,-28.199 -0.70235,-51.527 -3.0301,-77.157c-0.35248,-3.8809 -0.61614,-7.8184 -1.6606,-11.573c-1.5775,-5.6702 -3.3924,-11.507 -6.882,-16.246c-3.7096,-5.0382 -14.329,-12.138 -14.329,-12.138s-1.9041,
+                      -11.335 -5.5296,-15.425c-2.3137,-2.6096 -5.9479,-3.9109 -9.3472,-4.6907c-7.2584,-1.6652 -15.525,-2.7085 -22.341,0.29103c-3.9204,1.7252 -6.595,6.0577 -8.7994,9.3643s-3.304,13.781 -3.304,13.781l-38.313,-0.15416l0,-0.11974l-13.764,
+                      0.0514l-13.781,-0.0514l0,0.11974l-38.313,0.15416s-1.0996,-10.475 -3.304,-13.781c-2.2044,-3.3066 -4.879,-7.6391 -8.7994,-9.3643c-2.9821,-1.3123 -6.2379,-1.8667 -9.5698,-1.9174l-0.0004,0.00047zm155.5,27.511c5.1807,0 9.3814,
+                      4.2008 9.3814,9.3814c0,5.1807 -4.2008,9.3814 -9.3814,9.3814c-5.1807,0 -9.3814,-4.2008 -9.3814,-9.3814c0,-5.1807 4.2007,-9.3814 9.3814,-9.3814zm-171.31,5.307l15.099,0l0,11.23s-5.4723,7.2084 -7.5496,7.1217c-2.2054,-0.092 -7.5496,
+                      -7.1217 -7.5496,-7.1217l0.0002,-11.23zm148.55,14.62c5.1807,0 9.3814,4.2008 9.3814,9.3814c0,5.1807 -4.2008,9.3814 -9.3814,9.3814c-5.1807,0 -9.3814,-4.2008 -9.3814,-9.3814c0,-5.1807 4.2008,-9.3814 9.3814,-9.3814zm45.538,0c5.1807,
+                      0 9.3814,4.2008 9.3814,9.3814c0,5.1807 -4.2007,9.3814 -9.3814,9.3814s-9.3814,-4.2008 -9.3814,-9.3814c0,-5.1807 4.2007,-9.3814 9.3814,-9.3814zm-208.86,0.68478l11.23,0s7.0296,5.3614 7.1217,7.5668c0.0868,2.0773 -7.1217,7.5496 -7.1217,
+                      7.5496l-11.23,0l0,-15.1164zm33.417,0l11.23,0l0,15.116l-11.23,0s-7.2084,-5.4723 -7.1217,-7.5496c0.092,-2.2054 7.1217,-7.5668 7.1217,-7.5668l0,0.0004zm88.705,4.023l14.687,4.8106l-14.687,4.8277l0,-9.6383zm-51.345,0.33876l14.633,0l0,
+                      8.9607l-14.633,0l0,-8.9607zm-48.453,7.7245c2.0773,-0.0868 7.5496,7.1217 7.5496,7.1217l0,11.23l-15.099,0l0,-11.23s5.3442,-7.0296 7.5496,-7.1217l-0.0002,0zm163.76,7.173c5.1807,0 9.3814,4.2008 9.3814,9.3814c0,5.1807 -4.2008,
+                      9.3814 -9.3814,9.3814c-5.1807,0 -9.3814,-4.2008 -9.3814,-9.3814c0,-5.1807 4.2007,-9.3814 9.3814,-9.3814zm-123.66,16.4c10.12,0 18.318,8.1976 18.318,18.318s-8.1976,18.335 -18.318,18.335s-18.318,-8.2148 -18.318,-18.335s8.1977,
+                      -18.318 18.318,-18.318zm82.721,0c10.12,0 18.318,8.1976 18.318,18.318s-8.1976,18.335 -18.318,18.335s-18.318,-8.2148 -18.318,-18.335s8.1976,-18.318 18.318,-18.318z" id="path2996"/>
+                     </g>
+                     <path id="svg_13" d="m-52.309057,85.821949l0.812727,0l0.677273,0.747045l-0.677273,0.747045l-0.812727,0l0,-1.49409z" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#cecece"/>
+                     <path id="svg_14" d="m-67.234053,148.583484l0.812727,0l0.677273,0.747045l-0.677273,0.747045l-0.812727,0l0,-1.49409z" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#cecece"/>
+                     <ellipse stroke="#000" ry="9.807693" rx="9.615386" id="svg_5" cy="58.594352" cx="187.269234" stroke-opacity="null" stroke-width="1.5" fill="#cecece"/>
+                     <ellipse stroke="#000" ry="9.807693" rx="9.615386" id="svg_6" cy="78.594353" cx="209.576928" stroke-opacity="null" stroke-width="1.5" fill="#cecece"/>
+                     <ellipse stroke="#000" ry="9.807693" rx="9.615386" id="svg_7" cy="58.209737" cx="232.269238" stroke-opacity="null" stroke-width="1.5" fill="#cecece"/>
+                     <ellipse stroke="#000" ry="9.807693" rx="9.615386" id="svg_3" cy="38.978967" cx="209.192313" stroke-opacity="null" stroke-width="1.5" fill="#cecece"/>
+                     <ellipse stroke="#000" ry="18" rx="18" id="svg_2" cy="103.402045" cx="168.038463" stroke-opacity="null" stroke-width="1.5" fill="#cecece"/>
+                     <ellipse stroke="#000" ry="18.076924" rx="18.269232" id="svg_1" cy="103.402046" cx="85.923073" stroke-width="1.5" fill="#cecece"/>
+                     <rect id="svg_8" height="9.23077" width="14.615385" y="53.402044" x="94.192306" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#cecece"/>
+                     <path transform="rotate(180 56.980751037597656,57.24999237060547) " id="svg_10" d="m46.403824,48.980768l11.538463,0l9.615384,8.26923l-9.615384,8.26923l-11.538463,0l0,-16.53846z" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#cecece"/>
+                     <path transform="rotate(90 45.190948486328125,44.43155670166016) " id="svg_11" d="m34.614024,36.162334l11.538463,0l9.615384,8.26923l-9.615384,8.26923l-11.538463,0l0,-16.53846z" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#cecece"/>
+                     <path id="svg_9" d="m22.690946,48.854641l11.538463,0l9.615384,8.269231l-9.615384,8.26923l-11.538463,0l0,-16.538461z" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#cecece"/>
+                     <path transform="rotate(-90 45.190948486328146,69.43157196044923) " id="svg_12" d="m34.614024,61.162335l11.538463,0l9.615384,8.26923l-9.615384,8.26923l-11.538463,0l0,-16.53846z" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#cecece"/>
+                     <path stroke="#000" transform="rotate(90 152.90405273437503,57.94583892822267) " id="svg_17" d="m147.519441,65.638149l5.384616,-15.384613l5.384616,15.384613l-10.769232,0z" stroke-opacity="null" stroke-width="1.5" fill="#cecece"/>
+                     <text stroke="#000" transform="matrix(0.5430553624884616,0,0,0.4456226806806639,65.66019869608647,36.04085575597516) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_18" y="34.451735" x="140.479417" stroke-opacity="null" stroke-width="0" fill="#ffffff">Arm</text>
+                     <text stroke="null" transform="matrix(0.3482599166502352,0,0,0.4276718153347385,54.66320372174597,60.36752788616211) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_20" y="-23.079015" x="93.390124" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Disarm</text>
+                     <text stroke="#000" transform="matrix(0.29158245664138605,0,0,0.3089214665091582,53.90995770670048,72.60680870067883) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_21" y="36.026446" x="66.865519" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Forward</text>
+                     <text stroke="#000" transform="matrix(0.20946181322596225,0,0,0.32422715425491333,59.02814830243234,100.77462562173605) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_22" y="81.894614" x="75.490474" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Backward</text>
+                     <text stroke="#000" transform="matrix(0.2451925936191195,0,0,0.23405006529037564,123.94284029850488,81.81184061437608) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_23" y="6.354377" x="155.527793" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Up</text>
+                     <text stroke="#000" transform="matrix(0.2856023609638214,0,0,0.28109270334243774,117.40678699035197,108.58870057482272) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_24" y="66.060302" x="146.839297" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Down</text>
+                     <text stroke="#000" transform="matrix(0.18681262445641592,0,0,0.30293981083931953,29.64991257005076,88.25613589260371) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_25" y="56.676158" x="77.055772" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Rotate left</text>
+                     <text stroke="#000" transform="matrix(0.23226867616176602,0,0,0.25189945101737976,81.47923566796815,114.78937504719943) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_26" y="-38.898176" x="105.030216" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Right</text>
+                     <text stroke="#000" transform="matrix(0.23361686792095068,0,0,0.2484032923003809,111.23713620873576,95.3235527609861) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_27" y="41.88525" x="117.045578" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Left</text>
+                     <text stroke="#000" transform="matrix(0.20343452692031858,0,0,0.3039939193943794,147.11521332897246,61.71943028503797) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_28" y="148.171279" x="194.346156" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Translate right</text>
+                     <text stroke="#000" transform="matrix(0.29821526006036514,0,0,0.2783782139110933,144.81253262772282,86.86565846889533) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_29" y="23.763155" x="180.051263" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Manual</text>
+                     <text stroke="#000" transform="matrix(0.25569145396674736,0,0,0.3325782883094223,170.61350899235256,66.34178753612551) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_30" y="25.128072" x="206.03567" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">Stabilize</text>
+                     <text stroke="#000" transform="matrix(0.23702138662338257,0,0,0.30984899401664734,139.47010621707886,67.88282160414383) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_31" y="19.549092" x="143.862814" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#ffffff">DepthHold</text>
+                    </g>
+                   </svg>
+                   
                 <p class="control-info" id="keyboard-info" style="display: none;"> <b>KEYBOARD:</b> Keys W/S controls forward/backward <br> and keys A/D translates left/right. <br> &#8593 &#8595 controls up/down and &#8592 &#8594 rotates left/right.<br>
                     <img src = "https://media.giphy.com/media/RhMmGFlRGT1UtgGTaD/giphy.gif" style="width:68px;height:68px;"></p>           
                 <pre id="dataText"></pre>

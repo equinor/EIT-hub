@@ -62,8 +62,8 @@ export default class Input{
             this.r = axes[2];
 
             // Arm or disarm the shuttle's motors
-            let armButton = buttons[5].value;
-            let disarmButton = buttons[4].value;
+            let armButton = buttons[9].value;
+            let disarmButton = buttons[8].value;
             if (armButton && !disarmButton) {
                 this.armState = true;
             } else {
@@ -81,6 +81,8 @@ export default class Input{
             } else {
                 this.flightMode = this.flightModes.MANUAL;
             }
+
+            this._view.updateGamepadImage(this.x,this.y,this.z,this.r,armButton,disarmButton,manual,stabilize,depthHold);
 
         } else if (this._view.useKeyboard()) {
             
