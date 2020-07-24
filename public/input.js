@@ -56,9 +56,9 @@ export default class Input{
         if (this._view.useGamePad() && this._gamePad.getGamepad() !== null) {
             var [axes, buttons] = this._gamePad.getGamepad();
             // Inputs that control the shuttle's movement
-            this.y = axes[1];
+            this.y = -axes[1];
             this.x = axes[0];
-            this.z = axes[3];
+            this.z = -axes[3];
             this.r = axes[2];
 
             // Arm or disarm the shuttle's motors
