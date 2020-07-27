@@ -1,6 +1,8 @@
 /* istanbul ignore file */
 
 const express = require('express');
+const cookieParser = require('cookie-parser');
+
 const url = require('url');
 
 class Express {
@@ -12,6 +14,9 @@ class Express {
         this.app = express();
         this.server = undefined;
 
+        this.app.use(cookieParser());
+        this.app.use(express.urlencoded({ extended: true }));
+        this.app.use(this.auth.getBrowserMiddleware());
         this.app.use(express.static('public'));
     }
 
@@ -29,7 +34,13 @@ class Express {
         const path = pathname.split("/");
 
         if (path[1] === 'browser') { 
-            this.browserWs.handleUpgrade({}, request, socket, head);
+            let user = this.auth.getUser(request);
+            if(user !== null) {
+                this.browserWs.handleUpgrade(user, request, socket, head);
+            } else {
+                socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+                socket.destroy();
+            }
         } else if (path[1] === 'device') {
             if(this.auth.validateDeviceRequest(path[2], request)) {
                 this.deviceWs.handleUpgrade(path[2], request, socket, head);
