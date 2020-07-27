@@ -21,22 +21,23 @@ class WebsocketConnector:
     3) run()
     '''
 
-    def __init__(self, uri):
+    def __init__(self, uri, token):
         self.uri: str = uri
+        self.token = token
+
+    def get_shuttle_connector(self, shuttle_connector):
+        self.shuttle_connector = shuttle_connector
         
-    
     def add_handlers(self, consumer, producer):
         self.consumer = consumer
         self.producer = producer
 
-
     async def run(self):
         try: 
-            async with websockets.connect(self.uri) as websocket:
+            async with websockets.connect(self.uri, extra_headers = {'authorization': self.token}) as websocket:
                 await self.handler(websocket, websocket.path)
         except websockets.ConnectionClosed:
             logging.error('lost connection to websocket')
-
 
     async def handler(self, websocket, path):
         consumer_task = asyncio.create_task(self.consumer_handler(websocket, path))
@@ -45,37 +46,14 @@ class WebsocketConnector:
         for task in pending:
             task.cancel()
 
-
     async def consumer_handler(self, websocket, path):
         async for message in websocket:
             logging.debug('message recieved: ' + str(message))
-            await self.consumer(message)
-
+            await self.consumer(self.shuttle_connector,message)
 
     async def producer_handler(self, websocket, path):
         while True:
-            message = await self.producer()
+            # producer needs to have access to the ShuttleConnector to retrieve telemetry
+            message = await self.producer(self.shuttle_connector)
             logging.debug('message sent: ' + str(message))
             await websocket.send(message)
-
-
-if __name__ == "__main__":
-
-    from shuttle.shuttle_controller import DesiredThrust
-
-    uri = 'ws://localhost:3000/'
-
-    async def printer(message):
-        logging.info('message: ' + str(message))
-
-    async def talker() -> str:
-        await asyncio.sleep(1)
-        telemetry = DesiredThrust()
-        return json.dumps(telemetry)
-
-    async def main():
-        websocket_connector = WebsocketConnector(uri)
-        websocket_connector.add_handlers(printer, talker)
-        await websocket_connector.run()
-
-    asyncio.run(main())

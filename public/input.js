@@ -11,6 +11,17 @@ export default class Input{
         this.y = 0;
         this.z = 0;
         this.r = 0;
+
+        this.armState = null;
+        this.prevArmState = null;
+
+        this.flightMode = null;
+        this.prevFlightMode = null;
+        this.flightModes = {
+            MANUAL: 'MANUAL',
+            STABILIZE: 'STABILIZE',
+            DEPTH_HOLD: 'DEPTH_HOLD'
+        }
     }
 
     start(poolInterval) {
@@ -42,12 +53,36 @@ export default class Input{
 
     _possessInputs() {
         
-        if (this._view.useGamePad()) {
-            var axes = this._gamePad.getAxes();
-            this.y = axes[1];
+        if (this._view.useGamePad() && this._gamePad.getGamepad() !== null) {
+            var [axes, buttons] = this._gamePad.getGamepad();
+            // Inputs that control the shuttle's movement
+            this.y = -axes[1];
             this.x = axes[0];
-            this.z = axes[3];
+            this.z = -axes[3];
             this.r = axes[2];
+
+            // Arm or disarm the shuttle's motors
+            let armButton = buttons[9].value;
+            let disarmButton = buttons[8].value;
+            if (armButton && !disarmButton) {
+                this.armState = true;
+            } else {
+                this.armState = false;
+            }
+
+            // Change the shuttle's flight mode
+            let manual = buttons[0].value;
+            let stabilize = buttons[1].value;
+            let depthHold = buttons[2].value;
+            if (!manual && stabilize && !depthHold) {
+                this.flightMode = this.flightModes.STABILIZE;
+            } else if (!manual && !stabilize && depthHold) {
+                this.flightMode = this.flightModes.DEPTH_HOLD
+            } else {
+                this.flightMode = this.flightModes.MANUAL;
+            }
+
+            this._view.updateGamepadImage(this.x,this.y,this.z,this.r,armButton,disarmButton,manual,stabilize,depthHold);
 
         } else if (this._view.useKeyboard()) {
             
@@ -64,14 +99,24 @@ export default class Input{
             this.r = this.keySmoothing(this._keyboard.keyRight(), this._keyboard.keyLeft(),this.r);
         }
 
-        let msg = {
+        let inputMsg = {
             y: this.y,
             x: this.x,
             z: this.z,
             r: this.r
         }
 
-        this._websocket.sendInput(msg);
-        this._view.setData(msg);
+        this._websocket.sendInput(inputMsg);
+        this._view.setData(inputMsg);
+
+        if (this.armState !== this.prevArmState) {
+            this._websocket.sendShuttleCommand('armShuttle', this.armState);
+            this.prevArmState = this.armState;
+        }
+
+        if (this.flightMode !== this.prevFlightMode) {
+            this._websocket.sendShuttleCommand('changeFlightMode', this.flightMode);
+            this.prevFlightMode = this.flightMode;
+        }
     }
 }

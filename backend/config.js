@@ -4,10 +4,13 @@ class Config {
     constructor(){
         this._port = 3000;
         this._baseUrl = new URL("http://localhost:3000/");
-        this._disableDeviceAuth = true;
+        this._disableDeviceAuth = false;
         this._iotHubConnectionString = "";
         this._iotHubStreamDevices = "";
         this._eventHubConnectionString = "";
+        this._clientId = "";
+        this._tenantId = "";
+        this._clientSecret = "";
     }
 
     applyEnv(processEnv) {
@@ -29,6 +32,16 @@ class Config {
         if(process.env.EITHUB_EVENTHUB_CONNECTION_STRING){
             this._eventHubConnectionString = processEnv.EITHUB_EVENTHUB_CONNECTION_STRING;
         }
+        if(process.env.EITHUB_TENANT_ID){
+            this._tenantId = processEnv.EITHUB_TENANT_ID;
+        }
+        if(process.env.EITHUB_CLIENT_ID){
+            this._clientId = processEnv.EITHUB_CLIENT_ID;
+        }
+        if(process.env.EITHUB_CLIENT_SECRET){
+            this._clientSecret = processEnv.EITHUB_CLIENT_SECRET;
+        }
+        
     }
 
     get port() {
@@ -64,6 +77,18 @@ class Config {
 
     get eventHubConnectionString() {
         return this._eventHubConnectionString;
+    }
+
+    get clientId() {
+        return this._clientId;
+    }
+
+    get tenantId() {
+        return this._tenantId;
+    }
+
+    get clientSecret() {
+        return this._clientSecret;
     }
 }
 
