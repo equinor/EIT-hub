@@ -11,13 +11,13 @@ spec:
     - name: web
       secrets:
         - EITHUB_IOTHUB_CONNECTION_STRING
-          EITHUB_EVENTHUB_CONNECTION_STRING
-          EITHUB_CLIENT_SECRET
+        - EITHUB_EVENTHUB_CONNECTION_STRING
+        - EITHUB_CLIENT_SECRET
       variables:
-        EITHUB_BASE_URL: 
-        EITHUB_IOTHUB_STREAM_DEVICES: 
-        EITHUB_TENANT_ID: 
-        EITHUB_CLIENT_ID: 
+        EITHUB_BASE_URL: ""
+        EITHUB_IOTHUB_STREAM_DEVICES: ""
+        EITHUB_TENANT_ID: ""
+        EITHUB_CLIENT_ID: ""
       src: .
       ports:
        - name: http
