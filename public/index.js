@@ -32,14 +32,14 @@ function main() {
     const videoView = new VideoView(document.getElementById('video-view'));
 
     // Setup RtcConnector
-    const rtcConnector = new RtcConnector(websocket,videoView);
+    const rtcConnector = new RtcConnector(websocket, videoView);
 
     // Setup ClientRequests
     const clientRequestView = new ClientRequestView(websocket,document.getElementById('clientRequests'))
     websocket.onControl(clientRequestView.updateControl.bind(clientRequestView));
 
     // Start client
-    input.start(10);
+    input.start(100);
     rtcConnector.start();
 }
 

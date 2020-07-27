@@ -6,6 +6,7 @@ class Config {
         this._baseUrl = new URL("http://localhost:3000/");
         this._disableDeviceAuth = true;
         this._iotHubConnectionString = "";
+        this._iotHubStreamDevices = "";
         this._eventHubConnectionString = "";
         this._clientId = "";
         this._tenantId = "";
@@ -24,6 +25,9 @@ class Config {
         }
         if(processEnv.EITHUB_IOTHUB_CONNECTION_STRING){
             this._iotHubConnectionString = processEnv.EITHUB_IOTHUB_CONNECTION_STRING;
+        }
+        if(processEnv.EITHUB_IOTHUB_STREAM_DEVICES){
+            this._iotHubStreamDevices = processEnv.EITHUB_IOTHUB_STREAM_DEVICES;
         }
         if(process.env.EITHUB_EVENTHUB_CONNECTION_STRING){
             this._eventHubConnectionString = processEnv.EITHUB_EVENTHUB_CONNECTION_STRING;
@@ -66,6 +70,9 @@ class Config {
 
     get iotHubConnectionString() {
         return this._iotHubConnectionString;
+    }
+    get iotHubStreamDevices() {
+        return this._iotHubStreamDevices;
     } 
 
     get eventHubConnectionString() {

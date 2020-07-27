@@ -27,21 +27,18 @@ function sendMessage(mess, type){
 
 // Evaluating message received and sending response 
 function msgEval(me){
-    if (me.command == "getSDP"){
+    if (me.command === "getSDP"){
         if (stat == false){
             startup()
-            .then(sendMessage(SDP, "SDP"));
         } else {
             close()
             .then(startup)
-            .then(sendMessage(SDP, "SDP"));
         }
-    } else if (me.command == "submitSDP"){
-        submitSDP();
-        sendMessage("Submited SDP", "message");
-    } else if (me.command == "Close"){
+    } else if (me.command === "submitSDP"){
+        console.log(me);
+        submitSDP(me.commandData);
+    } else if (me.command === "Close"){
         close();
-        sendMessage("Stream closed", "message");
     } else {
         sendMessage("Unvalid command", "message");
     }
@@ -64,13 +61,11 @@ async function startup() {
     page.on('console', msg => SDP = msg.text()); // Reads the browser console output
 
     //Waiting for the SDP to load (varies with browser and hardware)
-    while (SDP == null){        
+    while (SDP === null){        
         await page.waitFor(100);
     } 
 
-    // Sending SDP as a message
     sendMessage(SDP, "SDP");
-
 }
 
 
@@ -79,10 +74,13 @@ async function submitSDP(payload){
 
     await page.type("#incoming", payload);
     await page.click('[type="submit"]');
+
+    sendMessage("Device submited SDP", "message");
  
     console.log("Stream started"); 
     
     stat = true;
+    sendMessage(stat, "Status");
 }
 
 
@@ -96,8 +94,10 @@ async function close(){
     browser = null;
     SDP = null;
 
+    sendMessage("Stream closed", "message");
     console.log("Stream closed");  
-    stat = false;    
+    stat = false;   
+    sendMessage(stat, "Status"); 
 }
 
 client.on('message', function(msg) {
