@@ -5,6 +5,7 @@ class ShuttleControl {
         this.deviceWs = deviceWs;
         this.auth = auth;
         this.currentBrowser = null;
+        this.currentUser = null;
     }
 
     start() {
@@ -42,15 +43,18 @@ class ShuttleControl {
 
             let wantsControl = message.body;
             let browserId = message.browserId;
+            let userName = message.user.name;
             let inputControlFeedback = new Object();
             inputControlFeedback.type = 'inputControl';
 
             if (wantsControl && self.currentBrowser === null) {
                 self.currentBrowser = browserId;
-                inputControlFeedback.body = browserId;
+                self.currentUser = userName;
+                inputControlFeedback.body = userName;
                 self.browserWs.broadcast(inputControlFeedback);
             } else if (!wantsControl && browserId === self.currentBrowser) {
                 self.currentBrowser = null;
+                self.currentUser = null;
                 inputControlFeedback.body = null;
                 self.browserWs.broadcast(inputControlFeedback);
             }
@@ -96,13 +100,14 @@ class ShuttleControl {
                 inputControlFeedback.body = null;
                 self.browserWs.broadcast(inputControlFeedback);
                 self.currentBrowser = null;
+                self.currentUser = null;
             }
         });
 
         self.browserWs.onOpen(function (browserId, user) {
             let inputControlFeedback = new Object();
             inputControlFeedback.type = 'inputControl';
-            inputControlFeedback.body = self.currentBrowser;
+            inputControlFeedback.body = self.currentUser;
             self.browserWs.sendMessage(browserId, inputControlFeedback);
         });
     }
