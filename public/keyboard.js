@@ -2,6 +2,12 @@ export default class Keyboard {
     constructor(window) { 
         window.addEventListener("keydown", this._down.bind(this), false);
         window.addEventListener("keyup", this._up.bind(this), false);
+        window.addEventListener("keydown", function(e) {
+            // Prevent page from moving upon arrow key press
+            if([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+                e.preventDefault();
+            }
+        }, false);
 
         /** A map of keyCode to pressed state. */
         this._pressed = {};
