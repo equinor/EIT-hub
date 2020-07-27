@@ -164,7 +164,7 @@ class BrowserWs {
             // onClose
             websocket.on("close", () => {
 
-                console.log(`Browser ${browserId} closed`);
+                console.log(`${user.name} closed browser ${browserId}.`);
                 self.wsMap.delete(browserId);
                 if (self._onCloseCallbacks.length > 0) {
                     for (let callback of self._onCloseCallbacks) {
