@@ -34,7 +34,7 @@ export default class InputView{
 
     setData(msg) {
         this._rootElem.querySelector("#dataText")
-            .innerText = ` Input values:\n x: ${msg.x.toFixed(5)}  y: ${msg.y.toFixed(5)}  z: ${msg.z.toFixed(5)}  r: ${msg.r.toFixed(5)}  `;
+            .innerText = ` Input values:\n x: ${msg.x.toFixed(3)}  y: ${msg.y.toFixed(3)}  z: ${msg.z.toFixed(3)}  r: ${msg.r.toFixed(3)}  `;
     }
 
     updateGamepadImage(x,y,z,r,armButton,disarmButton,manual,stabilize,depthHold) {
