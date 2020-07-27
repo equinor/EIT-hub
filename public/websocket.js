@@ -34,8 +34,8 @@ export default class WebSocket{
      *
      *@param {any} msg 
      */
-    sendRtc(msg){
-        msg.type = "rtc";
+    sendRtc(rtcMsg){
+        const msg = { type: "rtc", body: rtcMsg };
         this._ws.send(JSON.stringify(msg));
     }
 

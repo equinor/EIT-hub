@@ -84,6 +84,10 @@ class RtcControl {
                     msg = { type: "rtc", data: message };
                     self.browserWS.broadcast(msg);
 
+                    if ((self.Client.Count >=  1)&&(self.Device.Status[property] === false)) {
+                        self.azureIot.sendMessage(self.Devices[property], { command: "getSDP", commandData: null });
+                    }
+
                 }
             });
         }
@@ -140,6 +144,7 @@ class RtcControl {
                     if (self.Device.Status[property] === true) {
                         self.azureIot.sendMessage(self.Devices[property], { command: "Close", commandData: null });
                         self.videoStream.PeerDestroy(self.Device.Peers[property], property);
+                        self.Device.Status[property] = false;
                     }
                 }
             }
