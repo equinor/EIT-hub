@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node
 
 WORKDIR /app/eithub/
 
@@ -8,9 +8,7 @@ RUN npm install
 COPY backend ./backend
 COPY public ./public
 
-RUN adduser -S -D -h /app/eithub/ eithub eithub
-
-USER eithub
+USER node
 
 EXPOSE 3000
 
