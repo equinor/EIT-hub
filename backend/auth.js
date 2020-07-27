@@ -87,8 +87,6 @@ class Auth {
                 res.cookie("session", sessionId);
             }
 
-            console.log(sessionId);
-
             if (req.path === "/azuread") {
                 fetch(self._config.authorityUrl(), { method: 'POST', body: self._config.accessTokenParam(req.body.code) })
                     .then(res => res.json())
