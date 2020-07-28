@@ -20,14 +20,6 @@ export default class ClientRequestView{
         this._rootElem.querySelector("#disarm-button").onclick = function() {
             self._websocket.sendShuttleCommand("armShuttle",false);
         }
-        
-        this._rootElem.querySelector("#flight-modes").onchange = function() {
-            let value = self._rootElem.querySelector("#flight-modes").options[self._rootElem.querySelector("#flight-modes").selectedIndex].value;
-            if (value !== "none") {
-                self._websocket.sendShuttleCommand("changeFlightMode",value);
-            }
-            
-        }
     }
 
     updateControl(msg) {
