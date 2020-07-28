@@ -1,6 +1,6 @@
 export default class WebSocket{
     constructor(){
-        this._ws = new window.WebSocket('ws://localhost:3000/browser');
+        this._ws = new window.WebSocket(getWsUrl());
 
         this._ws.onmessage = this._onMessage.bind(this);
         this._telemetryCallbacks = [];
@@ -74,4 +74,17 @@ export default class WebSocket{
             console.warn("Unknown message from server:", msg);
         }
     }
+}
+
+function getWsUrl() {
+    var loc = window.location, new_uri;
+    if (loc.protocol === "https:") {
+        new_uri = "wss:";
+    } else {
+        new_uri = "ws:";
+    }
+    new_uri += "//" + loc.host;
+    new_uri += "/browser";
+
+    return new_uri
 }
