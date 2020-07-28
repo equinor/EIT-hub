@@ -166,7 +166,7 @@ class ShuttleConnector:
                 mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
                 mode_id)
 
-            logging.debug(f'Set mode to {flight_mode}')
+            logging.info(f'Set mode to {flight_mode}')
 
     async def arm_shuttle(self, arm_shuttle: bool):
         '''Arm or disarm the shuttle'''

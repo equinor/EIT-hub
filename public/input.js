@@ -78,7 +78,7 @@ export default class Input{
                 this.flightMode = this.flightModes.STABILIZE;
             } else if (!manual && !stabilize && depthHold) {
                 this.flightMode = this.flightModes.DEPTH_HOLD
-            } else {
+            } else if (manual && !stabilize && !depthHold) {
                 this.flightMode = this.flightModes.MANUAL;
             }
 
