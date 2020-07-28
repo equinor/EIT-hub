@@ -13,6 +13,8 @@ spec:
         - EITHUB_IOTHUB_CONNECTION_STRING
         - EITHUB_EVENTHUB_CONNECTION_STRING
         - EITHUB_CLIENT_SECRET
+      ingressConfiguration:
+        - websocketfriendly
       src: .
       ports:
        - name: http
