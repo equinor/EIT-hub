@@ -67,7 +67,7 @@ class ShuttleControl {
             if (browserId === self.currentBrowser) {
                 let flightMode = message.body;
                 // These are the only flight modes we use
-                if (['MANUAL', 'STABILIZE', 'DEPTH_HOLD'].indexOf(flightMode) > -1) {
+                if (['MANUAL', 'STABILIZE', 'ALT_HOLD'].indexOf(flightMode) > -1) {
                     let newObj = { type: 'changeFlightMode', flightMode: flightMode };
                     self.deviceWs.sendMessage('shuttle', newObj);
                 } else {

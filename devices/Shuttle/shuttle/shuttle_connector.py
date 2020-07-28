@@ -37,6 +37,8 @@ class ShuttleConnector:
         # Choose a mode
         mode = 'MANUAL'
 
+        print(self.mavcon.mode_mapping())
+
         # Check if mode is available
         if mode not in self.mavcon.mode_mapping():
             print('Unknown mode : {}'.format(mode))
