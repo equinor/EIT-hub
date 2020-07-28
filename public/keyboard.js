@@ -20,6 +20,9 @@ export default class Keyboard {
     keyUp() {return this.isPressed(38)}
     keyRight() {return this.isPressed(39)}
     keyDown() {return this.isPressed(40)}
+    key1() {return this.isPressed(49)}
+    key2() {return this.isPressed(50)}
+    key3() {return this.isPressed(51)}
 
     _down(event){
         this._pressed[event.keyCode] = true;
