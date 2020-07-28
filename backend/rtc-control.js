@@ -84,6 +84,10 @@ class RtcControl {
                     msg = { type: "rtc", data: message };
                     self.browserWS.broadcast(msg);
 
+                    if ((self.Client.Count >=  1)&&(self.Device.Status[property] === false)) {
+                        self.azureIot.sendMessage(self.Devices[property], { command: "getSDP", commandData: null });
+                    }
+
                 }
             });
         }
@@ -126,11 +130,12 @@ class RtcControl {
             for (const property in self.Devices) {
                 if (self.Client.Peers[browserId][property] !== undefined) {
                     self.videoStream.PeerDestroy(self.Client.Peers[browserId][property], browserId);
-                    delete self.Client.Peers[browserId];
-                    delete self.Client.sdpOut[browserId];
-                    delete self.Client.sdpIn[browserId];
                 }
             }
+
+            delete self.Client.Peers[browserId];
+            delete self.Client.sdpOut[browserId];
+            delete self.Client.sdpIn[browserId];
 
 
             // Checks if there is no browser connected and stops device streams if there is none
@@ -139,6 +144,7 @@ class RtcControl {
                     if (self.Device.Status[property] === true) {
                         self.azureIot.sendMessage(self.Devices[property], { command: "Close", commandData: null });
                         self.videoStream.PeerDestroy(self.Device.Peers[property], property);
+                        self.Device.Status[property] = false;
                     }
                 }
             }

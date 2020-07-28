@@ -71,21 +71,22 @@ async function startup() {
 
 // Submits the server SDP
 async function submitSDP(payload){
+    stat = true;
 
     await page.type("#incoming", payload);
-    await page.click('[type="submit"]');
+    await page.click('[type="submit"]').then(sendMessage(stat, "Status"));
 
     sendMessage("Device submited SDP", "message");
  
     console.log("Stream started"); 
     
-    stat = true;
-    sendMessage(stat, "Status");
 }
 
 
 // Closes the browser(and the stream)
 async function close(){
+    stat = false; 
+    sendMessage(stat, "Status"); 
 
     await page.close();
     await browser.close();
@@ -95,9 +96,7 @@ async function close(){
     SDP = null;
 
     sendMessage("Stream closed", "message");
-    console.log("Stream closed");  
-    stat = false;   
-    sendMessage(stat, "Status"); 
+    console.log("Stream closed");    
 }
 
 client.on('message', function(msg) {
