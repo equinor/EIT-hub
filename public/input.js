@@ -41,7 +41,7 @@ export default class Input{
                 if (newValue < -1)  newValue = -1; 
             }
         } else {
-            if (newValue >= 0.5*this.gainRelease || newValue <= -0.5*this.gainRelease) {
+            if (newValue > 0.06 || newValue < -0.06) {
                 let sign = newValue/Math.abs(newValue);
                 newValue -= sign*this.gainRelease;
             } else {
@@ -74,6 +74,13 @@ export default class Input{
             let manual = buttons[0].value;
             let stabilize = buttons[1].value;
             let depthHold = buttons[2].value;
+            if (!manual && stabilize && !depthHold) {
+                this.flightMode = this.flightModes.STABILIZE;
+            } else if (!manual && !stabilize && depthHold) {
+                this.flightMode = this.flightModes.DEPTH_HOLD
+            } else if (manual && !stabilize && !depthHold) {
+                this.flightMode = this.flightModes.MANUAL;
+            }
 
             this._view.updateGamepadImage(this.x,this.y,this.z,this.r,armButton,disarmButton,manual,stabilize,depthHold);
 
@@ -94,14 +101,13 @@ export default class Input{
             let manual = this._keyboard.key1();
             let stabilize = this._keyboard.key2();
             let depthHold = this._keyboard.key3();
-        }
-
-        if (!manual && stabilize && !depthHold) {
-            this.flightMode = this.flightModes.STABILIZE;
-        } else if (!manual && !stabilize && depthHold) {
-            this.flightMode = this.flightModes.DEPTH_HOLD
-        } else if (manual && !stabilize && !depthHold) {
-            this.flightMode = this.flightModes.MANUAL;
+            if (!manual && stabilize && !depthHold) {
+                this.flightMode = this.flightModes.STABILIZE;
+            } else if (!manual && !stabilize && depthHold) {
+                this.flightMode = this.flightModes.DEPTH_HOLD
+            } else if (manual && !stabilize && !depthHold) {
+                this.flightMode = this.flightModes.MANUAL;
+            }
         }
 
         let inputMsg = {
