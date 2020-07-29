@@ -34,7 +34,7 @@ export default class InputView{
 
     setData(msg) {
         this._rootElem.querySelector("#dataText")
-            .innerText = ` Input values:\n x: ${msg.x.toFixed(5)}  y: ${msg.y.toFixed(5)}  z: ${msg.z.toFixed(5)}  r: ${msg.r.toFixed(5)}  `;
+            .innerText = ` Input values:\n x: ${msg.x.toFixed(3)}  y: ${msg.y.toFixed(3)}  z: ${msg.z.toFixed(3)}  r: ${msg.r.toFixed(3)}  `;
     }
 
     updateGamepadImage(x,y,z,r,armButton,disarmButton,manual,stabilize,depthHold) {
@@ -81,4 +81,73 @@ export default class InputView{
             this._rootElem.querySelector("#svg_5").style.fill = "cecece";  
         }
     }
+
+    /* keyboardImage(keyA,keyS,keyW,keyD,keyLeft, keyDown, keyUp, keyRight, manual, stabilize, depthHold) {
+
+        if (keyA) {
+            this._rootElem.querySelector("#svg_5").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_5").style.fill = "cecece";  
+        }
+
+        if (keyS) {
+            this._rootElem.querySelector("#svg_6").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_6").style.fill = "cecece";  
+        }
+
+        if (keyW) {
+            this._rootElem.querySelector("#svg_7").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_7").style.fill = "cecece";  
+        }
+
+        if (keyD) {
+            this._rootElem.querySelector("#svg_8").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_8").style.fill = "cecece";  
+        }
+
+        if (keyLeft) {
+            this._rootElem.querySelector("#svg_9").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_9").style.fill = "cecece";  
+        }
+
+        if (keyDown) {
+            this._rootElem.querySelector("#svg_10").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_10").style.fill = "cecece";  
+        }
+
+        if (keyUp) {
+            this._rootElem.querySelector("#svg_11").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_11").style.fill = "cecece";  
+        }
+
+        if (keyRight) {
+            this._rootElem.querySelector("#svg_12").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_12").style.fill = "cecece";  
+        }
+
+        if (key1) {
+            this._rootElem.querySelector("#svg_13").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_13").style.fill = "cecece";  
+        }
+
+        if (key2) {
+            this._rootElem.querySelector("#svg_14").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_14").style.fill = "cecece";  
+        }
+
+        if (key3) {
+            this._rootElem.querySelector("#svg_15").style.fill = "red";
+        } else {
+            this._rootElem.querySelector("#svg_15").style.fill = "cecece";  
+        }
+    } */
 }
