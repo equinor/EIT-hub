@@ -41,7 +41,7 @@ export default class Input{
                 if (newValue < -1)  newValue = -1; 
             }
         } else {
-            if (newValue > 0.06 || newValue < -0.06) {
+            if (newValue >= 0.5*this.gainRelease || newValue <= -0.5*this.gainRelease) {
                 let sign = newValue/Math.abs(newValue);
                 newValue -= sign*this.gainRelease;
             } else {
