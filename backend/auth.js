@@ -73,7 +73,7 @@ class Auth {
         const self = this;
 
         return function (req, res, next) {
-            if(self._config.isDisabled(true)){
+            if(true){
                 next();
                 return;
             }
@@ -117,7 +117,7 @@ class Auth {
     }
 
     getUser(request) {
-        if (this._config.isDisabled(true) === true) {
+        if (true) {
             // Auth is disabled.
             return {};
         }
