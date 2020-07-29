@@ -182,7 +182,7 @@ class ShuttleConnector:
                 mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 0,
                 1,  # 1 = arm, 0 = disarm
                 0, 0, 0, 0, 0, 0)
-            logging.debug('Armed shuttle')
+            logging.info('Armed shuttle')
         else:
             # Disarm thrusters
             self.mavcon.mav.command_long_send(
@@ -191,7 +191,7 @@ class ShuttleConnector:
                 mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 0,
                 0,  # 1 = arm, 0 = disarm
                 0, 0, 0, 0, 0, 0)
-            logging.debug('Disarmed shuttle')
+            logging.info('Disarmed shuttle')
 
     async def send_heartbeat(self):
         ''' sends heartbeat from GCS to ardusub '''
@@ -223,6 +223,7 @@ class ShuttleConnector:
                 self.telemetry_list['chan6_raw'] = (message_dict['chan6_raw'] -1500) / 200
             if message.get_type() == 'VFR_HUD':
                 self.telemetry_list['heading'] = message_dict['heading']
+            #print(self.mavcon.motors_armed())
 
 
     def send_telemetry(self):
