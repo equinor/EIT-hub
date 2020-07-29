@@ -29,10 +29,10 @@ function main() {
     let input = new Input(websocket,gamePad,keyboard,inputView);
 
     // Setup VideoView
-    const videoView = new VideoView(document.getElementById('video-view'));
+    //const videoView = new VideoView(document.getElementById('video-view'));
 
     // Setup RtcConnector
-    const rtcConnector = new RtcConnector(websocket, videoView);
+    //const rtcConnector = new RtcConnector(websocket, videoView);
 
     // Setup ClientRequests
     const clientRequestView = new ClientRequestView(websocket,document.getElementById('clientRequests'))
@@ -40,7 +40,7 @@ function main() {
 
     // Start client
     input.start(200);
-    rtcConnector.start();
+    //rtcConnector.start();
 }
 
 main();

@@ -114,9 +114,8 @@ html * {
   min-width: 500px;
 }
 
-#video {
-  display: inline-block;
-  margin-left: 150px;
+#Video {
+  overflow: hidden;
 }
 #video-view {
   border: 5px solid #007079;

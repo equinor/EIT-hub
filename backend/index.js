@@ -34,7 +34,7 @@ function main() {
     const deviceWs = new DeviceWS();
 
     //For peer control
-    const videoStream = new VideoStream(); 
+    //const videoStream = new VideoStream(); 
 
     //Setup Azure IoT
     const azureIot = new AzureIot(config);
@@ -46,7 +46,7 @@ function main() {
     const shuttleTelemetry = new ShuttleTelemetry(azureIot, browserWs, deviceWs);
 
     //Create RtcControl
-    const rtcControl = new RtcControl(azureIot, browserWs, videoStream, config);
+    //const rtcControl = new RtcControl(azureIot, browserWs, videoStream, config);
 
     //Create express
     const express = new Express(config.port, auth, browserWs, deviceWs)
@@ -55,7 +55,7 @@ function main() {
     azureIot.start();
     shuttleControl.start();
     shuttleTelemetry.start();
-    rtcControl.start();
+    //rtcControl.start();
     express.start();
 
 }
