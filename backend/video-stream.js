@@ -50,6 +50,7 @@ class VideoStream {
      * 
      * @param {any} Stream
      * @param {Function} callback
+     * @return {any} returns peer
      */
 
     createClientPeer(Stream, callback) {
@@ -58,7 +59,6 @@ class VideoStream {
         let DataObj;
 
         let ClientPeer = new SimplePeer({
-            initiator: true,
             stream: Stream,
             trickle: false,
             wrtc: wrtc
@@ -70,11 +70,10 @@ class VideoStream {
             console.log("Generated client SDP");
             sdp = JSON.stringify(data); 
             DataObj = { peer: ClientPeer, sdp: sdp };
-
             callback(DataObj);
         });
 
-        
+        return ClientPeer;
     }
 
 
