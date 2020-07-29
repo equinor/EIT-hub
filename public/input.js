@@ -98,7 +98,7 @@ export default class Input{
             // r
             this.r = this.keySmoothing(this._keyboard.keyRight(), this._keyboard.keyLeft(),this.r);
 
-          /*   let manual = this._keyboard.key1();
+            let manual = this._keyboard.key1();
             let stabilize = this._keyboard.key2();
             let depthHold = this._keyboard.key3();
             if (!manual && stabilize && !depthHold) {
@@ -108,9 +108,8 @@ export default class Input{
             } else if (manual && !stabilize && !depthHold) {
                 this.flightMode = this.flightModes.MANUAL;
             }
-
-            this._view.keyboardImage(this.keyA,this.keyS,this.keyW,this.keyD,this.keyLeft, this.keyDown, this.keyUp, this.keyRight, key1, key2, key3);
-         */}
+            /*this._view.keyboardImage(this.keyA,this.keyS,this.keyW,this.keyD,this.keyLeft, this.keyDown, this.keyUp, this.keyRight, key1, key2, key3);*/
+        }
 
         let inputMsg = {
             y: this.y,
