@@ -13,20 +13,20 @@ function main() {
     const websocket = new WebSocket();
 
     // Setup Telemetry
-    const telemetryView = new TelemetryView(document.getElementById('telemetry-view'));
-    websocket.onTelemetry(telemetryView.updateTelemetry.bind(telemetryView));
+    //const telemetryView = new TelemetryView(document.getElementById('telemetry-view'));
+    //websocket.onTelemetry(telemetryView.updateTelemetry.bind(telemetryView));
 
     // Setup GamePad.
-    const gamePad = new GamePad();
+    //const gamePad = new GamePad();
 
     // Setup Keyboard.
-    const keyboard = new Keyboard(window);
+    //const keyboard = new Keyboard(window);
 
     // Setup InputView.
-    const inputView = new InputView(document.getElementById('input-view'));
+    //const inputView = new InputView(document.getElementById('input-view'));
 
     // Setup Input
-    let input = new Input(websocket,gamePad,keyboard,inputView);
+    //let input = new Input(websocket,gamePad,keyboard,inputView);
 
     // Setup VideoView
     const videoView = new VideoView(document.getElementById('video-view'));
@@ -35,11 +35,11 @@ function main() {
     const rtcConnector = new RtcConnector(websocket, videoView);
 
     // Setup ClientRequests
-    const clientRequestView = new ClientRequestView(websocket,document.getElementById('clientRequests'))
-    websocket.onControl(clientRequestView.updateControl.bind(clientRequestView));
+    //const clientRequestView = new ClientRequestView(websocket,document.getElementById('clientRequests'))
+    //websocket.onControl(clientRequestView.updateControl.bind(clientRequestView));
 
     // Start client
-    input.start(200);
+    //input.start(200);
     rtcConnector.start();
 }
 

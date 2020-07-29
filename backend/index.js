@@ -40,10 +40,10 @@ function main() {
     const azureIot = new AzureIot(config);
 
     //Setup ShuttleControl
-    const shuttleControl = new ShuttleControl(azureIot, browserWs, deviceWs, auth);
+    //const shuttleControl = new ShuttleControl(azureIot, browserWs, deviceWs, auth);
 
     //Setup ShuttleTelemetry
-    const shuttleTelemetry = new ShuttleTelemetry(azureIot, browserWs, deviceWs);
+    //const shuttleTelemetry = new ShuttleTelemetry(azureIot, browserWs, deviceWs);
 
     //Create RtcControl
     const rtcControl = new RtcControl(azureIot, browserWs, videoStream, config);
@@ -53,8 +53,8 @@ function main() {
 
     // Start EitHub
     azureIot.start();
-    shuttleControl.start();
-    shuttleTelemetry.start();
+    //shuttleControl.start();
+    //shuttleTelemetry.start();
     rtcControl.start();
     express.start();
 
