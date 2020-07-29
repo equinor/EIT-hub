@@ -170,6 +170,8 @@ html * {
 
 .control-info {
   font-size: 15px;
+  background-image: auto;
+  min-width: 500px;
 }
 
 #telemetry {
