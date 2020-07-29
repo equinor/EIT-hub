@@ -1,6 +1,7 @@
 from pymavlink import mavutil
 import logging
 import sys
+import asyncio
 
 
 def is_legal(value: float):
@@ -22,6 +23,8 @@ class ShuttleConnector:
         self.z = 0
         self.r = 0
         self.rateLimit = 0.2
+
+        self.telemetry_list = {}
 
         # Create the connection
         # Documentation on connection strings
@@ -55,12 +58,12 @@ class ShuttleConnector:
             mode_id)
 
         # Arm thrusters
-        self.mavcon.mav.command_long_send(
+        """self.mavcon.mav.command_long_send(
             self.mavcon.target_system,
             self.mavcon.target_component,
             mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
             0,
-            1, 0, 0, 0, 0, 0, 0)
+            1, 0, 0, 0, 0, 0, 0)"""
 
         while True:
             logging.info('ack')
@@ -151,6 +154,7 @@ class ShuttleConnector:
 
     async def change_flight_mode(self, flight_mode):
         '''Change the shuttle's flight mode'''
+        print('flight')
 
         # Check if mode is available
         if flight_mode not in self.mavcon.mode_mapping():
@@ -170,7 +174,6 @@ class ShuttleConnector:
 
     async def arm_shuttle(self, arm_shuttle: bool):
         '''Arm or disarm the shuttle'''
-
         if arm_shuttle:
             # Arm thrusters
             self.mavcon.mav.command_long_send(
@@ -179,7 +182,7 @@ class ShuttleConnector:
                 mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 0,
                 1,  # 1 = arm, 0 = disarm
                 0, 0, 0, 0, 0, 0)
-            logging.debug('Armed shuttle')
+            logging.info('Armed shuttle')
         else:
             # Disarm thrusters
             self.mavcon.mav.command_long_send(
@@ -188,7 +191,7 @@ class ShuttleConnector:
                 mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 0,
                 0,  # 1 = arm, 0 = disarm
                 0, 0, 0, 0, 0, 0)
-            logging.debug('Disarmed shuttle')
+            logging.info('Disarmed shuttle')
 
     async def send_heartbeat(self):
         ''' sends heartbeat from GCS to ardusub '''
@@ -202,19 +205,34 @@ class ShuttleConnector:
         )
         logging.debug('Heartbeat sent')
 
-    async def recv_telemetry(self):
+    async def get_telemetry(self):
         """Listens for selected types of telemetry from shuttle"""
+        while True:
+            await asyncio.sleep(0.001)
+            message = self.mavcon.recv_match(blocking=True)
+            message_dict = message.to_dict()
+            if message.get_type() == 'GLOBAL_POSITION_INT':
+                self.telemetry_list['alt'] = message_dict['alt']
+                self.telemetry_list['vx'] = message_dict['vx']
+                self.telemetry_list['vy'] = message_dict['vy']
+                self.telemetry_list['vz'] = message_dict['vz']
+            if message.get_type() == 'RC_CHANNELS':
+                self.telemetry_list['chan3_raw'] = (message_dict['chan3_raw'] -1500) / 200
+                self.telemetry_list['chan4_raw'] = (message_dict['chan4_raw'] -1500) / 200
+                self.telemetry_list['chan5_raw'] = (message_dict['chan5_raw'] -1500) / 200
+                self.telemetry_list['chan6_raw'] = (message_dict['chan6_raw'] -1500) / 200
+            if message.get_type() == 'VFR_HUD':
+                self.telemetry_list['heading'] = message_dict['heading']
+            #print(self.mavcon.motors_armed())
 
-        # GLOBAL_POSITION_INT contains data on shuttle speed and shuttle altitude
-        telemetry = self.mavcon.recv_match(type='GLOBAL_POSITION_INT', blocking=True)
-        logging.info(f'Position telemetry received: {telemetry}')
 
+    def send_telemetry(self):
+        flightmode = self.mavcon.flightmode
+        armed = self.mavcon.motors_armed()
+        self.telemetry_list['flightmode'] = flightmode
+        self.telemetry_list['armed'] = armed
 
-    def telemetry(self):
-        return {
-            'fake_telemetry': 0.5
-        }
-
+        return {'telemetry_list': self.telemetry_list}
 
 class FakeShuttleConnector:
 

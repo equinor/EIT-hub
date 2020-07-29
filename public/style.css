@@ -99,7 +99,6 @@ html * {
   flex-direction: row;
   margin-top: 50px;
   margin-bottom: 50px;
-  justify-content: center;
 }
 
 .shuttle-pictures {
@@ -185,5 +184,4 @@ html * {
   padding: 20px;
   border: 5px solid #007079;
   margin: 5px;
-  background-color: #75b1b5;
 }

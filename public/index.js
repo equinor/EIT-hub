@@ -13,7 +13,7 @@ function main() {
     const websocket = new WebSocket();
 
     // Setup Telemetry
-    const telemetryView = new TelemetryView(document.getElementById('telemetry-view'));
+    const telemetryView = new TelemetryView(document.getElementById('telemetry'));
     websocket.onTelemetry(telemetryView.updateTelemetry.bind(telemetryView));
 
     // Setup GamePad.
