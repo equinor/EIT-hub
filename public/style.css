@@ -1,3 +1,8 @@
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
 @font-face {
   font-family: Equinor;
   src: url(https://eds-static.equinor.com/font/Equinor-Light.woff2) format('woff2'),
@@ -119,7 +124,6 @@ html * {
 
 #input-view {
   text-align: center;
-  display: inline-block;
   padding-left: 30px;
   padding-right: 30px;
   border-left: 2px solid rgb(138, 138, 138);
@@ -130,7 +134,6 @@ html * {
 
 #clientRequests {
   text-align: center;
-  display: inline-block;
   padding-left: 30px;
   padding-right: 30px;
   padding-bottom: 30px;
@@ -184,4 +187,9 @@ html * {
   border: 5px solid #007079;
   margin: 5px;
   background-color: #75b1b5;
+}
+
+#keybord-info {
+  width: 100%;
+  height: auto;
 }
