@@ -35,7 +35,7 @@ class RtcControl {
             for (const property in self.Devices) {
                 if (self.Device.Status2[property] === null) {
                     console.log(`${property} is off`);
-                    self.browserWS.broadcast({type: "rtc", data: {type: "Status", message: "off", Device: property}});
+                    self.browserWS.broadcast({ type: "rtc", data: { type: "Status", message: "off", Device: property } });
                 }
                 self.Device.Status2[property] = null;
             }
@@ -43,12 +43,12 @@ class RtcControl {
         }
         setTimeout(timeout, 20000);
 
-        if (self.config.iotHubStreamDevices !== ""){
+        if (self.config.iotHubStreamDevices !== "") {
             self.Devices = JSON.parse(self.config.iotHubStreamDevices);
         } else {
             console.log("No stream devices given");
-            self.browserWS.onOpen( function(browserId){
-                self.browserWS.sendMessage(browserId, {type: "rtc", data:{ type: "message", message: "No stream devices given"}});
+            self.browserWS.onOpen(function (browserId) {
+                self.browserWS.sendMessage(browserId, { type: "rtc", data: { type: "message", message: "No stream devices given" } });
             });
         }
 
@@ -84,7 +84,7 @@ class RtcControl {
                     msg = { type: "rtc", data: message };
                     self.browserWS.broadcast(msg);
 
-                    if ((self.Client.Count >=  1)&&(self.Device.Status[property] === false)) {
+                    if ((self.Client.Count >= 1) && (self.Device.Status[property] === false)) {
                         self.azureIot.sendMessage(self.Devices[property], { command: "getSDP", commandData: null });
                     }
 
@@ -95,7 +95,7 @@ class RtcControl {
 
         // Adds browser variables to Client object and starts device streams if it is the only browser connected 
         self.browserWS.onOpen(function (browserId) {
-            
+
             self.browserWS.sendMessage(browserId, { type: "rtc", data: { type: "Devices", message: self.Devices } });
 
             function open() {
@@ -106,7 +106,7 @@ class RtcControl {
                 }
 
                 for (const property in self.Devices) {
-                    self.browserWS.sendMessage(browserId, { type: "rtc", data: {type: "Status", message: self.Device.Status[property], Device: property}});
+                    self.browserWS.sendMessage(browserId, { type: "rtc", data: { type: "Status", message: self.Device.Status[property], Device: property } });
                 }
 
                 self.Client.Count += 1;
@@ -158,19 +158,20 @@ class RtcControl {
             let reqDev = message.body.data.Device;
 
             // When asked the server will provide server SDP to the client(and stream device)
-            if (message.body.data.type === "SDPrequest") {
+            // Submits client SDP. When this is done the video stream will show in browser 
+            if (message.body.data.type === "SDP") {
 
-                self.videoStream.createClientPeer(self.Device.Streams[reqDev], function (DataObj) {
-
-                    self.Client.Peers[browserId][reqDev] = DataObj.peer;
-                    self.Client.sdpOut[browserId][reqDev] = DataObj.sdp;
-
-                    self.browserWS.sendMessage(browserId, { type: "rtc", data: { type: "SDP", message: self.Client.sdpOut[browserId][reqDev], Device: reqDev } });
-
-                });
-
-                // Submits client SDP. When this is done the video stream will show in browser 
-            } else if (message.body.data.type === "SDP") {
+                for (const property in self.Devices) {
+                    self.Client.Peers[browserId][property] = self.videoStream.createClientPeer(self.Device.Streams[property], function (DataObj) {
+    
+                        //self.Client.Peers[browserId][property] = DataObj.peer;
+                        self.Client.sdpOut[browserId][property] = DataObj.sdp;
+    
+                        console.log(DataObj.sdp);
+                        self.browserWS.sendMessage(browserId, { type: "rtc", data: { type: "SDP", message: self.Client.sdpOut[browserId][property], Device: property } });
+    
+                    });
+                }
 
                 self.Client.sdpIn[browserId][reqDev] = message.body.data.message;
 
