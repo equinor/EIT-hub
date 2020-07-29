@@ -5,8 +5,15 @@ export default class TelemetryView {
 
     updateTelemetry(json) {
         let msg = JSON.stringify(json);
-        this._rootElem.innerText = "x: "+ json.desired_thrust.x.toFixed(5) +
-        "   y: "+ json.desired_thrust.y.toFixed(5) + "   z: "+ json.desired_thrust.z.toFixed(5) +
-        "   r: "+ json.desired_thrust.r.toFixed(5);
+        let telemtery = msg.telemetry_list;
+        if (telemtery.armed) {
+            this._rootElem.querySelector("#circle_3").style.fill = "green";
+        } else {
+            this._rootElem.querySelector("#circle_3").style.fill = "red";
+        }
+
+        this._rootElem.querySelector("#telemetry_view").innerText = "Flightmode: "+ telemtery.flightmode + "\r\n" +
+        "Altitud: "+ telemtery.alt + "\r\n" + "Heading: "+ telemtery.heading + "\r\n" +
+        "Vx: "+ telemtery.vx;
     }
 }

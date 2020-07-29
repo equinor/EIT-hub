@@ -31,6 +31,11 @@ async def heartbeat(shuttle: ShuttleConnector):
     logging.debug('Heartbeat sent')
 
 
+async def telemetry(shuttle: ShuttleConnector):
+    '''Listens to telemetry from shuttle'''
+    await shuttle.get_telemetry()
+
+
 async def io_handler(websocket_connector: WebsocketConnector, shuttle_connector: ShuttleConnector, consumer, producer):
     '''
     Deals with handlers for messages that are reviced and those that are sent. 
@@ -58,7 +63,7 @@ async def websocket_producer(shuttle_connector: ShuttleConnector):
     Sends messages periodically over websocket
     '''
     await asyncio.sleep(config.TELEMETRY_INVERVAL)
-    return json.dumps(shuttle_connector.telemetry())
+    return json.dumps(shuttle_connector.send_telemetry())
 
 
 def control_over_websocket(use_fake_shuttle=False):
@@ -85,6 +90,7 @@ def control_over_websocket(use_fake_shuttle=False):
                         websocket_consumer, 
                         websocket_producer),
             heartbeat(shuttle_connector),  # send heartbeat to shuttle periodicaly 
+            telemetry(shuttle_connector)
         )
 
     asyncio.run(main())

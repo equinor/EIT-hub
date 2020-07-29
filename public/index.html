@@ -145,6 +145,28 @@
         <p class="info" id="StreamStatus1"></p>
         <p class="info" id="StreamStatus2"></p>
     </div>
+
+    <div id="telemetry">
+        <p>Telemetry of the shuttle position</p>
+        <div id="telemetry-display" style="display: flex;">
+            <svg id="armed-light" width="120" height="150" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                <rect fill="none" id="canvas_background" height="152" width="122" y="-1" x="-1"/>
+                <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
+                <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
+                </g>
+                </g>
+                <g>
+                <title>Layer 1</title>
+                <rect stroke="#000" id="square_1" height="103.999999" width="104.000002" y="36.445313" x="3.5" stroke-width="1.5" fill="#cecece"/>
+                <ellipse stroke="#000" ry="42.5" rx="45.500004" id="circle_3" cy="87.945312" cx="56.000005" stroke-width="1.5" fill="red"/>
+                <text stroke="#000" transform="matrix(1.2491562066961137,0,0,1.4525634050369263,-19.800899493605357,-11.964645020663738) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_4" y="27.292169" x="24.462173" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#000000">Armed</text>
+                </g>
+            </svg>
+            <pre id="telemetry-view"></pre>
+        </div>
+    </div>
+
     <div class = "shuttle-pictures">
         <div class = "1">
             <img src ="https://communicationtoolbox.equinor.com/fr/gallery/12366/images/lowres/e4641b051e02477ca409c2fbb49a2737.png" style="width: 350px; height: 200px;">
@@ -154,9 +176,6 @@
         </div>
     </div>
 
-    <div id="telemetry">
-        <p>Telemetry of the shuttle position</p>
-        <pre id="telemetry-view"></pre>
-    </div>
+    
 </body>
 </html>
