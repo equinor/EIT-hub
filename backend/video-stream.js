@@ -50,7 +50,6 @@ class VideoStream {
      * 
      * @param {any} Stream
      * @param {Function} callback
-     * @return {any} returns peer
      */
 
     createClientPeer(Stream, callback) {
@@ -59,6 +58,7 @@ class VideoStream {
         let DataObj;
 
         let ClientPeer = new SimplePeer({
+            initiator: true,
             stream: Stream,
             trickle: false,
             wrtc: wrtc
@@ -73,7 +73,6 @@ class VideoStream {
             callback(DataObj);
         });
 
-        return ClientPeer;
     }
 
 

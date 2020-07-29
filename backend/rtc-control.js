@@ -158,20 +158,21 @@ class RtcControl {
             let reqDev = message.body.data.Device;
 
             // When asked the server will provide server SDP to the client(and stream device)
-            // Submits client SDP. When this is done the video stream will show in browser 
-            if (message.body.data.type === "SDP") {
+            if (message.body.data.type === "SDPrequest") {
 
-                for (const property in self.Devices) {
-                    self.Client.Peers[browserId][property] = self.videoStream.createClientPeer(self.Device.Streams[property], function (DataObj) {
-    
-                        //self.Client.Peers[browserId][property] = DataObj.peer;
-                        self.Client.sdpOut[browserId][property] = DataObj.sdp;
-    
-                        console.log(DataObj.sdp);
-                        self.browserWS.sendMessage(browserId, { type: "rtc", data: { type: "SDP", message: self.Client.sdpOut[browserId][property], Device: property } });
-    
-                    });
-                }
+                self.videoStream.createClientPeer(self.Device.Streams[reqDev], function (DataObj) {
+
+                    self.Client.Peers[browserId][reqDev] = DataObj.peer;
+                    self.Client.sdpOut[browserId][reqDev] = DataObj.sdp;
+
+                    console.log(DataObj.sdp);
+                    self.browserWS.sendMessage(browserId, { type: "rtc", data: { type: "SDP", message: self.Client.sdpOut[browserId][reqDev], Device: reqDev } });
+
+                });
+
+                // Submits client SDP. When this is done the video stream will show in browser
+
+            } else if (message.body.data.type === "SDP") {
 
                 self.Client.sdpIn[browserId][reqDev] = message.body.data.message;
 

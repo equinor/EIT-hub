@@ -9,15 +9,12 @@ export default class RtcConnector {
         this._streams = {};
         this._tags = {};
         this._first = {};
-        this._sdp = {};
-        this._ans = {};
-        this._regDone = {};
     }
 
     start() {
 
         let self = this;
-    
+
 
         self._websocket.onRtc(function (msg) {
             let Type = msg.data.type;
@@ -35,8 +32,7 @@ export default class RtcConnector {
                     if (self._first[strDev] === true) {
                         self._videoView.setStatus(`The device: ${self._devices[strDev]} is streaming. Takes a few moments to show`, self._tags.iTag[strDev]);
 
-                        connect(strDev);
-                        //self._websocket.sendRtc({data: {type: "SDPrequest", message: null, Device: strDev}});
+                        self._websocket.sendRtc({data: {type: "SDPrequest", message: null, Device: strDev}});
                         self._first[strDev] = false;
                     }
                 } else if (message === "off") {
@@ -53,48 +49,33 @@ export default class RtcConnector {
                     self._tags.vTag[property] = self._videoView.getFreeTag(".video");
                     self._tags.iTag[property] = self._videoView.getFreeTag(".info");
                     self._first[property] = true;
+
+                    self._peers[property] = new SimplePeer({
+                        trickle: false
+                    });
+                    self._peers[property].on('error', err => console.log('error', err));
+                    self._peers[property].on('signal', data => {
+                        self._websocket.sendRtc({ data: { type: "SDP", message: data, Device: property } });
+                    });
+                    self._peers[property].on('stream', stream => {
+                        self._streams[property] = stream;
+                        self._videoView.setStream(self._streams[property], self._tags.vTag[property]);
+                    });
+
                 }
                 // Submits backend SDP
             } else if (Type === "SDP") {
                 console.log(message);
                 let msg = JSON.parse(message)
-                if ((self._regDone[strDev] === false)) {
-                    console.log("Reneg");
-                    if (msg.type === "answer") {
-                        self._ans[strDev] = msg;  
-                    } else if(msg.renegotiate === undefined){
-                        self._peers[strDev].signal(msg);
-                        console.log({ data: { type: "SDP", message: self._sdp[strDev], Device: strDev } });
-                        self._peers[strDev].signal(self._ans[strDev]);
-                        self._regDone[strDev] = true;
-                    }
-                } else if((self._regDone[strDev] === true)&&(msg.type === "answer")){
-                    self._peers[strDev].signal(msg);
-                }
+
+                self._peers[strDev].signal(msg);
 
             } else if (Type === "message") {
                 self._videoView.setStatus("No stream devices given", self._tags.iTag[strDev]);
             }
 
         });
-        function connect(device){
-        self._peers[device] = new SimplePeer({
-            initiator: true,
-            trickle: false
-        });
-        self._peers[device].on('error', err => console.log('error', err));
-        self._peers[device].on('signal', data => {
-            self._sdp[device] = data;
-            self._websocket.sendRtc({ data: { type: "SDP", message: self._sdp[device], Device: device } });
-        });
-        self._peers[device].on('stream', stream => {
-            self._streams[device] = stream;
-            self._videoView.setStream(self._streams[device], self._tags.vTag[device]);
-        });
 
-        self._regDone[device] = false;
-
-    }
 
         window.onclose = function () {
             self._peers.destroy();
@@ -102,4 +83,5 @@ export default class RtcConnector {
         }
 
     }
-} 
+}
+
