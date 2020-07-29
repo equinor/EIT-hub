@@ -108,7 +108,6 @@ export default class Input{
             } else if (manual && !stabilize && !depthHold) {
                 this.flightMode = this.flightModes.MANUAL;
             }
-            /*this._view.keyboardImage(this.keyA,this.keyS,this.keyW,this.keyD,this.keyLeft, this.keyDown, this.keyUp, this.keyRight, key1, key2, key3);*/
         }
 
         let inputMsg = {
