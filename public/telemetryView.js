@@ -4,16 +4,16 @@ export default class TelemetryView {
     }
 
     updateTelemetry(json) {
-        let msg = JSON.stringify(json);
-        let telemtery = msg.telemetry_list;
-        if (telemtery.armed) {
+        let telemetry = json.telemetry_list;
+        console.log(telemetry);
+        if (telemetry.armed !== 0) {
             this._rootElem.querySelector("#circle_3").style.fill = "green";
         } else {
             this._rootElem.querySelector("#circle_3").style.fill = "red";
         }
 
-        this._rootElem.querySelector("#telemetry_view").innerText = "Flightmode: "+ telemtery.flightmode + "\r\n" +
-        "Altitud: "+ telemtery.alt + "\r\n" + "Heading: "+ telemtery.heading + "\r\n" +
-        "Vx: "+ telemtery.vx;
+        this._rootElem.querySelector("#telemetry-view").innerText = "Flightmode: "+ telemetry.flightmode + "\r\n" +
+        "Altitude: "+ telemetry.alt + "\r\n" + "Heading: "+ telemetry.heading + "\r\n" +
+        "Vx: "+ telemetry.vx; 
     }
 }
