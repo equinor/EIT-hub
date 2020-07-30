@@ -66,7 +66,7 @@ export default class Input{
             let disarmButton = buttons[8].value;
             if (armButton && !disarmButton) {
                 this.armState = true;
-            } else {
+            } else if (!armButton && disarmButton) {
                 this.armState = false;
             }
 
