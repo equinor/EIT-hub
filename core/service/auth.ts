@@ -1,20 +1,28 @@
+import Config from "./config";
+import {URL} from "url";
+
 const DeviceAuth = require("./auth/device-auth");
 const Time = require("./utils/time");
 const UserAuth = require("./auth/user-auth");
 const AuthConfig = require("./auth/auth-config");
-const fetch = require('node-fetch');
-const { URLSearchParams } = require('url');
-var cookie = require('cookie')
+import fetch from 'node-fetch';
+import cookie from 'cookie';
 
 /** A class that handles authentication and access controls needs for EitHub
  *  Must be integrated with express to generate any security.
  */
-class Auth {
+export default class Auth {
+    _baseUrl: URL;
+    _disableDeviceAuth: boolean;
+    _deviceAuth: any;
+    _userAuth: any;
+    _config: any;
+
     /** Create and setup a new Auth module from config.
      * 
-     * @param {*} config Config object from config module.
+     * @param config Config object from config module.
      */
-    constructor(config) {
+    constructor(config: Config) {
         this._baseUrl = config.baseUrl;
         this._disableDeviceAuth = config.disableDeviceAuth;
         this._deviceAuth = new DeviceAuth(new Time());
@@ -32,7 +40,7 @@ class Auth {
      * * token is the bearer token you need to authenticate with.
      * * authorization is the content of the Authorization http header you must have to connect. 
      */
-    getDeviceToken(deviceName) {
+    public getDeviceToken(deviceName: string): { url: URL; token: string; authorization: string; } {
         let key = this._deviceAuth.generateKey(deviceName);
         let url = new URL(`/device/${deviceName}`, this._baseUrl);
 
@@ -48,7 +56,7 @@ class Auth {
         }
     }
 
-    validateDeviceRequest(deviceName, request) {
+    validateDeviceRequest(deviceName:string, request: any) {
         if (this._disableDeviceAuth === true) {
             // Auth is disabled.
             return true;
@@ -72,13 +80,13 @@ class Auth {
     getBrowserMiddleware() {
         const self = this;
 
-        return function (req, res, next) {
+        return function (req: any, res: any, next: any) {
             if(self._config.isDisabled()){
                 next();
                 return;
             }
 
-            let sessionId;
+            let sessionId: string;
             if (self._userAuth.hasSession(req.cookies["session"])) {
                 sessionId = req.cookies["session"];
             } else {
@@ -116,7 +124,7 @@ class Auth {
         }
     }
 
-    getUser(request) {
+    getUser(request:any) {
         if (this._config.isDisabled() === true) {
             // Auth is disabled.
             return {};
@@ -127,5 +135,3 @@ class Auth {
         return this._userAuth.getUser(sessionId);
     }
 }
-
-module.exports = Auth;

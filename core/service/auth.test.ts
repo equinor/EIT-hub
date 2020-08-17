@@ -1,9 +1,11 @@
-const Auth = require("./auth");
+import Auth from "./auth";
+import Config from "./config";
+import {URL} from "url";
 
 test("getDeviceToken http", () => {
-    var config = {
+    const config = Config.default.set({
         baseUrl: new URL("http://localhost/")
-    }
+    });
     var auth = new Auth(config);
 
     var key = auth.getDeviceToken("test");
@@ -12,9 +14,9 @@ test("getDeviceToken http", () => {
 });
 
 test("getDeviceToken https", () => {
-    var config = {
+    const config = Config.default.set({
         baseUrl: new URL("https://localhost/")
-    }
+    });
     var auth = new Auth(config);
 
     var key = auth.getDeviceToken("test");
