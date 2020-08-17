@@ -2,12 +2,12 @@
 "use strict";
 import dotenv from 'dotenv';
 
-const Auth = require('../../apps/shuttle/services/auth');
-const AzureIot = require('../../apps/shuttle/services/azureiot');
-const BrowserWs = require('../../apps/shuttle/services/browser-ws');
+const Auth = require('./auth');
+const AzureIot = require('./azureiot');
+const BrowserWs = require('./browser-ws');
 import Config from './config';
-const DeviceWS = require('../../apps/shuttle/services/device-ws');
-const Express = require('../../apps/shuttle/services/express');
+const DeviceWS = require('./device-ws');
+const Express = require('./express');
 const ShuttleControl = require('../../apps/shuttle/services/shuttle-control');
 const ShuttleTelemetry = require('../../apps/shuttle/services/shuttle-telemetry');
 
