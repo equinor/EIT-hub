@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "node backend/index.js",
+    "start": "node apps/shuttle/services/index.js",
     "test": "jest --coverage"
   },
   "repository": {
@@ -28,6 +28,8 @@
     "express": "^4.17.1",
     "node-fetch": "^2.6.0",
     "simple-peer": "^9.7.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7",
     "uuid": "^8.2.0",
     "wrtc": "^0.4.5",
     "ws": "^7.3.1"
