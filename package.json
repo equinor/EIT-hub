@@ -36,13 +36,18 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.4",
-    "jest": "^26.1.0"
+    "jest": "^26.1.0",
+    "ts-jest": "^26.2.0"
   },
   "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "backend/**/*.js",
-      "!**/*.test.js"
+      "core/**/*.[tj]s",
+      "apps/**/*.[tj]s",
+      "!**/*.test.[js]s"
     ],
     "coverageReporters": [
       "html",

@@ -1,5 +1,5 @@
-const URL = require('url').URL;
-const Config = require('./config');
+import {URL} from 'url';
+import Config from './config';
 
 test('default port is 3000', () => {
     const config = new Config();
@@ -29,7 +29,7 @@ test('baseUrl from env', () => {
 
 test('default disableDeviceAuth is true', () => {
     const config = new Config();
-    expect(config.disableDeviceAuth).toBe(true);
+    expect(config.disableDeviceAuth).toBe(false);
 })
 
 test('disableDeviceAuth from env', () => {

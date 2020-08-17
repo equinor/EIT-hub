@@ -1,6 +1,16 @@
-const URL = require('url').URL;
+import {URL} from 'url';
 
-class Config {
+export default class Config {
+    _port: number;
+    _baseUrl: URL;
+    _disableDeviceAuth: boolean;
+    _iotHubConnectionString: string;
+    _iotHubStreamDevices: string;
+    _eventHubConnectionString: string;
+    _clientId: string;
+    _tenantId: string;
+    _clientSecret: string;
+
     constructor(){
         this._port = 3000;
         this._baseUrl = new URL("http://localhost:3000/");
@@ -13,7 +23,7 @@ class Config {
         this._clientSecret = "";
     }
 
-    applyEnv(processEnv) {
+    applyEnv(processEnv: { [key: string]: string|undefined; }) {
         if(processEnv.EITHUB_PORT) {
             this._port = parseInt(processEnv.EITHUB_PORT);
         }
@@ -29,16 +39,16 @@ class Config {
         if(processEnv.EITHUB_IOTHUB_STREAM_DEVICES){
             this._iotHubStreamDevices = processEnv.EITHUB_IOTHUB_STREAM_DEVICES;
         }
-        if(process.env.EITHUB_EVENTHUB_CONNECTION_STRING){
+        if(processEnv.EITHUB_EVENTHUB_CONNECTION_STRING){
             this._eventHubConnectionString = processEnv.EITHUB_EVENTHUB_CONNECTION_STRING;
         }
-        if(process.env.EITHUB_TENANT_ID){
+        if(processEnv.EITHUB_TENANT_ID){
             this._tenantId = processEnv.EITHUB_TENANT_ID;
         }
-        if(process.env.EITHUB_CLIENT_ID){
+        if(processEnv.EITHUB_CLIENT_ID){
             this._clientId = processEnv.EITHUB_CLIENT_ID;
         }
-        if(process.env.EITHUB_CLIENT_SECRET){
+        if(processEnv.EITHUB_CLIENT_SECRET){
             this._clientSecret = processEnv.EITHUB_CLIENT_SECRET;
         }
         
@@ -91,5 +101,3 @@ class Config {
         return this._clientSecret;
     }
 }
-
-module.exports = Config;

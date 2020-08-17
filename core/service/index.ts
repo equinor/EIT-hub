@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 const Auth = require('../../apps/shuttle/services/auth');
 const AzureIot = require('../../apps/shuttle/services/azureiot');
 const BrowserWs = require('../../apps/shuttle/services/browser-ws');
-const Config = require('../../apps/shuttle/services/config');
+import Config from './config';
 const DeviceWS = require('../../apps/shuttle/services/device-ws');
 const Express = require('../../apps/shuttle/services/express');
 const ShuttleControl = require('../../apps/shuttle/services/shuttle-control');
