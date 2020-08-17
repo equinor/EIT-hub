@@ -19,8 +19,7 @@ function main() {
     dotenv.config();
 
     //Get configuration
-    const config = new Config();
-    config.applyEnv(process.env);
+    const config = Config.default.envSet(process.env);
 
     //Setup Auth
     const auth = new Auth(config);
