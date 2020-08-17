@@ -5,11 +5,11 @@ WORKDIR /app/eithub/
 COPY package*.json ./
 RUN npm install
 
-COPY backend ./backend
-COPY public ./public
+COPY core ./core
+COPY apps ./apps
 
 USER node
 
 EXPOSE 3000
 
-CMD [ "node", "backend/index.js" ]
+CMD [ "node", "apps/shuttle/services/index.js" ]

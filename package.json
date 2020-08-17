@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "node backend/index.js",
+    "start": "node apps/shuttle/services/index.js",
     "test": "jest --coverage"
   },
   "repository": {
