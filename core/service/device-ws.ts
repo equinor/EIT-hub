@@ -23,7 +23,7 @@ export default class DeviceWs {
      * @param {any} jsonMessage
      * @returns {boolean} If there was a connection to send message too.
      */
-    sendMessage(deviceName: string, jsonMessage: any): boolean{
+    public sendMessage(deviceName: string, jsonMessage: any): boolean{
         try {
             this.deviceMap.get(deviceName)!.send(JSON.stringify(jsonMessage));
             return true;
@@ -39,12 +39,11 @@ export default class DeviceWs {
      * @param {string} deviceName
      * @param {Function} callback The callback return a js object with the parsed json data from device.
      */
-    onMessage(deviceName: string, callback: MessageCallback) {
+    public onMessage(deviceName: string, callback: MessageCallback): void {
         if (this._deviceCallback.has(deviceName)){
             this._deviceCallback.get(deviceName)!.push(callback);
         }else {
-            let emptyArr = [callback];
-            this._deviceCallback.set(deviceName, emptyArr);
+            this._deviceCallback.set(deviceName, [callback]);
         }
     }
 
@@ -53,12 +52,8 @@ export default class DeviceWs {
      * @param {string} deviceName
      * @return {number} WebSocket ready state.
      */
-    getState(deviceName: string): number {
-        if(this.deviceMap.has(deviceName)) {
-            return this.deviceMap.get(deviceName)!.readyState;
-        } else {
-            return 3;
-        }
+    public getState(deviceName: string): number {
+        return this.deviceMap.get(deviceName)?.readyState ?? 3;
     }
 
     /**
@@ -67,22 +62,19 @@ export default class DeviceWs {
      * @param {import("net").Socket} socket
      * @param {Buffer} head
      */
-    handleUpgrade(deviceName: string, request: import("http").IncomingMessage, socket: import("net").Socket, head: Buffer) {
-        let self = this;
-        this.ws.handleUpgrade(request, socket, head, function(websocket) {
-            self.deviceMap.set(deviceName, websocket);
+    public handleUpgrade(deviceName: string, request: import("http").IncomingMessage, socket: import("net").Socket, head: Buffer): void {
+        this.ws.handleUpgrade(request, socket, head, (websocket)  => {
+            this.deviceMap.set(deviceName, websocket);
             websocket.on("message", (msg) => {
-                const message = JSON.parse(msg as any);
-                if (self._deviceCallback.has(deviceName)) {
-                    for (let callback of self._deviceCallback.get(deviceName)!) {
-                        callback(message);
-                    }
+                const message = JSON.parse(msg as string);
+                for (const callback of this._deviceCallback.get(deviceName) ?? []) {
+                    callback(message);
                 }
             });
 
             websocket.on("close", () => {
                 console.log(`${deviceName} websocket closed`);
-                self.deviceMap.delete(deviceName);
+                this.deviceMap.delete(deviceName);
             });
         });
     }

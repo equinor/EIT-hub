@@ -25,7 +25,7 @@ export default class Config {
     }
 
     public envSet(processEnv: { [key: string]: string | undefined; }): Config {
-        let env:any = {};
+        const env:Record<string, unknown> = {};
         if (processEnv.EITHUB_PORT) {
             env.port = parseInt(processEnv.EITHUB_PORT);
         }

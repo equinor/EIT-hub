@@ -30,12 +30,12 @@ export default class AzureIot {
      * @param {any} jsonObject
      * @returns {boolean} If there was nowhere to send to.
      */
-    sendMessage(deviceName: string, jsonObject: any): boolean {
+    public sendMessage(deviceName: string, jsonObject: any): boolean {
         let self = this;
 
         if (self.iotHubClient) {
 
-            let message = new Message(JSON.stringify(jsonObject));
+            const message = new Message(JSON.stringify(jsonObject));
             message.messageId = 'c2d';
             console.log(`Sending message to ${deviceName} with payload:\n`, message.getData())
             self.iotHubClient.send(deviceName, message, function (err) {
@@ -56,7 +56,7 @@ export default class AzureIot {
      * @param {string} deviceName
      * @param {Function} callback called with a js object with the message from device as argument.
      */
-    onMessage(deviceName: string, callback: Function) {
+    public onMessage(deviceName: string, callback: Function): void {
         if (this._onMessageCallbacks.has(deviceName)) {
             this._onMessageCallbacks.get(deviceName).push(callback);
         } else {
@@ -65,7 +65,7 @@ export default class AzureIot {
         }
     }
 
-    start() {
+    public start(): void {
         let self = this;
 
         if (self.config.eventHubConnectionString !== "") {

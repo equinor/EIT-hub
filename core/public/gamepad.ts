@@ -7,7 +7,7 @@ export default class GamePad {
      * If no gamepad is detected, return null.
      */
     getGamepad():[number[], any[]] | null {
-        let gamepads = navigator.getGamepads ? navigator.getGamepads() : ((navigator as any).webkitGetGamepads ? (navigator as any).webkitGetGamepads : []);
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : ((navigator as any).webkitGetGamepads ? (navigator as any).webkitGetGamepads : []);
         if (gamepads[0] !== null)
             return [gamepads[0].axes, gamepads[0].buttons];
         return null;
