@@ -1,15 +1,15 @@
-const { URLSearchParams } = require('url');
+import { URLSearchParams } from "url"
+import Config from "../config";
 
-class AuthConfig {
-    static fromConfig(config){
+export default class AuthConfig {
+    private redirectUri: string;
+
+    static fromConfig(config: Config){
         return new AuthConfig(config.baseUrl, config.tenantId, config.clientId, config.clientSecret)
     }
 
-    constructor(baseUrl, tenantId, clientId, clientSecret) {
-        this.baseUrl = baseUrl;
-        this.tenantId = tenantId;
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
+    constructor(private baseUrl:URL,private  tenantId:string,private  clientId:string,private  clientSecret:string) {
+       
         this.redirectUri = new URL("/azuread", this.baseUrl).toString();
     }
 
@@ -22,7 +22,7 @@ class AuthConfig {
         return false;
     }
 
-    createAuthorizationUrl(token) {
+    createAuthorizationUrl(token:string) {
         let url = new URL("https://login.microsoftonline.com/");
         url.pathname = `/${this.tenantId}/oauth2/v2.0/authorize`;
         url.searchParams.set("response_type", "code");
@@ -38,7 +38,7 @@ class AuthConfig {
         return "https://login.microsoftonline.com/" + this.tenantId + "/oauth2/v2.0/token";
     }
 
-    accessTokenParam(code) {
+    accessTokenParam(code:string) {
         let params = new URLSearchParams();
         params.set("client_id", this.clientId);
         params.set("grant_type", "authorization_code");
@@ -48,5 +48,3 @@ class AuthConfig {
         return params;
     }
 }
-
-module.exports = AuthConfig;
