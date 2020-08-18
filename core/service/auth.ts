@@ -1,8 +1,8 @@
 import Config from "./config";
 import {URL} from "url";
 
-const DeviceAuth = require("./auth/device-auth");
-const Time = require("./utils/time");
+import DeviceAuth from "./auth/device-auth";
+import Time from "./utils/time";
 const UserAuth = require("./auth/user-auth");
 const AuthConfig = require("./auth/auth-config");
 import fetch from 'node-fetch';
@@ -14,7 +14,7 @@ import cookie from 'cookie';
 export default class Auth {
     _baseUrl: URL;
     _disableDeviceAuth: boolean;
-    _deviceAuth: any;
+    _deviceAuth: DeviceAuth;
     _userAuth: any;
     _config: any;
 

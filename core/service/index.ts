@@ -2,7 +2,7 @@
 "use strict";
 import dotenv from 'dotenv';
 
-const Auth = require('./auth');
+import Auth from './auth';
 const AzureIot = require('./azureiot');
 const BrowserWs = require('./browser-ws');
 import Config from './config';
