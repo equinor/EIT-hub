@@ -2,8 +2,8 @@ export default class TelemetryView {
     constructor(private rootElem:HTMLElement) {
     }
 
-    updateTelemetry(json:any) {
-        let telemetry = json.telemetry_list;
+    updateTelemetry(json:any):void {
+        const telemetry = json.telemetry_list;
         console.log(telemetry);
         if (telemetry.armed !== 0) {
             this.rootElem.querySelector<HTMLElement>("#circle_3")!.style.fill = "green";

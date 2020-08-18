@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 const puppet = require("puppeteer");
 const Mqtt = require("azure-iot-device-mqtt").Mqtt;
 const DeviceClient = require("azure-iot-device").Client

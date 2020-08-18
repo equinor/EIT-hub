@@ -5,8 +5,6 @@ export default class Time{
     /// Set this property to overwrite the time for now. Only useful for testing.
     public nowOverride: Date | undefined = undefined;
 
-    constructor(){}
-    
     /** 
      * Returns the Date object for now. Or the override if its set.
      * 

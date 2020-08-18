@@ -24,10 +24,10 @@ function main() {
     const inputView = new InputView(document.getElementById('input-view')!);
 
     // Setup Input
-    let input = new Input(websocket,gamePad,keyboard,inputView);
+    const input = new Input(websocket,gamePad,keyboard,inputView);
 
     // Setup ClientRequests
-    const clientRequestView = new ClientRequestView(websocket,document.getElementById('clientRequests'))
+    const clientRequestView = new ClientRequestView(websocket,document.getElementById('clientRequests')!)
     websocket.onControl(clientRequestView.updateControl.bind(clientRequestView));
 
     // Start client

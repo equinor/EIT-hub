@@ -22,21 +22,21 @@ export default class Express {
         this.app.use(express.static('./dist'));
     }
 
-    start() {
+    public start():void {
         this.server = this.app.listen(this.port, () => console.log(`EIT Hub is listening at http://localhost:${this.port}`));
         this.server.on('upgrade', this._upgrade.bind(this));
     }
 
-    stop() {
+    public stop(): void {
         this.server?.close();
     }
 
-    _upgrade(request: IncomingMessage, socket: Socket, head: Buffer){
-        const pathname = url.parse(request.url!).pathname;
-        const path = pathname!.split("/");
+    private _upgrade(request: IncomingMessage, socket: Socket, head: Buffer):void {
+        const pathname = url.parse(request.url ?? "").pathname ?? "";
+        const path = pathname.split("/");
 
         if (path[1] === 'browser') { 
-            let user = this.auth.getUser(request);
+            const user = this.auth.getUser(request);
             if(user !== null) {
                 this.browserWs.handleUpgrade(user, request, socket, head);
             } else {

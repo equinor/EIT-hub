@@ -1,36 +1,35 @@
+import WebSocket from "./websocket";
+
 export default class ClientRequestView{
-    constructor(websocket,element) {
-        this._rootElem = element;
-        this._websocket = websocket;
-        let self = this;
 
-        this._rootElem.querySelector("#requestControlButton").onclick = function() {
-            self._websocket.sendControlRequest(true);
-            self._rootElem.querySelector("#flight-modes").value = "none";
+    constructor(private websocket: WebSocket, private rootElem: HTMLElement) {
+        this.rootElem.querySelector<HTMLElement>("#requestControlButton")!.onclick = () => {
+            this.websocket.sendControlRequest(true);
+            this.rootElem.querySelector<HTMLInputElement>("#flight-modes")!.value = "none";
         }
 
-        this._rootElem.querySelector("#cancelControlButton").onclick = function() {
-            self._websocket.sendControlRequest(false);
+        this.rootElem.querySelector<HTMLElement>("#cancelControlButton")!.onclick = () => {
+            this.websocket.sendControlRequest(false);
         }
 
-        this._rootElem.querySelector("#arm-button").onclick = function() {
-            self._websocket.sendShuttleCommand("armShuttle",true);
+        this.rootElem.querySelector<HTMLElement>("#arm-button")!.onclick = () => {
+            this.websocket.sendShuttleCommand("armShuttle",true);
         }
 
-        this._rootElem.querySelector("#disarm-button").onclick = function() {
-            self._websocket.sendShuttleCommand("armShuttle",false);
+        this.rootElem.querySelector<HTMLElement>("#disarm-button")!.onclick = () => {
+            this.websocket.sendShuttleCommand("armShuttle",false);
         }
     }
 
-    updateControl(msg) {
-        let userName = msg.body;
+    public updateControl(msg:any):void {
+        const userName = msg.body;
         let feedbackText = "";
         if (userName === null) {
             feedbackText = 'No one is in control of the shuttle.'
         } else {
             feedbackText = `${userName} is in control of shuttle.`
         }
-        this._rootElem.querySelector("#requestAnswer").innerText = feedbackText;
+        this.rootElem.querySelector<HTMLElement>("#requestAnswer")!.innerText = feedbackText;
         
     }
 }

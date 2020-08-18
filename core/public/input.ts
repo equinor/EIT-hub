@@ -4,12 +4,12 @@ import Keyboard from "./keyboard";
 import InputView from "./inputView";
 
 export default class Input{
-    private gainPressed: number = 0.15;
-    private gainRelease: number = 0.2;
-    private x: number = 0;
-    private y: number = 0;
-    private z: number = 0;
-    private r: number = 0;
+    private gainPressed = 0.15;
+    private gainRelease = 0.2;
+    private x = 0;
+    private y = 0;
+    private z = 0;
+    private r = 0;
     private armState: boolean | null = null;
     private prevArmState: boolean | null = null;
     private flightMode: string | null = null;
@@ -23,7 +23,7 @@ export default class Input{
     constructor(private websocket: WebSocket, private gamePad: Gamepad, private keyboard: Keyboard, private view: InputView) {
     }
 
-    start(poolInterval: number) {
+    start(poolInterval: number):void {
         setInterval(this._possessInputs.bind(this), poolInterval);
     }
 
@@ -41,7 +41,7 @@ export default class Input{
             }
         } else {
             if (newValue > 0.06 || newValue < -0.06) {
-                let sign = newValue/Math.abs(newValue);
+                const sign = newValue/Math.abs(newValue);
                 newValue -= sign*this.gainRelease;
             } else {
                 newValue = 0;
@@ -50,10 +50,10 @@ export default class Input{
         return newValue;
     }
 
-    _possessInputs() {
+    _possessInputs():void {
         
         if (this.view.useGamePad() && this.gamePad.getGamepad() !== null) {
-            var [axes, buttons] = this.gamePad.getGamepad()!;
+            const [axes, buttons] = this.gamePad.getGamepad()!;
             // Inputs that control the shuttle's movement
             this.y = -axes[1];
             this.x = axes[0];
@@ -61,8 +61,8 @@ export default class Input{
             this.r = axes[2];
 
             // Arm or disarm the shuttle's motors
-            let armButton = buttons[9].value;
-            let disarmButton = buttons[8].value;
+            const armButton = buttons[9].value;
+            const disarmButton = buttons[8].value;
             if (armButton && !disarmButton) {
                 this.armState = true;
             } else if (!armButton && disarmButton) {
@@ -70,9 +70,9 @@ export default class Input{
             }
 
             // Change the shuttle's flight mode
-            let manual = buttons[0].value;
-            let stabilize = buttons[1].value;
-            let depthHold = buttons[2].value;
+            const manual = buttons[0].value;
+            const stabilize = buttons[1].value;
+            const depthHold = buttons[2].value;
             if (!manual && stabilize && !depthHold) {
                 this.flightMode = this.flightModes.STABILIZE;
             } else if (!manual && !stabilize && depthHold) {
@@ -97,9 +97,9 @@ export default class Input{
             // r
             this.r = this.keySmoothing(this.keyboard.keyRight(), this.keyboard.keyLeft(),this.r);
 
-            let manual = this.keyboard.key1();
-            let stabilize = this.keyboard.key2();
-            let depthHold = this.keyboard.key3();
+            const manual = this.keyboard.key1();
+            const stabilize = this.keyboard.key2();
+            const depthHold = this.keyboard.key3();
             if (!manual && stabilize && !depthHold) {
                 this.flightMode = this.flightModes.STABILIZE;
             } else if (!manual && !stabilize && depthHold) {
@@ -109,7 +109,7 @@ export default class Input{
             }
         }
 
-        let inputMsg = {
+        const inputMsg = {
             y: this.y,
             x: this.x,
             z: this.z,

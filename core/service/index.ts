@@ -8,7 +8,9 @@ import BrowserWs from './browser-ws';
 import Config from './config';
 import DeviceWS from './device-ws';
 import Express from './express';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const ShuttleControl = require('../../apps/shuttle/services/shuttle-control');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const ShuttleTelemetry = require('../../apps/shuttle/services/shuttle-telemetry');
 
 /** The main function for Eit-Hub backend.

@@ -10,7 +10,7 @@ import { EventHubConsumerClient } from "@azure/event-hubs";
 import Config from './config';
 
 export default class AzureIot {
-    private _onMessageCallbacks: Map<string, any> = new Map();
+    private _onMessageCallbacks: Map<string, any[]> = new Map();
     private iotHubClient: Client | undefined;
     private eventHubConsumer: EventHubConsumerClient | undefined;
 
@@ -30,15 +30,13 @@ export default class AzureIot {
      * @param {any} jsonObject
      * @returns {boolean} If there was nowhere to send to.
      */
-    sendMessage(deviceName: string, jsonObject: any): boolean {
-        let self = this;
+    public sendMessage(deviceName: string, jsonObject: any): boolean {
+        if (this.iotHubClient) {
 
-        if (self.iotHubClient) {
-
-            let message = new Message(JSON.stringify(jsonObject));
+            const message = new Message(JSON.stringify(jsonObject));
             message.messageId = 'c2d';
             console.log(`Sending message to ${deviceName} with payload:\n`, message.getData())
-            self.iotHubClient.send(deviceName, message, function (err) {
+            this.iotHubClient.send(deviceName, message, function (err) {
                 if (err) {
                     return false;
                 } else {
@@ -56,38 +54,32 @@ export default class AzureIot {
      * @param {string} deviceName
      * @param {Function} callback called with a js object with the message from device as argument.
      */
-    onMessage(deviceName: string, callback: Function) {
+    public onMessage(deviceName: string, callback: any): void {
         if (this._onMessageCallbacks.has(deviceName)) {
-            this._onMessageCallbacks.get(deviceName).push(callback);
+            this._onMessageCallbacks.get(deviceName)!.push(callback);
         } else {
-            let emptyArr = [callback];
-            this._onMessageCallbacks.set(deviceName, emptyArr);
+            this._onMessageCallbacks.set(deviceName, [callback]);
         }
     }
 
-    start() {
-        let self = this;
+    public start(): void {
+        if (this.config.eventHubConnectionString !== "") {
 
-        if (self.config.eventHubConnectionString !== "") {
-
-            let _processMessage = async function (messages: any) {
+            const _processMessage = async (messages: any) => {
                 for (const message of messages) {
-                    let deviceName = message.systemProperties['iothub-connection-device-id'];
-
-                    if (self._onMessageCallbacks.has(deviceName) && self._onMessageCallbacks.get(deviceName).length > 0) {
-                        for (let callback of self._onMessageCallbacks.get(deviceName)) {
-                            callback(message);
-                        }
+                    const deviceName = message.systemProperties['iothub-connection-device-id'];
+                    for (const callback of this._onMessageCallbacks.get(deviceName) ?? []) {
+                        callback(message);
                     }
                 }
             };
 
-            let _processError = async function (err: any) {
+            const _processError = async function (err: any) {
                 console.log(err);
             };
 
             // Subscribe to messages from all partitions as below
-            self.eventHubConsumer?.subscribe({
+            this.eventHubConsumer?.subscribe({
                 processEvents: _processMessage,
                 processError: _processError
             });

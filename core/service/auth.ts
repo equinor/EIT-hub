@@ -41,8 +41,8 @@ export default class Auth {
      * * authorization is the content of the Authorization http header you must have to connect. 
      */
     public getDeviceToken(deviceName: string): { url: URL; token: string; authorization: string; } {
-        let key = this._deviceAuth.generateKey(deviceName);
-        let url = new URL(`/device/${deviceName}`, this._baseUrl);
+        const key = this._deviceAuth.generateKey(deviceName);
+        const url = new URL(`/device/${deviceName}`, this._baseUrl);
 
         if (this._baseUrl.protocol === "http:") {
             url.protocol = "ws"
@@ -56,13 +56,13 @@ export default class Auth {
         }
     }
 
-    validateDeviceRequest(deviceName:string, request: any) {
+    validateDeviceRequest(deviceName:string, request: any):boolean {
         if (this._disableDeviceAuth === true) {
             // Auth is disabled.
             return true;
         }
 
-        var authorization = request.headers.authorization;
+        const authorization = request.headers.authorization;
         if (authorization) {
             const auth = authorization.split(" ");
             if (auth[0] !== "Bearer") {
@@ -78,34 +78,32 @@ export default class Auth {
      * @returns Express Middleware
      */
     getBrowserMiddleware() {
-        const self = this;
-
-        return function (req: any, res: any, next: any) {
-            if(self._config.isDisabled()){
+        return (req: any, res: any, next: any): void => {
+            if(this._config.isDisabled()){
                 next();
                 return;
             }
 
             let sessionId: string;
-            if (self._userAuth.hasSession(req.cookies["session"])) {
+            if (this._userAuth.hasSession(req.cookies["session"])) {
                 sessionId = req.cookies["session"];
             } else {
                 // first time we have seen this user.
-                sessionId = self._userAuth.getNewSessionId();
+                sessionId = this._userAuth.getNewSessionId();
                 res.cookie("session", sessionId);
             }
 
             if (req.path === "/azuread") {
-                fetch(self._config.authorityUrl(), { method: 'POST', body: self._config.accessTokenParam(req.body.code) })
+                fetch(this._config.authorityUrl(), { method: 'POST', body: this._config.accessTokenParam(req.body.code) })
                     .then(res => res.json())
                     .then(json => {
                         if(json.access_token) {
-                            let body = json.access_token.split(".")[1];
-                            let buff = new Buffer(body, 'base64');
-                            let userJson = buff.toString('ascii');
-                            let user = JSON.parse(userJson);
+                            const body = json.access_token.split(".")[1];
+                            const buff = new Buffer(body, 'base64');
+                            const userJson = buff.toString('ascii');
+                            const user = JSON.parse(userJson);
 
-                            self._userAuth.setUser(sessionId,user);
+                            this._userAuth.setUser(sessionId,user);
                             res.redirect("/");
                         }else {
                             res.status(401).send(json).end();
@@ -114,24 +112,24 @@ export default class Auth {
                 return;
             }
 
-            if (self._userAuth.getUser(sessionId) !== null) {
+            if (this._userAuth.getUser(sessionId) !== null) {
                 // we have user.
                 next();
                 return;
             }
 
-            res.redirect(self._config.createAuthorizationUrl(sessionId));
+            res.redirect(this._config.createAuthorizationUrl(sessionId));
         }
     }
 
-    getUser(request:any) {
+    getUser(request:any): any {
         if (this._config.isDisabled() === true) {
             // Auth is disabled.
             return {};
         }
 
         //get cookie
-        let sessionId = cookie.parse(request.headers.cookie)["session"];
+        const sessionId = cookie.parse(request.headers.cookie)["session"];
         return this._userAuth.getUser(sessionId);
     }
 }

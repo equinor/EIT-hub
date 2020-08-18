@@ -1,4 +1,5 @@
-
+/* eslint-disable */
+// @ts-nocheck
 navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(connect).catch(() => { });
 
 window.onclose = function () {
