@@ -19,7 +19,7 @@ export default class Express {
         this.app.use(cookieParser());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(this.auth.getBrowserMiddleware());
-        this.app.use(express.static('public'));
+        this.app.use(express.static('./apps/shuttle/public'));
     }
 
     start() {

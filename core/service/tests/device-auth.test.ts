@@ -1,11 +1,11 @@
 import Auth from '../auth';
 import Config from '../config';
 import {URL} from "url";
-const BrowserWs = require('../browser-ws');
-const DeviceWS = require('../device-ws');
-const Express = require('../express');
+import BrowserWs from '../browser-ws';
+import DeviceWS from '../device-ws';
+import Express from '../express';
 
-const WebSocket = require('ws');
+import WebSocket from 'ws';
 
 let auth: Auth;
 let express: any;
