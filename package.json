@@ -8,7 +8,9 @@
   },
   "scripts": {
     "start": "ts-node core/service/index.ts",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "watch": "parcel watch core/public/index.html",
+    "build": "parcel build core/public/index.html"
   },
   "repository": {
     "type": "git",
@@ -43,6 +45,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.4",
     "jest": "^26.1.0",
+    "parcel-bundler": "^1.12.4",
     "ts-jest": "^26.2.0"
   },
   "jest": {
