@@ -1,5 +1,6 @@
 export default class Keyboard {
-    constructor(window) { 
+    private _pressed: {[key: number]: boolean;};
+    constructor(window: Window & typeof globalThis) { 
         window.addEventListener("keydown", this._down.bind(this), false);
         window.addEventListener("keyup", this._up.bind(this), false);
         window.addEventListener("keydown", function(e) {
@@ -13,7 +14,7 @@ export default class Keyboard {
         this._pressed = {};
     }
 
-    isPressed(keycode) { 
+    isPressed(keycode:number) { 
         // return true only if keycode have a value of true and type bool. If the value is not there is false.
         return this._pressed[keycode] === true;
     }
@@ -30,11 +31,11 @@ export default class Keyboard {
     key2() {return this.isPressed(50)}
     key3() {return this.isPressed(51)}
 
-    _down(event){
+    _down(event: KeyboardEvent){
         this._pressed[event.keyCode] = true;
     }
 
-    _up(event){
+    _up(event: KeyboardEvent){
         this._pressed[event.keyCode] = false;
     } 
 }

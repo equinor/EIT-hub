@@ -1,18 +1,19 @@
 export default class WebSocket{
-    constructor(){
-        this._ws = new window.WebSocket(getWsUrl());
+    private _ws = new window.WebSocket(getWsUrl());
+    private _telemetryCallbacks:Function[] = [];
+    private _controlCallbacks:Function[] = [];
+    private _rtcCallbacks:Function[] = [];
 
+    constructor(){
         this._ws.onmessage = this._onMessage.bind(this);
-        this._telemetryCallbacks = [];
-        this._controlCallbacks = [];
-        this._rtcCallbacks = [];
+
     }
 
     /** Try to send input information to the server. Do nothing if connection is not working.
      * 
      * @param {{x:number, y:number, z:number, r:number}} input 
      */
-    sendInput(input) {
+    sendInput(input: { x: number; y: number; z: number; r: number; }) {
         const msg = {type: "input", body: input}
         this._ws.send(JSON.stringify(msg));
     }
@@ -20,12 +21,12 @@ export default class WebSocket{
     /** Ask server to let us have control or give up our control. Do nothing if connection is not working.
      * 
      */
-    sendControlRequest(bool) {
+    sendControlRequest(bool: boolean) {
         const msg = {type: "inputControl", body: bool}
         this._ws.send(JSON.stringify(msg));
     }
 
-    sendShuttleCommand(type,value) {
+    sendShuttleCommand(type: any,value: any) {
         const msg = {type: type, body: value}
         this._ws.send(JSON.stringify(msg));
     }
@@ -34,7 +35,7 @@ export default class WebSocket{
      *
      *@param {any} msg 
      */
-    sendRtc(rtcMsg){
+    sendRtc(rtcMsg: any){
         const msg = { type: "rtc", body: rtcMsg };
         this._ws.send(JSON.stringify(msg));
     }
@@ -42,19 +43,19 @@ export default class WebSocket{
     /** 
      * 
      */
-    onControl(callback) {
+    onControl(callback: Function) {
         this._controlCallbacks.push(callback);
     }
 
-    onTelemetry(callback) {
+    onTelemetry(callback: Function) {
         this._telemetryCallbacks.push(callback);
     }
 
-    onRtc(callback) {
+    onRtc(callback: Function) {
         this._rtcCallbacks.push(callback);
     }
 
-    _onMessage(event) {
+    _onMessage(event: MessageEvent) {
         var msg = JSON.parse(event.data);
 
         if(msg.type === "inputControl") {

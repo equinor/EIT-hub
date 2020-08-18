@@ -1,34 +1,33 @@
+import WebSocket from "./websocket";
+import Gamepad from "./gamepad";
+import Keyboard from "./keyboard";
+import InputView from "./inputView";
+
 export default class Input{
-    constructor(websocket, gamePad, keyboard, view) {
-        this._websocket = websocket;
-        this._gamePad = gamePad;
-        this._keyboard = keyboard;
-        this._view = view;
-        
-        this.gainPressed = 0.15;
-        this.gainRelease = 0.2;
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
-        this.r = 0;
+    private gainPressed: number = 0.15;
+    private gainRelease: number = 0.2;
+    private x: number = 0;
+    private y: number = 0;
+    private z: number = 0;
+    private r: number = 0;
+    private armState: boolean | null = null;
+    private prevArmState: boolean | null = null;
+    private flightMode: string | null = null;
+    private prevFlightMode: string | null = null;
+    private flightModes: { MANUAL: string; STABILIZE: string; DEPTH_HOLD: string; } = {
+        MANUAL: 'MANUAL',
+        STABILIZE: 'STABILIZE',
+        DEPTH_HOLD: 'ALT_HOLD'
+    };
 
-        this.armState = null;
-        this.prevArmState = null;
-
-        this.flightMode = null;
-        this.prevFlightMode = null;
-        this.flightModes = {
-            MANUAL: 'MANUAL',
-            STABILIZE: 'STABILIZE',
-            DEPTH_HOLD: 'ALT_HOLD'
-        }
+    constructor(private websocket: WebSocket, private gamePad: Gamepad, private keyboard: Keyboard, private view: InputView) {
     }
 
-    start(poolInterval) {
+    start(poolInterval: number) {
         setInterval(this._possessInputs.bind(this), poolInterval);
     }
 
-    keySmoothing(plusKey,minusKey,oldValue) {
+    keySmoothing(plusKey: boolean,minusKey: boolean,oldValue: number): number {
         let newValue = oldValue;
         if (plusKey || minusKey) {
 
@@ -53,8 +52,8 @@ export default class Input{
 
     _possessInputs() {
         
-        if (this._view.useGamePad() && this._gamePad.getGamepad() !== null) {
-            var [axes, buttons] = this._gamePad.getGamepad();
+        if (this.view.useGamePad() && this.gamePad.getGamepad() !== null) {
+            var [axes, buttons] = this.gamePad.getGamepad()!;
             // Inputs that control the shuttle's movement
             this.y = -axes[1];
             this.x = axes[0];
@@ -82,25 +81,25 @@ export default class Input{
                 this.flightMode = this.flightModes.MANUAL;
             }
 
-            this._view.updateGamepadImage(this.x,this.y,this.z,this.r,armButton,disarmButton,manual,stabilize,depthHold);
+            this.view.updateGamepadImage(this.x,this.y,this.z,this.r,armButton,disarmButton,manual,stabilize,depthHold);
 
-        } else if (this._view.useKeyboard()) {
+        } else if (this.view.useKeyboard()) {
             
             // y
-            this.y = this.keySmoothing(this._keyboard.keyW(), this._keyboard.keyS(),this.y);
+            this.y = this.keySmoothing(this.keyboard.keyW(), this.keyboard.keyS(),this.y);
 
             // x
-            this.x = this.keySmoothing(this._keyboard.keyD(), this._keyboard.keyA(),this.x);
+            this.x = this.keySmoothing(this.keyboard.keyD(), this.keyboard.keyA(),this.x);
 
             // z
-            this.z = this.keySmoothing(this._keyboard.keyUp(), this._keyboard.keyDown(),this.z);
+            this.z = this.keySmoothing(this.keyboard.keyUp(), this.keyboard.keyDown(),this.z);
 
             // r
-            this.r = this.keySmoothing(this._keyboard.keyRight(), this._keyboard.keyLeft(),this.r);
+            this.r = this.keySmoothing(this.keyboard.keyRight(), this.keyboard.keyLeft(),this.r);
 
-            let manual = this._keyboard.key1();
-            let stabilize = this._keyboard.key2();
-            let depthHold = this._keyboard.key3();
+            let manual = this.keyboard.key1();
+            let stabilize = this.keyboard.key2();
+            let depthHold = this.keyboard.key3();
             if (!manual && stabilize && !depthHold) {
                 this.flightMode = this.flightModes.STABILIZE;
             } else if (!manual && !stabilize && depthHold) {
@@ -117,16 +116,16 @@ export default class Input{
             r: this.r
         }
 
-        this._websocket.sendInput(inputMsg);
-        this._view.setData(inputMsg);
+        this.websocket.sendInput(inputMsg);
+        this.view.setData(inputMsg);
 
         if (this.armState !== this.prevArmState) {
-            this._websocket.sendShuttleCommand('armShuttle', this.armState);
+            this.websocket.sendShuttleCommand('armShuttle', this.armState);
             this.prevArmState = this.armState;
         }
 
         if (this.flightMode !== this.prevFlightMode) {
-            this._websocket.sendShuttleCommand('changeFlightMode', this.flightMode);
+            this.websocket.sendShuttleCommand('changeFlightMode', this.flightMode);
             this.prevFlightMode = this.flightMode;
         }
     }
