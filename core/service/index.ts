@@ -3,7 +3,7 @@
 import dotenv from 'dotenv';
 
 import Auth from './auth';
-const AzureIot = require('./azureiot');
+import AzureIot from './azureiot';
 import BrowserWs from './browser-ws';
 import Config from './config';
 import DeviceWS from './device-ws';
