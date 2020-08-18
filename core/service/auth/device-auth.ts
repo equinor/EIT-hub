@@ -1,15 +1,22 @@
-const uuid4 = require('uuid').v4;
+import Time from "../utils/time";
+import {v4 as uuid4} from "uuid";
 
-class DeviceAuth {
-    constructor(time) {
-        this._time = time;
-        this._keys = [];
+interface KeyObj {
+    name: string,
+    key: string,
+    created: Date
+}
+
+export default class DeviceAuth {
+    private _keys: KeyObj[] = [];
+
+    constructor(private _time: Time) {
     }
 
     /**
      * @param {string} deviceName
      */
-    generateKey(deviceName) {
+    generateKey(deviceName: string): string {
         const key = {
             name: deviceName,
             key: uuid4(),
@@ -26,16 +33,16 @@ class DeviceAuth {
      * @param {string} deviceName
      * @returns {boolean}
      */
-    checkKey(key, deviceName) {
+    checkKey(key: string, deviceName: string): boolean {
         // We will check and clean at the same time.
-        const newKeys = [];
+        const newKeys:KeyObj[] = [];
         let isAllowed = false;
         const notBefore = this._time.now();
         notBefore.setSeconds(notBefore.getSeconds() - 60);
 
         for (const keyObj of this._keys) {
             if(keyObj.created >= notBefore ) {
-                newKeys.push[key];
+                newKeys.push(keyObj);
                 if(keyObj.name === deviceName) {
                     if(keyObj.key === key) {
                         isAllowed = true;

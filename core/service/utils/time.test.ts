@@ -1,4 +1,4 @@
-const Time = require('./time');
+import Time from './time';
 
 test('Returns current time.', () => {
     let time = new Time();

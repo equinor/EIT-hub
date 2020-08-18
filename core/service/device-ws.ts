@@ -1,10 +1,16 @@
-const WebSocket  = require('ws');
+import WebSocket from 'ws';
+
+export type MessageCallback = (msg:any) => void
 
 /** Class that deals with the low level handling of websocket to devices.
  *
  * This is the only class and children can use ws module when it comes to devices.
  */
-class DeviceWs {
+export default class DeviceWs {
+    private ws: WebSocket.Server = new WebSocket.Server({noServer: true});
+    private deviceMap: Map<string, WebSocket> = new Map();;
+    private _deviceCallback: Map<string, MessageCallback[]> = new Map();;
+
     constructor() {
         this.ws = new WebSocket.Server({noServer: true});
         this.deviceMap = new Map();
@@ -17,9 +23,9 @@ class DeviceWs {
      * @param {any} jsonMessage
      * @returns {boolean} If there was a connection to send message too.
      */
-    sendMessage(deviceName, jsonMessage){
+    sendMessage(deviceName: string, jsonMessage: any): boolean{
         try {
-            this.deviceMap.get(deviceName).send(JSON.stringify(jsonMessage));
+            this.deviceMap.get(deviceName)!.send(JSON.stringify(jsonMessage));
             return true;
         } catch(err) {
             console.log(err);
@@ -33,9 +39,9 @@ class DeviceWs {
      * @param {string} deviceName
      * @param {Function} callback The callback return a js object with the parsed json data from device.
      */
-    onMessage(deviceName, callback) {
+    onMessage(deviceName: string, callback: MessageCallback) {
         if (this._deviceCallback.has(deviceName)){
-            this._deviceCallback.get(deviceName).push(callback);
+            this._deviceCallback.get(deviceName)!.push(callback);
         }else {
             let emptyArr = [callback];
             this._deviceCallback.set(deviceName, emptyArr);
@@ -47,20 +53,12 @@ class DeviceWs {
      * @param {string} deviceName
      * @return {number} WebSocket ready state.
      */
-    getState(deviceName) {
+    getState(deviceName: string): number {
         if(this.deviceMap.has(deviceName)) {
-            return this.deviceMap.get(deviceName).readyState;
+            return this.deviceMap.get(deviceName)!.readyState;
         } else {
             return 3;
         }
-    }
-
-    /** Calls callback when connection have been open or closed for that device. 
-     * @param {string} deviceName
-     * @param {Function} callback
-     */
-    onStateChange(deviceName, callback) {
-        //TODO
     }
 
     /**
@@ -69,14 +67,14 @@ class DeviceWs {
      * @param {import("net").Socket} socket
      * @param {Buffer} head
      */
-    handleUpgrade(deviceName, request, socket, head) {
+    handleUpgrade(deviceName: string, request: import("http").IncomingMessage, socket: import("net").Socket, head: Buffer) {
         let self = this;
         this.ws.handleUpgrade(request, socket, head, function(websocket) {
             self.deviceMap.set(deviceName, websocket);
             websocket.on("message", (msg) => {
-                const message = JSON.parse(msg);
+                const message = JSON.parse(msg as any);
                 if (self._deviceCallback.has(deviceName)) {
-                    for (let callback of self._deviceCallback.get(deviceName)) {
+                    for (let callback of self._deviceCallback.get(deviceName)!) {
                         callback(message);
                     }
                 }

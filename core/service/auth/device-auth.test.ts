@@ -1,5 +1,5 @@
-const DeviceAuth = require("./device-auth");
-const Time = require("../utils/time");
+import DeviceAuth from "./device-auth";
+import Time from "../utils/time";
 
 function time2020() {
     const time = new Time();
@@ -7,8 +7,10 @@ function time2020() {
     return time;
 }
 
-function addTime(time, secs) {
-    time.nowOverride = new Date(time.nowOverride.getTime() + secs * 1000);
+function addTime(time: Time, secs: number) {
+    if (time.nowOverride){
+        time.nowOverride = new Date(time.nowOverride.getTime() + secs * 1000);
+    }
 }
 
 test('Happy path accepted', () => {
@@ -23,7 +25,7 @@ test('Happy path reject', () => {
     let time = time2020();
 
     let auth = new DeviceAuth(time);
-    let key = auth.generateKey("test");
+    auth.generateKey("test");
     expect(auth.checkKey("not the key", "test")).toBe(false);
 });
 

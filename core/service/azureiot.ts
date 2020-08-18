@@ -4,14 +4,17 @@
  * 
  * This is the only part of the code that can use Azure IoT apis. Add method as needed.
  */
+import {Client} from 'azure-iothub';
+import {Message} from "azure-iot-common";
+import { EventHubConsumerClient } from "@azure/event-hubs";
+import Config from './config';
 
-const Client = require('azure-iothub').Client;
-const Message = require('azure-iot-common').Message;
-const { EventHubConsumerClient } = require("@azure/event-hubs");
+export default class AzureIot {
+    private _onMessageCallbacks: Map<string, any> = new Map();
+    private iotHubClient: Client | undefined;
+    private eventHubConsumer: EventHubConsumerClient | undefined;
 
-class AzureIot {
-    constructor(config) {
-        this.config = config;
+    constructor(private config: Config) {
         this._onMessageCallbacks = new Map();
         if (this.config.iotHubConnectionString !== "") {
             this.iotHubClient = Client.fromConnectionString(this.config.iotHubConnectionString);
@@ -27,10 +30,10 @@ class AzureIot {
      * @param {any} jsonObject
      * @returns {boolean} If there was nowhere to send to.
      */
-    sendMessage(deviceName, jsonObject) {
+    sendMessage(deviceName: string, jsonObject: any): boolean {
         let self = this;
 
-        if (self.config.iotHubConnectionString !== "") {
+        if (self.iotHubClient) {
 
             let message = new Message(JSON.stringify(jsonObject));
             message.messageId = 'c2d';
@@ -45,6 +48,7 @@ class AzureIot {
         } else {
             console.warn('You have not specified an IoT Hub connection string.')
         }
+        return false;
     }
 
     /** Register a callback for used with device.
@@ -52,7 +56,7 @@ class AzureIot {
      * @param {string} deviceName
      * @param {Function} callback called with a js object with the message from device as argument.
      */
-    onMessage(deviceName, callback) {
+    onMessage(deviceName: string, callback: Function) {
         if (this._onMessageCallbacks.has(deviceName)) {
             this._onMessageCallbacks.get(deviceName).push(callback);
         } else {
@@ -66,7 +70,7 @@ class AzureIot {
 
         if (self.config.eventHubConnectionString !== "") {
 
-            let _processMessage = function (messages) {
+            let _processMessage = async function (messages: any) {
                 for (const message of messages) {
                     let deviceName = message.systemProperties['iothub-connection-device-id'];
 
@@ -78,12 +82,12 @@ class AzureIot {
                 }
             };
 
-            let _processError = function (err) {
+            let _processError = async function (err: any) {
                 console.log(err);
             };
 
             // Subscribe to messages from all partitions as below
-            self.eventHubConsumer.subscribe({
+            self.eventHubConsumer?.subscribe({
                 processEvents: _processMessage,
                 processError: _processError
             });
@@ -92,5 +96,3 @@ class AzureIot {
         }
     }
 }
-
-module.exports = AzureIot;
