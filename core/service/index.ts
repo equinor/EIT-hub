@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 import Auth from './auth';
 const AzureIot = require('./azureiot');
-const BrowserWs = require('./browser-ws');
+import BrowserWs from './browser-ws';
 import Config from './config';
 const DeviceWS = require('./device-ws');
 const Express = require('./express');
