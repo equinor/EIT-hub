@@ -7,7 +7,7 @@ const AzureIot = require('./azureiot');
 import BrowserWs from './browser-ws';
 import Config from './config';
 import DeviceWS from './device-ws';
-const Express = require('./express');
+import Express from './express';
 const ShuttleControl = require('../../apps/shuttle/services/shuttle-control');
 const ShuttleTelemetry = require('../../apps/shuttle/services/shuttle-telemetry');
 

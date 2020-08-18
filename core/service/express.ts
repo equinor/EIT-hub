@@ -1,16 +1,18 @@
 /* istanbul ignore file */
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import url from 'url';
+import Auth from './auth';
+import BrowserWs from './browser-ws';
+import DeviceWs from './device-ws';
+import {Server, IncomingMessage} from 'http'
+import { Socket } from 'net';
 
-const express = require('express');
-const cookieParser = require('cookie-parser');
+export default class Express {
+    private app: express.Express;
+    server: Server | undefined;
 
-const url = require('url');
-
-class Express {
-    constructor(port, auth, browserWs, deviceWs) {
-        this.port = port;
-        this.auth = auth;
-        this.browserWs = browserWs;
-        this.deviceWs = deviceWs;
+    constructor(private port: number, private auth:Auth, private browserWs:BrowserWs, private deviceWs:DeviceWs) {
         this.app = express();
         this.server = undefined;
 
@@ -26,12 +28,12 @@ class Express {
     }
 
     stop() {
-        this.server.close();
+        this.server?.close();
     }
 
-    _upgrade(request, socket, head){
-        const pathname = url.parse(request.url).pathname;
-        const path = pathname.split("/");
+    _upgrade(request: IncomingMessage, socket: Socket, head: Buffer){
+        const pathname = url.parse(request.url!).pathname;
+        const path = pathname!.split("/");
 
         if (path[1] === 'browser') { 
             let user = this.auth.getUser(request);
@@ -53,5 +55,3 @@ class Express {
         }
     }
 }
-
-module.exports = Express;
