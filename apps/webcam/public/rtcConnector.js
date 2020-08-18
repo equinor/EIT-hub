@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 import './simplepeer.min.js';
 
 export default class RtcConnector {

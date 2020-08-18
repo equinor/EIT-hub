@@ -1,8 +1,8 @@
 export default class WebSocket{
     private _ws = new window.WebSocket(getWsUrl());
-    private _telemetryCallbacks:Function[] = [];
-    private _controlCallbacks:Function[] = [];
-    private _rtcCallbacks:Function[] = [];
+    private _telemetryCallbacks:any[] = [];
+    private _controlCallbacks:any[] = [];
+    private _rtcCallbacks:any[] = [];
 
     constructor(){
         this._ws.onmessage = this._onMessage.bind(this);
@@ -13,7 +13,7 @@ export default class WebSocket{
      * 
      * @param {{x:number, y:number, z:number, r:number}} input 
      */
-    sendInput(input: { x: number; y: number; z: number; r: number; }) {
+    sendInput(input: { x: number; y: number; z: number; r: number; }):void {
         const msg = {type: "input", body: input}
         this._ws.send(JSON.stringify(msg));
     }
@@ -21,12 +21,12 @@ export default class WebSocket{
     /** Ask server to let us have control or give up our control. Do nothing if connection is not working.
      * 
      */
-    sendControlRequest(bool: boolean) {
+    sendControlRequest(bool: boolean):void {
         const msg = {type: "inputControl", body: bool}
         this._ws.send(JSON.stringify(msg));
     }
 
-    sendShuttleCommand(type: any,value: any) {
+    sendShuttleCommand(type: any,value: any):void {
         const msg = {type: type, body: value}
         this._ws.send(JSON.stringify(msg));
     }
@@ -35,7 +35,7 @@ export default class WebSocket{
      *
      *@param {any} msg 
      */
-    sendRtc(rtcMsg: any){
+    sendRtc(rtcMsg: any):void{
         const msg = { type: "rtc", body: rtcMsg };
         this._ws.send(JSON.stringify(msg));
     }
@@ -43,32 +43,32 @@ export default class WebSocket{
     /** 
      * 
      */
-    onControl(callback: Function) {
+    onControl(callback: any): void {
         this._controlCallbacks.push(callback);
     }
 
-    onTelemetry(callback: Function) {
+    onTelemetry(callback: any): void {
         this._telemetryCallbacks.push(callback);
     }
 
-    onRtc(callback: Function) {
+    onRtc(callback: any): void {
         this._rtcCallbacks.push(callback);
     }
 
-    _onMessage(event: MessageEvent) {
-        var msg = JSON.parse(event.data);
+    _onMessage(event: MessageEvent):void {
+        const msg = JSON.parse(event.data);
 
         if(msg.type === "inputControl") {
-            for (let callback of this._controlCallbacks) {
+            for (const callback of this._controlCallbacks) {
                 callback(msg)
             }
         }else if(msg.type === "telemetry") {
-            for (let callback of this._telemetryCallbacks) {
+            for (const callback of this._telemetryCallbacks) {
                 callback(msg)
             }
         } else if(msg.type === "rtc") {
             console.log(msg);
-            for (let callback of this._rtcCallbacks) {
+            for (const callback of this._rtcCallbacks) {
                 callback(msg);   
             }
         } else {
@@ -78,7 +78,8 @@ export default class WebSocket{
 }
 
 function getWsUrl() {
-    var loc = window.location, new_uri;
+    const loc = window.location
+    let new_uri;
     if (loc.protocol === "https:") {
         new_uri = "wss:";
     } else {

@@ -3,12 +3,12 @@ import WebSocket from 'ws';
 export type BrowserMessage = {
     browserId: number,
     type: string,
-    user: never,
-    body: never,
+    user: any,
+    body: any,
 }
 
 export type MessageCallback = (msg: BrowserMessage)=>void;
-export type StatusCallback = (browserId:number, user: never)=>void;
+export type StatusCallback = (browserId:number, user: any)=>void;
 
 /** Class that deals with the low level websocket connections from browsers.
  *
@@ -120,7 +120,7 @@ export default class BrowserWs {
      * @param {import("net").Socket} socket
      * @param {Buffer} head
      */
-    public handleUpgrade(user:never, request: import("http").IncomingMessage, socket: import("net").Socket, head: Buffer): void {
+    public handleUpgrade(user:any, request: import("http").IncomingMessage, socket: import("net").Socket, head: Buffer): void {
         this.ws.handleUpgrade(request, socket, head, (websocket) => {
 
             const browserId = this.clientCount;
@@ -157,7 +157,7 @@ export default class BrowserWs {
             // onClose
             websocket.on("close", () => {
 
-                console.log(`${(user as any).name} closed browser ${browserId}.`);
+                console.log(`${user.name} closed browser ${browserId}.`);
                 this.wsMap.delete(browserId);
                 if (this._onCloseCallbacks.length > 0) {
                     for (const callback of this._onCloseCallbacks) {

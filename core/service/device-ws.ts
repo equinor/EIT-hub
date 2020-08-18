@@ -8,8 +8,8 @@ export type MessageCallback = (msg:any) => void
  */
 export default class DeviceWs {
     private ws: WebSocket.Server = new WebSocket.Server({noServer: true});
-    private deviceMap: Map<string, WebSocket> = new Map();;
-    private _deviceCallback: Map<string, MessageCallback[]> = new Map();;
+    private deviceMap: Map<string, WebSocket> = new Map();
+    private _deviceCallback: Map<string, MessageCallback[]> = new Map();
 
     constructor() {
         this.ws = new WebSocket.Server({noServer: true});

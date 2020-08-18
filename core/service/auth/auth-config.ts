@@ -4,7 +4,7 @@ import Config from "../config";
 export default class AuthConfig {
     private redirectUri: string;
 
-    static fromConfig(config: Config){
+    static fromConfig(config: Config): AuthConfig{
         return new AuthConfig(config.baseUrl, config.tenantId, config.clientId, config.clientSecret)
     }
 
@@ -13,7 +13,7 @@ export default class AuthConfig {
         this.redirectUri = new URL("/azuread", this.baseUrl).toString();
     }
 
-    isDisabled() {
+    isDisabled(): boolean {
         if(this.baseUrl.hostname === "localhost") {
             if(!this.clientId){
                 return true;
@@ -22,8 +22,8 @@ export default class AuthConfig {
         return false;
     }
 
-    createAuthorizationUrl(token:string) {
-        let url = new URL("https://login.microsoftonline.com/");
+    createAuthorizationUrl(token:string): URL {
+        const url = new URL("https://login.microsoftonline.com/");
         url.pathname = `/${this.tenantId}/oauth2/v2.0/authorize`;
         url.searchParams.set("response_type", "code");
         url.searchParams.set("client_id", this.clientId);
@@ -34,12 +34,12 @@ export default class AuthConfig {
         return url;
     }
 
-    authorityUrl() {
+    authorityUrl(): string {
         return "https://login.microsoftonline.com/" + this.tenantId + "/oauth2/v2.0/token";
     }
 
-    accessTokenParam(code:string) {
-        let params = new URLSearchParams();
+    accessTokenParam(code:string):URLSearchParams  {
+        const params = new URLSearchParams();
         params.set("client_id", this.clientId);
         params.set("grant_type", "authorization_code");
         params.set("code", code);

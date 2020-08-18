@@ -14,43 +14,43 @@ function addTime(time: Time, secs: number) {
 }
 
 test('Happy path accepted', () => {
-    let time = time2020();
+    const time = time2020();
 
-    let auth = new DeviceAuth(time);
-    let key = auth.generateKey("test");
+    const auth = new DeviceAuth(time);
+    const key = auth.generateKey("test");
     expect(auth.checkKey(key, "test")).toBe(true);
 });
 
 test('Happy path reject', () => {
-    let time = time2020();
+    const time = time2020();
 
-    let auth = new DeviceAuth(time);
+    const auth = new DeviceAuth(time);
     auth.generateKey("test");
     expect(auth.checkKey("not the key", "test")).toBe(false);
 });
 
 test('Timeout', () => {
-    let time = time2020();
+    const time = time2020();
 
-    let auth = new DeviceAuth(time);
-    let key = auth.generateKey("test");
+    const auth = new DeviceAuth(time);
+    const key = auth.generateKey("test");
     addTime(time, 61);
     expect(auth.checkKey(key, "test")).toBe(false);
 });
 
 test('Just accepted', () => {
-    let time = time2020();
+    const time = time2020();
 
-    let auth = new DeviceAuth(time);
-    let key = auth.generateKey("test");
+    const auth = new DeviceAuth(time);
+    const key = auth.generateKey("test");
     addTime(time, 60);
     expect(auth.checkKey(key, "test")).toBe(true);
 });
 
 test('Wrong device', () => {
-    let time = time2020();
+    const time = time2020();
 
-    let auth = new DeviceAuth(time);
-    let key = auth.generateKey("test");
+    const auth = new DeviceAuth(time);
+    const key = auth.generateKey("test");
     expect(auth.checkKey(key, "test2")).toBe(false);
 });

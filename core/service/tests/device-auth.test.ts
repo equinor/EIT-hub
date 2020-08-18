@@ -8,7 +8,7 @@ import Express from '../express';
 import WebSocket from 'ws';
 
 let auth: Auth;
-let express: any;
+let express: Express;
 
 beforeAll(() => {
     const config = Config.default.set({baseUrl: new URL("http://localhost:3123/")});
@@ -25,9 +25,9 @@ afterAll(() => {
 });
 
 test("Happy path device authentication", (done) => {
-    let token = auth.getDeviceToken("test");
+    const token = auth.getDeviceToken("test");
 
-    let websocket = new WebSocket(token.url, {
+    const websocket = new WebSocket(token.url, {
         headers: {
             "Authorization": token.authorization
         }
@@ -44,9 +44,9 @@ test("Happy path device authentication", (done) => {
 });
 
 test("Wrong key", (done) => {
-    let token = auth.getDeviceToken("test");
+    const token = auth.getDeviceToken("test");
 
-    let websocket = new WebSocket(token.url, {
+    const websocket = new WebSocket(token.url, {
         headers: {
             "Authorization": "Bearer pleaseLetMeIn"
         }

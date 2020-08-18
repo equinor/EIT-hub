@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 export default class VideoView {
     constructor(element) {
         this._rootElem = element;

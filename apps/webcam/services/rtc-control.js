@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 /**
  * Managers many VideoStreams. And link it up with azure iot and connection with browser.
  */

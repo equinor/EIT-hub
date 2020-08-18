@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 class ShuttleControl {
     constructor(azureIot, browserWs, deviceWs, auth) {
         this.azureIot = azureIot;
