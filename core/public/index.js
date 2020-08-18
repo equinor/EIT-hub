@@ -4,8 +4,6 @@ import Keyboard from './keyboard.js';
 import InputView from './inputView.js';
 import Input from './input.js';
 import TelemetryView from './telemetryView.js';
-import VideoView from './videoView.js';
-import RtcConnector from './rtcConnector.js';
 import ClientRequestView from './clientRequests.js';
 
 function main() {
@@ -28,19 +26,12 @@ function main() {
     // Setup Input
     let input = new Input(websocket,gamePad,keyboard,inputView);
 
-    // Setup VideoView
-    //const videoView = new VideoView(document.getElementById('video-view'));
-
-    // Setup RtcConnector
-    //const rtcConnector = new RtcConnector(websocket, videoView);
-
     // Setup ClientRequests
     const clientRequestView = new ClientRequestView(websocket,document.getElementById('clientRequests'))
     websocket.onControl(clientRequestView.updateControl.bind(clientRequestView));
 
     // Start client
     input.start(200);
-    //rtcConnector.start();
 }
 
 main();
