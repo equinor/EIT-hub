@@ -42,4 +42,3 @@ MVP
 * UI to backend websocket connection. With a minimal of protocol.
 * Backend to device websocket connection. With a minimal of protocol.
 * Use azure iot only for setting up websocket connection.
-* Libraries on UI, backend, device to abstracts away the connection.
