@@ -17,9 +17,9 @@ Modules are core part of EIT-Hub. They may not be the there own separate blocks 
 
 * **[Gui](gui.md)** is a browser based dashboard solution. Using predefined widgets that communicate over an event bus. With easy communications with backend.
 
-* **[Security](security.md)**s goal is to be as secure as possible with little to no hassle. You should not be temped to apply an allow everything hack.
+* **[Security](security.md)**'s goal is to be as secure as possible with little to no hassle. You should not be temped to apply an allow everything hack.
 
-* **Communication** is based on both well defined and custom messages. There the module will handle the most locked down and impolite networks. No more weeks of hacking to bypass a corporate firewall for a small demo.
+* **[Communication](communication.md)** is based on both well defined and custom messages. There the module will handle the most locked down and impolite networks. No more weeks of hacking to bypass a corporate firewall for a small demo.
 
 ### EIT-Hub application
 EIT-Hub is an application platform. So the top level unit is an application. That can contain zero or more of:
