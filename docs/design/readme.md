@@ -26,7 +26,7 @@ EIT-Hub is an application platform. So the top level unit is an application. Tha
 
 * **[Dashboards](dashboards.md)** a grid you can lay out widgets. Your own or from other apps. Every dashboard will also have an event bus for inter widget communication on the same page.
 
-* **Widget** custom tags that can be composed similar to AFrame. Will have some isolation to enable use of crazy tech and solutions.
+* **[Widget](widget.md)** custom tags that can be composed similar to AFrame. Will have some isolation to enable use of crazy tech and solutions.
 
 * **Services** server code that can comminate with both browser widgets and devices. And can also do everything a normal server can.
 
