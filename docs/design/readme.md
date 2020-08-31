@@ -28,7 +28,7 @@ EIT-Hub is an application platform. So the top level unit is an application. Tha
 
 * **[Widget](widget.md)** custom tags that can be composed similar to AFrame. Will have some isolation to enable use of crazy tech and solutions.
 
-* **Services** server code that can comminate with both browser widgets and devices. And can also do everything a normal server can.
+* **[Services](services.md)** server code that can comminate with both browser widgets and devices. And can also do everything a normal server can.
 
 * **Devices**. Use a simple SDK to bring your PI online. Can communicate over both an always on and a realtime link.
 
