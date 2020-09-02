@@ -1,3 +1,9 @@
+##################################################
+## Usage
+#
+# 1. docker-compose up
+# 2. docker exec -it eit-hub-development sh
+
 version: "3.7"
 services:
   eit-hub:
