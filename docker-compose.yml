@@ -1,8 +1,22 @@
-version: '2.0'
+version: "3.7"
 services:
-    web:
-      build: .
-      ports:
-        - "3000:3000"
-      env_file: 
-        - ".env"
+  eit-hub:
+    image: node:14.9.0-buster
+    container_name: eit-hub-development
+    tty: true # Keep container running. This option is not available if you build from a dockerfile.
+    working_dir: /app
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+      - type: volume
+        source: node-modules
+        target: /app/node_modules
+    ports:
+      - "3000:3000"
+    env_file: 
+      - ".env"
+
+volumes:
+  node-modules:
+    name: eit-hub_node-modules
