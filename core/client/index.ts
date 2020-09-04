@@ -1,8 +1,2 @@
-import shuttle from "../../apps/shuttle/public/index";
+import "../../apps/shuttle/widgets/shuttle-ui";
 
-function main() {
-    const eitMain = document.getElementsByTagName("eit-main")[0];
-    eitMain.appendChild(shuttle());
-}
-
-main();
