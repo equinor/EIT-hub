@@ -6,7 +6,7 @@ import Input from './input';
 import TelemetryView from './telemetryView';
 import ClientRequestView from './clientRequests';
 
-function main() {
+export default function main(): void {
     // Setup websocket.
     const websocket = new WebSocket();
 
@@ -33,5 +33,3 @@ function main() {
     // Start client
     input.start(200);
 }
-
-main();
