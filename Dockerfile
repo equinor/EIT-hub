@@ -1,15 +1,23 @@
-FROM node
-
+#####################################
+## Build
+FROM node:14.9-alpine3.10 as builder
 WORKDIR /app/eithub/
-
-COPY package*.json ./
-RUN npm install
-
 COPY core ./core
 COPY apps ./apps
+COPY package*.json ./
+COPY tsconfig.json ./
+RUN npm install
 
-USER node
 
+#####################################
+# Test
+RUN npm audit
+RUN npm run test
+
+
+#####################################
+# Release
 EXPOSE 3000
-
-CMD [ "node", "apps/shuttle/services/index.js" ]
+# Set user context and execute startup
+USER node
+CMD ["npm", "start"]

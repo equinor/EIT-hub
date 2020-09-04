@@ -4,8 +4,8 @@
   "description": "Stream from browser using headless chrome to get mediastreams and stream video (the easy way) ",
   "main": "device.js",
   "dependencies": {
-    "azure-iot-device": "^1.16.0",
-    "azure-iot-device-mqtt": "^1.14.1",
+    "azure-iot-device": "^1.17.1",
+    "azure-iot-device-mqtt": "^1.15.1",
     "dotenv": "^8.2.0",
     "modules": "^0.4.0",
     "puppeteer": "^5.0.0",
