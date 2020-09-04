@@ -5,6 +5,7 @@ WORKDIR /app/eithub/
 COPY core ./core
 COPY apps ./apps
 COPY package*.json ./
+COPY tsconfig.json ./
 RUN npm install
 
 
