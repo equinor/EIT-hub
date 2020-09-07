@@ -29,8 +29,11 @@ export class Topic<T> {
 export class Broker {
     private topics: Map<string,Topic<unknown>> = new Map();
     
-    createTopic(name: string): Topic<unknown> {
-        const topic = new Topic<unknown>();
+    createTopic<T>(name: string): Topic<T> {
+        if(this.topics.has(name)){
+            throw new Error(`There is already a topic named: ${name}`);
+        }
+        const topic = new Topic<T>();
         this.topics.set(name, topic);
         return topic;
     }
