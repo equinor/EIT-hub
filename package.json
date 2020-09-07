@@ -55,7 +55,12 @@
   },
   "jest": {
     "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+      "^.+\\.(html|tsx?)$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "stringifyContentPathRegex": "\\.html$"
+      }
     },
     "collectCoverage": true,
     "collectCoverageFrom": [
