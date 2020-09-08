@@ -29,7 +29,7 @@ export class Topic<T> {
 export class Broker {
     public static instance: Broker = new Broker();
 
-    private topics: Map<string,Topic<unknown>> = new Map();
+    private topics: Map<string,Topic<unknown>> = new Map<string,Topic<unknown>>();
     
     createTopic<T>(name: string): Topic<T> {
         if(this.topics.has(name)){
