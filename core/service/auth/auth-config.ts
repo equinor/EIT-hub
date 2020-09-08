@@ -1,6 +1,7 @@
 import { URLSearchParams } from "url"
 import Config from "../config";
 
+/* istanbul ignore file */
 export default class AuthConfig {
     private redirectUri: string;
 

@@ -9,3 +9,5 @@ export default class EitHub extends HTMLElement{
 
     }
 }
+
+customElements.define('eit-hub', EitHub);

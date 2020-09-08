@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import ShuttleUi from "./widgets/shuttle-ui";
 
 export default class Shuttle {

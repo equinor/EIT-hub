@@ -9,3 +9,5 @@ export default class EitMain extends HTMLElement{
 
     }
 }
+
+customElements.define('eit-main', EitMain);

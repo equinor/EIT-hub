@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export default class Keyboard {
     private _pressed: {[key: number]: boolean;};
     constructor(window: Window & typeof globalThis) { 

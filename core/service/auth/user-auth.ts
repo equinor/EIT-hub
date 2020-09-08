@@ -1,5 +1,6 @@
 import {v4 as uuid4} from "uuid";
 
+/* istanbul ignore file */
 export default class UserAuth{
     private _session: Map<string, any> = new Map();
 

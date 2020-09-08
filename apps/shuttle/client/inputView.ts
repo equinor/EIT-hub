@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export default class InputView{
     // 1: GamePad
     // 2: Keyboard

@@ -1,7 +1,7 @@
 import html from "./eit-header.html";
 
 export default class EitHeader extends HTMLElement{
-    constructor() {
+    constructor(public value: number = 0) {
         super();
 
         const shadow = this.attachShadow({mode:'closed'});
@@ -9,3 +9,5 @@ export default class EitHeader extends HTMLElement{
 
     }
 }
+
+customElements.define('eit-header', EitHeader);

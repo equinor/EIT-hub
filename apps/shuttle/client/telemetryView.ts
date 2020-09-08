@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export default class TelemetryView {
     constructor(private rootElem:HTMLElement) {
     }

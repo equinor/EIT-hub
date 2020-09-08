@@ -1,6 +1,6 @@
 import EitApps from "./eit-apps";
 
-test("Eit Apps dom", () => {
-    const eitApps = document.createElement("eit-apps");
-    expect(eitApps).toBeInstanceOf(EitApps);
+test("Eit Apps smoke test", () => {
+    const eitApps = new EitApps;
+    expect(eitApps).toBeInstanceOf(HTMLElement);
 });

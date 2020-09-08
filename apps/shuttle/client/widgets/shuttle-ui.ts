@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import WebSocket from '../websocket';
 import GamePad from '../gamepad';
 import Keyboard from '../keyboard';

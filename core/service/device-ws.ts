@@ -6,6 +6,7 @@ export type MessageCallback = (msg:any) => void
  *
  * This is the only class and children can use ws module when it comes to devices.
  */
+/* istanbul ignore file */
 export default class DeviceWs {
     private ws: WebSocket.Server = new WebSocket.Server({noServer: true});
     private deviceMap: Map<string, WebSocket> = new Map();

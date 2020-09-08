@@ -1,5 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
+/* istanbul ignore file */
 class ShuttleControl {
     constructor(azureIot, browserWs, deviceWs, auth) {
         this.azureIot = azureIot;

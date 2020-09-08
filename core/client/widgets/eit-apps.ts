@@ -9,3 +9,5 @@ export default class EitApps extends HTMLElement{
 
     }
 }
+
+customElements.define('eit-apps', EitApps);

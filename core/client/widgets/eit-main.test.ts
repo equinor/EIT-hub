@@ -1,6 +1,6 @@
 import EitMain from "./eit-main";
 
-test("EitMain from dom", () => {
-    const eitMain = document.createElement("eit-main");
-    expect(eitMain).toBeInstanceOf(EitMain);
+test("EitMain smoke test", () => {
+    const eitMain = new EitMain();
+    expect(eitMain).toBeInstanceOf(HTMLElement);
 });

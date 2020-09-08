@@ -1,5 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
+/* istanbul ignore file */
 /**
  * Managers many VideoStreams. And link it up with azure iot and connection with browser.
  */
