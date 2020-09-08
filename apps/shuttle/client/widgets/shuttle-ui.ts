@@ -1,10 +1,10 @@
-import WebSocket from './shuttle-ui/websocket';
-import GamePad from './shuttle-ui/gamepad';
-import Keyboard from './shuttle-ui/keyboard';
-import InputView from './shuttle-ui/inputView';
-import Input from './shuttle-ui/input';
-import TelemetryView from './shuttle-ui/telemetryView';
-import ClientRequestView from './shuttle-ui/clientRequests';
+import WebSocket from '../websocket';
+import GamePad from '../gamepad';
+import Keyboard from '../keyboard';
+import InputView from '../inputView';
+import Input from '../input';
+import TelemetryView from '../telemetryView';
+import ClientRequestView from '../clientRequests';
 import html from './shuttle-ui.html';
 
 export default class ShuttleUi extends HTMLElement {
@@ -42,5 +42,3 @@ export default class ShuttleUi extends HTMLElement {
         input.start(200);
     }
 }
-
-customElements.define('shuttle-ui', ShuttleUi);

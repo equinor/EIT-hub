@@ -27,6 +27,8 @@ export class Topic<T> {
 }
 
 export class Broker {
+    public static instance: Broker = new Broker();
+
     private topics: Map<string,Topic<unknown>> = new Map();
     
     createTopic<T>(name: string): Topic<T> {

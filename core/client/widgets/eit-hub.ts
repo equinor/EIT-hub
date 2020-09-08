@@ -1,9 +1,4 @@
 import html from "./eit-hub.html";
-import '../../apps/shuttle/widgets/shuttle-ui';
-import './eit-header';
-import './eit-apps';
-import './eit-main';
-import 'wired-elements';
 
 export default class EitHub extends HTMLElement{
     constructor() {
@@ -14,5 +9,3 @@ export default class EitHub extends HTMLElement{
 
     }
 }
-
-customElements.define('eit-hub', EitHub);

@@ -9,5 +9,3 @@ export default class EitHeader extends HTMLElement{
 
     }
 }
-
-customElements.define('eit-header', EitHeader);

@@ -1,6 +1,6 @@
-import html from "./eit-main.html";
+import html from "./eit-apps.html";
 
-export default class EitMain extends HTMLElement{
+export default class EitApps extends HTMLElement{
     constructor() {
         super();
 
@@ -9,5 +9,3 @@ export default class EitMain extends HTMLElement{
 
     }
 }
-
-customElements.define('eit-main', EitMain);
