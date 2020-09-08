@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export default class WebSocket{
     private _ws = new window.WebSocket(getWsUrl());
     private _telemetryCallbacks:any[] = [];

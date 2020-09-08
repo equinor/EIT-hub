@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export default class GamePad {
 
     /** Gets the axis of the first gamepad connected 

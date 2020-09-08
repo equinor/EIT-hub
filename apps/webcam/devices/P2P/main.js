@@ -1,5 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
+/* istanbul ignore file */
 navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(connect).catch(() => { });
 
 window.onclose = function () {

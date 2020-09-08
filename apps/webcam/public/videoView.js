@@ -1,5 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
+/* istanbul ignore file */
 export default class VideoView {
     constructor(element) {
         this._rootElem = element;

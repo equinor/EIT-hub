@@ -3,6 +3,7 @@ import Gamepad from "./gamepad";
 import Keyboard from "./keyboard";
 import InputView from "./inputView";
 
+/* istanbul ignore file */
 export default class Input{
     private gainPressed = 0.15;
     private gainRelease = 0.2;

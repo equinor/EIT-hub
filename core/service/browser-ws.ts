@@ -10,6 +10,7 @@ export type BrowserMessage = {
 export type MessageCallback = (msg: BrowserMessage)=>void;
 export type StatusCallback = (browserId:number, user: any)=>void;
 
+/* istanbul ignore file */
 /** Class that deals with the low level websocket connections from browsers.
  *
  * This is the only class and children can use ws module when it comes to browsers.

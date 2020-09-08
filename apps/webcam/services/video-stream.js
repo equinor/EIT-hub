@@ -1,5 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
+/* istanbul ignore file */
 /**
  * Represent a set of RTC peering connection so that there are one presenter that stream to multiple viewers.
  * 

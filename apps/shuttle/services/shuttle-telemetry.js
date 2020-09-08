@@ -1,4 +1,5 @@
 /* eslint-disable */
+/* istanbul ignore file */
 class ShuttleTelemetry {
     constructor(azureIot, browserWs, deviceWs) {
         this.azureIot = azureIot;

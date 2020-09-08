@@ -8,6 +8,7 @@ import AuthConfig from "./auth/auth-config";
 import fetch from 'node-fetch';
 import cookie from 'cookie';
 
+/* istanbul ignore file */
 /** A class that handles authentication and access controls needs for EitHub
  *  Must be integrated with express to generate any security.
  */

@@ -9,6 +9,7 @@ import {Message} from "azure-iot-common";
 import { EventHubConsumerClient } from "@azure/event-hubs";
 import Config from './config';
 
+/* istanbul ignore file */
 export default class AzureIot {
     private _onMessageCallbacks: Map<string, any[]> = new Map();
     private iotHubClient: Client | undefined;

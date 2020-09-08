@@ -1,5 +1,6 @@
 import WebSocket from "./websocket";
 
+/* istanbul ignore file */
 export default class ClientRequestView{
 
     constructor(private websocket: WebSocket, private rootElem: HTMLElement) {
