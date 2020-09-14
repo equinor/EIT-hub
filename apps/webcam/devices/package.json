@@ -8,7 +8,7 @@
     "azure-iot-device-mqtt": "^1.15.1",
     "dotenv": "^8.2.0",
     "modules": "^0.4.0",
-    "puppeteer": "^5.0.0",
+    "puppeteer": "^5.3.0",
     "simple-peer": "^9.7.2"
   },
   "devDependencies": {},
