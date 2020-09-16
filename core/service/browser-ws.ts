@@ -1,4 +1,6 @@
 import WebSocket from 'ws';
+import NodeWebSocket from './network/NodeWebSocket';
+import IWebSocket from '../common/network/IWebSocket';
 
 export type BrowserMessage = {
     browserId: number,
@@ -25,12 +27,12 @@ export type StatusCallback = (browserId:number, user: any)=>void;
  */
 export default class BrowserWs {
     private ws: WebSocket.Server = new WebSocket.Server({noServer: true});
-    private wsMap: Map<number, WebSocket> = new Map();
+    private wsMap: Map<number, IWebSocket> = new Map<number,IWebSocket>();
     private clientCount = 0;
     private _onOpenCallbacks: StatusCallback[] = [];
     private _onCloseCallbacks: StatusCallback[] = [];
-    private _onBrowserCallbacks: Map<number, MessageCallback[]> = new Map();
-    private _onTopicCallbacks: Map<string, MessageCallback[]> = new Map();
+    private _onBrowserCallbacks: Map<number, MessageCallback[]> = new Map<number, MessageCallback[]>();
+    private _onTopicCallbacks: Map<string, MessageCallback[]> = new Map<string, MessageCallback[]>();
     
     /** Try to send a message to a browser. If the device is not connected the message will be dropped.
      * 
@@ -97,15 +99,6 @@ export default class BrowserWs {
         }
     }
 
-    /** Gets the current ready state for the device in question. 3 (CLOSED) if no connections exist
-     * 
-     * @param {number} browserId
-     * @return {number} WebSocket ready state.
-     */
-    public getState(browserId: number): number {
-        return this.wsMap.get(browserId)?.readyState ?? 3
-    }
-
     /** Calls callback when a browser have disconnected.
      * 
      * @param {Function} callback called with the browserId and user object as properties.
@@ -123,10 +116,11 @@ export default class BrowserWs {
      */
     public handleUpgrade(user:any, request: import("http").IncomingMessage, socket: import("net").Socket, head: Buffer): void {
         this.ws.handleUpgrade(request, socket, head, (websocket) => {
+            const ws = new NodeWebSocket(websocket);
 
             const browserId = this.clientCount;
             this.clientCount += 1;
-            this.wsMap.set(browserId, websocket);
+            this.wsMap.set(browserId, ws);
 
             // onOpen
             if (this._onOpenCallbacks.length > 0) {
@@ -136,9 +130,8 @@ export default class BrowserWs {
             }
             
             // onMessage
-            websocket.on("message", (msg) => {
-
-                const msgParse = JSON.parse(msg as string);
+            ws.onMessage((msg) => {
+                const msgParse = JSON.parse(msg);
                 const message = {
                     browserId: browserId,
                     type: msgParse.type as string,
@@ -156,7 +149,7 @@ export default class BrowserWs {
             })
 
             // onClose
-            websocket.on("close", () => {
+            ws.onConnectionChange(() => {
 
                 console.log(`${user.name} closed browser ${browserId}.`);
                 this.wsMap.delete(browserId);

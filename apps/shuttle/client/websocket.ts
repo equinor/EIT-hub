@@ -1,13 +1,14 @@
+import BrowserWebSocket from "../../../core/client/network/BrowserWebSocket";
+
 /* istanbul ignore file */
 export default class WebSocket{
-    private _ws = new window.WebSocket(getWsUrl());
+    private _ws = BrowserWebSocket.connect(getWsUrl());
     private _telemetryCallbacks:any[] = [];
     private _controlCallbacks:any[] = [];
     private _rtcCallbacks:any[] = [];
 
     constructor(){
-        this._ws.onmessage = this._onMessage.bind(this);
-
+        this._ws.onMessage(this._onMessage.bind(this));
     }
 
     /** Try to send input information to the server. Do nothing if connection is not working.
@@ -56,8 +57,8 @@ export default class WebSocket{
         this._rtcCallbacks.push(callback);
     }
 
-    _onMessage(event: MessageEvent):void {
-        const msg = JSON.parse(event.data);
+    _onMessage(data: string):void {
+        const msg = JSON.parse(data);
 
         if(msg.type === "inputControl") {
             for (const callback of this._controlCallbacks) {
