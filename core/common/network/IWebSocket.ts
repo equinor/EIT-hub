@@ -1,8 +1,9 @@
 export default interface IWebSocket {
-    onMessage(callback: (data:string) => void): void,
-    onConnectionChange(callback: (connected: boolean) => void): void,
+    send(data:string): void;
+    onMessage: ((data:string) => void) | undefined,
 
     readonly isConnected: boolean
-    send(data:string): void;
+    onConnectionChange: ((connected: boolean) => void) | undefined,
+
     close(code?: number, reason?: string): void;
 } 

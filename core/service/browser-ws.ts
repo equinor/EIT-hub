@@ -130,7 +130,7 @@ export default class BrowserWs {
             }
             
             // onMessage
-            ws.onMessage((msg) => {
+            ws.onMessage = (msg) => {
                 const msgParse = JSON.parse(msg);
                 const message = {
                     browserId: browserId,
@@ -146,10 +146,10 @@ export default class BrowserWs {
                 for (const callback of this._onTopicCallbacks.get(message.type) ?? []) {
                     callback(message)
                 }
-            })
+            };
 
             // onClose
-            ws.onConnectionChange(() => {
+            ws.onConnectionChange = () => {
 
                 console.log(`${user.name} closed browser ${browserId}.`);
                 this.wsMap.delete(browserId);
@@ -158,7 +158,7 @@ export default class BrowserWs {
                         callback(browserId,user)
                     }
                 }
-            }) 
+            }
         })
     }
 }

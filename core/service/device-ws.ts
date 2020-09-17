@@ -59,17 +59,17 @@ export default class DeviceWs {
             const ws = new NodeWebSocket(websocket);
             this.deviceMap.set(deviceName, ws);
 
-            ws.onMessage((msg) => {
+            ws.onMessage = (msg) => {
                 const message = JSON.parse(msg);
                 for (const callback of this._deviceCallback.get(deviceName) ?? []) {
                     callback(message);
                 }
-            });
+            };
 
-            ws.onConnectionChange(() => {
+            ws.onConnectionChange = () => {
                 console.log(`${deviceName} websocket closed`);
                 this.deviceMap.delete(deviceName);
-            });
+            };
         });
     }
 }
