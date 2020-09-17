@@ -1,6 +1,4 @@
-import WebSocket from 'ws';
-import NodeWebSocket from './network/NodeWebSocket';
-import IWebSocket from '../common/network/IWebSocket';
+import IConnection from '../common/network/IConnection';
 
 export type MessageCallback = (msg:any) => void
 
@@ -10,13 +8,8 @@ export type MessageCallback = (msg:any) => void
  */
 /* istanbul ignore file */
 export default class DeviceWs {
-    private ws: WebSocket.Server = new WebSocket.Server({noServer: true});
-    private deviceMap: Map<string, IWebSocket> = new Map<string, IWebSocket> ();
+    private deviceMap: Map<string, IConnection> = new Map<string, IConnection> ();
     private _deviceCallback: Map<string, MessageCallback[]> = new Map<string, MessageCallback[]>();
-
-    constructor() {
-        this.ws = new WebSocket.Server({noServer: true});
-    }
 
     /** Try to send a message to a device. If the device is not connected the message will be dropped.
      * 
@@ -48,29 +41,21 @@ export default class DeviceWs {
         }
     }
 
-    /**
-     * @param {string} deviceName
-     * @param {import("http").IncomingMessage} request
-     * @param {import("net").Socket} socket
-     * @param {Buffer} head
-     */
-    public handleUpgrade(deviceName: string, request: import("http").IncomingMessage, socket: import("net").Socket, head: Buffer): void {
-        this.ws.handleUpgrade(request, socket, head, (websocket)  => {
-            const ws = new NodeWebSocket(websocket);
-            this.deviceMap.set(deviceName, ws);
+    public newConnection(deviceName: string, connection: IConnection): void {
+        this.deviceMap.set(deviceName, connection);
 
-            ws.onMessage = (msg) => {
-                const message = JSON.parse(msg);
-                for (const callback of this._deviceCallback.get(deviceName) ?? []) {
-                    callback(message);
-                }
-            };
+        connection.onMessage = (msg) => {
+            const message = JSON.parse(msg);
+            for (const callback of this._deviceCallback.get(deviceName) ?? []) {
+                callback(message);
+            }
+        };
 
-            ws.onConnectionChange = () => {
-                console.log(`${deviceName} websocket closed`);
-                this.deviceMap.delete(deviceName);
-            };
-        });
+        connection.onOnline = (online) => {
+            if(online) return;
+            console.log(`${deviceName} websocket closed`);
+            this.deviceMap.delete(deviceName);
+        };
     }
 }
 

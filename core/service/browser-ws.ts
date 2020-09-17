@@ -1,6 +1,4 @@
-import WebSocket from 'ws';
-import NodeWebSocket from './network/NodeWebSocket';
-import IWebSocket from '../common/network/IWebSocket';
+import IConnection from '../common/network/IConnection';
 
 export type BrowserMessage = {
     browserId: number,
@@ -26,8 +24,7 @@ export type StatusCallback = (browserId:number, user: any)=>void;
  * body: The message as sent from the browser as an JS object.
  */
 export default class BrowserWs {
-    private ws: WebSocket.Server = new WebSocket.Server({noServer: true});
-    private wsMap: Map<number, IWebSocket> = new Map<number,IWebSocket>();
+    private wsMap: Map<number, IConnection> = new Map<number,IConnection>();
     private clientCount = 0;
     private _onOpenCallbacks: StatusCallback[] = [];
     private _onCloseCallbacks: StatusCallback[] = [];
@@ -53,11 +50,9 @@ export default class BrowserWs {
 
     public broadcast(jsonObject:never):void {
         const msg = JSON.stringify(jsonObject);
-        this.ws.clients.forEach(function each(client) {
-            if (client.readyState === WebSocket.OPEN) {
-              client.send(msg);
-            }
-          });
+        for(const client of this.wsMap.values()) {
+            client.send(msg);
+        }
     }
 
     /** Register a callback new browser connections.
@@ -108,57 +103,49 @@ export default class BrowserWs {
         this._onCloseCallbacks.push(callback);
     }
 
-    /**
-     * @param {any} user user object from authentication.
-     * @param {import("http").IncomingMessage} request
-     * @param {import("net").Socket} socket
-     * @param {Buffer} head
-     */
-    public handleUpgrade(user:any, request: import("http").IncomingMessage, socket: import("net").Socket, head: Buffer): void {
-        this.ws.handleUpgrade(request, socket, head, (websocket) => {
-            const ws = new NodeWebSocket(websocket);
+    public newConnection(user:any, connection: IConnection ): void {
 
-            const browserId = this.clientCount;
-            this.clientCount += 1;
-            this.wsMap.set(browserId, ws);
+        const browserId = this.clientCount;
+        this.clientCount += 1;
+        this.wsMap.set(browserId, connection);
 
-            // onOpen
-            if (this._onOpenCallbacks.length > 0) {
-                for (const callback of this._onOpenCallbacks) {
+        // onOpen
+        if (this._onOpenCallbacks.length > 0) {
+            for (const callback of this._onOpenCallbacks) {
+                callback(browserId,user)
+            }
+        }
+        
+        // onMessage
+        connection.onMessage = (msg) => {
+            const msgParse = JSON.parse(msg);
+            const message = {
+                browserId: browserId,
+                type: msgParse.type as string,
+                user: user,
+                body: msgParse.body as never,
+            }
+
+            for (const callback of this._onBrowserCallbacks.get(message.browserId) ?? []) {
+                callback(message)
+            }
+
+            for (const callback of this._onTopicCallbacks.get(message.type) ?? []) {
+                callback(message)
+            }
+        };
+
+        // onClose
+        connection.onOnline = (online) => {
+            if(online) return;
+
+            console.log(`${user.name} closed browser ${browserId}.`);
+            this.wsMap.delete(browserId);
+            if (this._onCloseCallbacks.length > 0) {
+                for (const callback of this._onCloseCallbacks) {
                     callback(browserId,user)
                 }
             }
-            
-            // onMessage
-            ws.onMessage = (msg) => {
-                const msgParse = JSON.parse(msg);
-                const message = {
-                    browserId: browserId,
-                    type: msgParse.type as string,
-                    user: user,
-                    body: msgParse.body as never,
-                }
-
-                for (const callback of this._onBrowserCallbacks.get(message.browserId) ?? []) {
-                    callback(message)
-                }
-
-                for (const callback of this._onTopicCallbacks.get(message.type) ?? []) {
-                    callback(message)
-                }
-            };
-
-            // onClose
-            ws.onConnectionChange = () => {
-
-                console.log(`${user.name} closed browser ${browserId}.`);
-                this.wsMap.delete(browserId);
-                if (this._onCloseCallbacks.length > 0) {
-                    for (const callback of this._onCloseCallbacks) {
-                        callback(browserId,user)
-                    }
-                }
-            }
-        })
+        }
     }
 }

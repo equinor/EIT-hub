@@ -1,15 +1,29 @@
-import IWebSocket from "../../common/network/IWebSocket";
+import Connection from "../common/network/Connection";
+import IConnection from "../common/network/IConnection";
+import IWebSocket from "../common/network/IWebSocket";
+import WebSocket from 'ws';
+import { IncomingMessage } from 'http'
+import { Socket } from 'net';
 
-/* istanbul ignore next */
-export default class BrowserWebSocket  implements IWebSocket {
-    static connect(url: string): BrowserWebSocket {
-        return new BrowserWebSocket(new window.WebSocket(url))
+/* istanbul ignore file */
+export default class Network {
+    private _ws: WebSocket.Server = new WebSocket.Server({noServer: true});
+
+    upgrade(request: IncomingMessage, socket: Socket, head: Buffer): IConnection {
+        const c = new Connection();
+        this._ws.handleUpgrade(request, socket, head, (websocket) => {
+            c.webSocket = new NodeWebSocket(websocket);
+        });
+
+        return c;
     }
+}
 
+class NodeWebSocket  implements IWebSocket {
     constructor(private _ws: WebSocket) {
         this._ws.onmessage = (event) => {
             if(this.onMessage !== undefined) {
-                this.onMessage(event.data);
+                this.onMessage(event.data as string);
             }
         }
 

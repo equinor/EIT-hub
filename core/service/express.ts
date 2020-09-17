@@ -7,10 +7,12 @@ import BrowserWs from './browser-ws';
 import DeviceWs from './device-ws';
 import {Server, IncomingMessage} from 'http'
 import { Socket } from 'net';
+import Network from './Network';
 
 export default class Express {
     private app: express.Express;
     server: Server | undefined;
+    private network = new Network();
 
     constructor(private port: number, private auth:Auth, private browserWs:BrowserWs, private deviceWs:DeviceWs) {
         this.app = express();
@@ -38,14 +40,14 @@ export default class Express {
         if (path[1] === 'browser') { 
             const user = this.auth.getUser(request);
             if(user !== null) {
-                this.browserWs.handleUpgrade(user, request, socket, head);
+                this.browserWs.newConnection(user, this.network.upgrade(request, socket, head));
             } else {
                 socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
                 socket.destroy();
             }
         } else if (path[1] === 'device') {
             if(this.auth.validateDeviceRequest(path[2], request)) {
-                this.deviceWs.handleUpgrade(path[2], request, socket, head);
+                this.deviceWs.newConnection(path[2], this.network.upgrade(request, socket, head));
             }else{
                 socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
                 socket.destroy();

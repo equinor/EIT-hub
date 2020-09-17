@@ -1,14 +1,14 @@
-import BrowserWebSocket from "../../../core/client/network/BrowserWebSocket";
+import Network from "../../../core/client/Network";
 
 /* istanbul ignore file */
 export default class WebSocket{
-    private _ws = BrowserWebSocket.connect(getWsUrl());
+    private _ws = Network.connect(getWsUrl());
     private _telemetryCallbacks:any[] = [];
     private _controlCallbacks:any[] = [];
     private _rtcCallbacks:any[] = [];
 
     constructor(){
-        this._ws.onMessage(this._onMessage.bind(this));
+        this._ws.onMessage = this._onMessage.bind(this);
     }
 
     /** Try to send input information to the server. Do nothing if connection is not working.
