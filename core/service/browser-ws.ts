@@ -1,4 +1,4 @@
-import WebSocket from 'ws';
+import IConnection from '../common/network/IConnection';
 
 export type BrowserMessage = {
     browserId: number,
@@ -24,13 +24,12 @@ export type StatusCallback = (browserId:number, user: any)=>void;
  * body: The message as sent from the browser as an JS object.
  */
 export default class BrowserWs {
-    private ws: WebSocket.Server = new WebSocket.Server({noServer: true});
-    private wsMap: Map<number, WebSocket> = new Map();
+    private wsMap: Map<number, IConnection> = new Map<number,IConnection>();
     private clientCount = 0;
     private _onOpenCallbacks: StatusCallback[] = [];
     private _onCloseCallbacks: StatusCallback[] = [];
-    private _onBrowserCallbacks: Map<number, MessageCallback[]> = new Map();
-    private _onTopicCallbacks: Map<string, MessageCallback[]> = new Map();
+    private _onBrowserCallbacks: Map<number, MessageCallback[]> = new Map<number, MessageCallback[]>();
+    private _onTopicCallbacks: Map<string, MessageCallback[]> = new Map<string, MessageCallback[]>();
     
     /** Try to send a message to a browser. If the device is not connected the message will be dropped.
      * 
@@ -51,11 +50,9 @@ export default class BrowserWs {
 
     public broadcast(jsonObject:never):void {
         const msg = JSON.stringify(jsonObject);
-        this.ws.clients.forEach(function each(client) {
-            if (client.readyState === WebSocket.OPEN) {
-              client.send(msg);
-            }
-          });
+        for(const client of this.wsMap.values()) {
+            client.send(msg);
+        }
     }
 
     /** Register a callback new browser connections.
@@ -97,15 +94,6 @@ export default class BrowserWs {
         }
     }
 
-    /** Gets the current ready state for the device in question. 3 (CLOSED) if no connections exist
-     * 
-     * @param {number} browserId
-     * @return {number} WebSocket ready state.
-     */
-    public getState(browserId: number): number {
-        return this.wsMap.get(browserId)?.readyState ?? 3
-    }
-
     /** Calls callback when a browser have disconnected.
      * 
      * @param {Function} callback called with the browserId and user object as properties.
@@ -115,57 +103,49 @@ export default class BrowserWs {
         this._onCloseCallbacks.push(callback);
     }
 
-    /**
-     * @param {any} user user object from authentication.
-     * @param {import("http").IncomingMessage} request
-     * @param {import("net").Socket} socket
-     * @param {Buffer} head
-     */
-    public handleUpgrade(user:any, request: import("http").IncomingMessage, socket: import("net").Socket, head: Buffer): void {
-        this.ws.handleUpgrade(request, socket, head, (websocket) => {
+    public newConnection(user:any, connection: IConnection ): void {
 
-            const browserId = this.clientCount;
-            this.clientCount += 1;
-            this.wsMap.set(browserId, websocket);
+        const browserId = this.clientCount;
+        this.clientCount += 1;
+        this.wsMap.set(browserId, connection);
 
-            // onOpen
-            if (this._onOpenCallbacks.length > 0) {
-                for (const callback of this._onOpenCallbacks) {
+        // onOpen
+        if (this._onOpenCallbacks.length > 0) {
+            for (const callback of this._onOpenCallbacks) {
+                callback(browserId,user)
+            }
+        }
+        
+        // onMessage
+        connection.onMessage = (msg) => {
+            const msgParse = JSON.parse(msg);
+            const message = {
+                browserId: browserId,
+                type: msgParse.type as string,
+                user: user,
+                body: msgParse.body as never,
+            }
+
+            for (const callback of this._onBrowserCallbacks.get(message.browserId) ?? []) {
+                callback(message)
+            }
+
+            for (const callback of this._onTopicCallbacks.get(message.type) ?? []) {
+                callback(message)
+            }
+        };
+
+        // onClose
+        connection.onOnline = (online) => {
+            if(online) return;
+
+            console.log(`${user.name} closed browser ${browserId}.`);
+            this.wsMap.delete(browserId);
+            if (this._onCloseCallbacks.length > 0) {
+                for (const callback of this._onCloseCallbacks) {
                     callback(browserId,user)
                 }
             }
-            
-            // onMessage
-            websocket.on("message", (msg) => {
-
-                const msgParse = JSON.parse(msg as string);
-                const message = {
-                    browserId: browserId,
-                    type: msgParse.type as string,
-                    user: user,
-                    body: msgParse.body as never,
-                }
-
-                for (const callback of this._onBrowserCallbacks.get(message.browserId) ?? []) {
-                    callback(message)
-                }
-
-                for (const callback of this._onTopicCallbacks.get(message.type) ?? []) {
-                    callback(message)
-                }
-            })
-
-            // onClose
-            websocket.on("close", () => {
-
-                console.log(`${user.name} closed browser ${browserId}.`);
-                this.wsMap.delete(browserId);
-                if (this._onCloseCallbacks.length > 0) {
-                    for (const callback of this._onCloseCallbacks) {
-                        callback(browserId,user)
-                    }
-                }
-            }) 
-        })
+        }
     }
 }
