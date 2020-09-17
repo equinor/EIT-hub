@@ -4,7 +4,6 @@ import IWebSocket from "./IWebSocket";
 export default class Connection implements IConnection {
     private _ws: IWebSocket | undefined
 
-    private _onMessage: ((data: string) => void) | undefined;
     private _online = false;
 
     constructor(webSocket? : IWebSocket) {
@@ -18,8 +17,8 @@ export default class Connection implements IConnection {
     onOnline: ((online: boolean) => void) | undefined;
 
     send(msg: string): boolean {
-        if(this._ws?.isConnected ?? false) {
-            this._ws?.send(msg);
+        if(this._ws?.isConnected === true) {
+            this._ws.send(msg);
             return true;
         }
         return false;
@@ -41,9 +40,7 @@ export default class Connection implements IConnection {
 
         if(ws?.isConnected === true){
             ws.onMessage = (msg:string) => {
-                if(this._onMessage !== undefined) {
-                    this._onMessage(msg); 
-                }
+                this.onMessage?.(msg); 
             }
             ws.onConnectionChange = (connected:boolean) => {
                 if(!connected) {
@@ -56,9 +53,7 @@ export default class Connection implements IConnection {
 
         if(this._online !== (this._ws !== undefined)) {
             this._online = this._ws !== undefined;
-            if(this.onOnline !== undefined) {
-                this.onOnline(this._online);
-            }
+            this.onOnline?.(this._online);
         }
     }
 
