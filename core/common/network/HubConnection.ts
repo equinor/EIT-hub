@@ -1,9 +1,11 @@
 import { JsonDecoder } from "ts.data.json";
 import IConnection from "./IConnection";
+import IReceiver from "./IReceiver";
+import ISender from "./ISender";
 import MyCredits from "./MyCredits";
 import TargetCredits from "./TargetCredits";
 
-export default class CreditConnection {
+export default class HubConnection implements ISender, IReceiver {
     constructor(
         private _connection: IConnection,
         private _my: MyCredits = new MyCredits(),
@@ -13,13 +15,11 @@ export default class CreditConnection {
             if(this.onMessage === undefined){
                 return;
             }
-            const msgJson:unknown = JSON.parse(data);
-            const msgDecode = messageDecoder.decode(msgJson);
-            if(msgDecode.isOk()) {
-                const msg = msgDecode.value;
+            const msg = decode(data);
+            if(typeof msg !== "string") {
                 this._target.balance = msg.credits;
                 this._my.dec();
-                this.onMessage(msg.type, msg.payload).finally(() => this._my.inc());
+                this.onMessage(msg.topic, msg.payload).finally(() => this._my.inc());
             }
         }
     }
@@ -34,7 +34,7 @@ export default class CreditConnection {
             return false;
         }
         // Create payload
-        const msg = JSON.stringify({
+        const msg = encode({
             credits: this._my.balance,
             topic: topic,
             payload: payload,
@@ -53,12 +53,26 @@ export default class CreditConnection {
 
 interface Message {
     credits: number,
-    type: string,
+    topic: string,
     payload: unknown,
+}
+
+function encode(msg: Message): string{
+    return JSON.stringify(msg);
+}
+
+function decode(msg: string): Message | string{
+    const obj:unknown = JSON.parse(msg);
+    const decode = messageDecoder.decode(obj);
+    if(decode.isOk()) {
+        return decode.value
+    }else {
+        return decode.error
+    }
 }
 
 const messageDecoder = JsonDecoder.object<Message>({
     credits: JsonDecoder.number,
-    type: JsonDecoder.string,
+    topic: JsonDecoder.string,
     payload: JsonDecoder.succeed
 }, "Message")
