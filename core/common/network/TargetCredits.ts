@@ -7,16 +7,24 @@
 export default class TargetCredits {
     private _credits = 10;
 
+    canSend(): boolean {
+        return this._credits > 0;
+    }
+
     /** Ask to be able to send a message.
      * If return true a credits is used an you can send that message.
      * If returns false you must abort message.
      */
     sendRequest(): boolean {
-        if(this._credits > 0) {
+        if(this.canSend()) {
             this._credits -= 1;
             return true;
         }
         return false;
+    }
+
+    cancelRequest(): void {
+        this._credits += 1;
     }
 
     /** Get the number of messages you can send. 
