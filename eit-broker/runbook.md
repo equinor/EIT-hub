@@ -37,3 +37,42 @@ See verne readme for guide: https://github.com/vernemq/vernemq/
 ## Setup permissions.
 Main doc: https://docs.vernemq.com/configuration/file-auth
 
+1. Create `./etc/vmq.acl` with the same content as [vmq.acl](vmq.acl).
+2. Create `./etc/vmq.passwd` based on [vmq.passwd](vmq.passwd). Remember to set new passwords.
+3. Run `./bin/vmq-passwd -U ./etc/vmq.passwd` to hash all the passwords in the file.
+
+## Setup protocols.
+Around line 238 in the config file change/add:
+```
+listener.tcp.default = 0.0.0.0:1883
+listener.ssl.default = 0.0.0.0:8883
+listener.ws.default = 0.0.0.0:8080
+listener.wss.default = 0.0.0.0:8443
+```
+To add all the ports and protocols.
+
+## Setup TLS
+I need todo this again to give a exact guide.
+1. Give your VM a domain name.
+2. Make sure port 80 is open.
+3. Download lets encrypt tooling.
+4. Create cert.
+5. Copy certs to ./certs
+6. chown to local user.
+7. Find and sett configuration.
+```
+listener.ssl.cafile = ./cert/fullchain.pem
+listener.wss.cafile = ./cert/fullchain.pem
+
+listener.ssl.certfile = ./cert/fullchain.pem
+listener.wss.certfile = ./cert/fullchain.pem
+
+listener.ssl.keyfile = ./cert/privkey.pem
+listener.wss.keyfile = ./cert/privkey.pem
+```
+
+## Finally run
+1. Open up port 8883 and 8443 to the world.
+2. Run `./bin/vernemq start`
+
+And it may just work. MAY.
