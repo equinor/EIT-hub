@@ -1,0 +1,10 @@
+user browser
+topic public/#
+
+user device
+topic public/#
+topic private/#
+
+user service
+topic public/#
+topic private/#

@@ -1,6 +1,14 @@
 # EIT-hub
 
-A IoT hub for experimentation for Emerging IT.
+The goal of EIT-Hub help development of IoT prototypes. By removing some of the annoying not fun stuff. This first MVP have goal of removing 3 hassle: 
+
+1. Gui.
+2. Security. 
+3. Communication.
+
+## Status
+
+Right now EIT hub is a bit off a mess. We are in a learning state and there have been a few experiments, false starts and dead ends. 
 
 ## Install dependencies
 
