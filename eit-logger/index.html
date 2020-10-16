@@ -9,6 +9,7 @@
         Client Id: <input id="clientId" type="text" value=""/><br/>
         <button id="connect">Connect</button><br/>
         Status: <b id="status">Disconnected</b><br/>
+        <pre id="view"></pre>
         <pre id="log"></pre>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
@@ -18,7 +19,9 @@
             const clientIdElem = document.getElementById("clientId");
             const connectElem = document.getElementById("connect");
             const statusElem = document.getElementById("status");
+            const viewElem = document.getElementById("view");
             const logElem = document.getElementById("log");
+            const view = new Map();
 
             function logString(msg) {
                 let old = logElem.innerText.substring(0,2000);
@@ -27,7 +30,7 @@
             }
 
             function logMessage(msg) {
-                logString(msg.destinationName + " " + msg.payloadString);
+                view.set(msg.destinationName,msg.payloadString);
             }
 
             function connect() {
@@ -67,6 +70,20 @@
             }
 
             connectElem.onclick = connect;
+
+            function frame() {
+                let text = "";
+
+                view.forEach(function(v, k){
+                    text += k + " " + v + "\n";
+                })
+
+                viewElem.innerText = text;
+
+                window.requestAnimationFrame(frame);
+            }
+
+            window.requestAnimationFrame(frame);
         </script>
 
     </body>
