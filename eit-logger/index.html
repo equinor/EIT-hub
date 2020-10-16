@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+        <script>
+            const username = "browser";
+            const password = "browser";
+            const clientId = "eit-logger"
+
+            // Create a client instance
+            client = new Paho.MQTT.Client("eit-hub-broker.northeurope.cloudapp.azure.com", 8443, clientId);
+
+            // set callback handlers
+            client.onConnectionLost = onConnectionLost;
+            client.onMessageArrived = onMessageArrived;
+
+            // connect the client
+            client.connect({
+                onSuccess:onConnect,
+                onFailure: onFailure,
+                userName: username,
+                password: password,
+                useSSL: true
+            });
+
+            let count = 0;
+            let stop = false;
+
+            function onConnect() {
+                console.log("onConnect");
+                client.subscribe("public/#");
+            }
+            function onFailure(err) {
+                console.log("onFailure", err);
+            }
+
+            // called when the client loses its connection
+            function onConnectionLost(responseObject) {
+                if (responseObject.errorCode !== 0) {
+                    console.log("onConnectionLost:" + responseObject.errorMessage);
+                }
+            }
+
+            // called when a message arrives
+            function onMessageArrived(message) {
+                console.log(message.destinationName, JSON.parse(message.payloadString));
+            }
+        </script>
+
+    </body>
+</html>
