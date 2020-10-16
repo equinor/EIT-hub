@@ -1,0 +1,16 @@
+[package]
+name = "eit-enviro"
+version = "0.1.0"
+authors = ["pi"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ltr-559 = "0.1.1"
+linux-embedded-hal = "0.3.0"
+rumqttc = "0.1.2"
+webpki-roots = "0.20.0"
+rustls-native-certs = "0.4.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
