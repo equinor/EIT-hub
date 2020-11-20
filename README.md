@@ -1,4 +1,14 @@
-# EIT-hub
+# EIT-hub-experiments
+
+This is an archived containing different starts and stops for the idea of eit-hub.
+
+* apps and core is the old shuttle demo.
+* eit-* is the newer mqtt part of the eit-hub.
+
+We save this as experiments its the code we wrote before we knew what we wanted.
+
+
+## Old Readme
 
 The goal of EIT-Hub help development of IoT prototypes. By removing some of the annoying not fun stuff. This first MVP have goal of removing 3 hassle: 
 
